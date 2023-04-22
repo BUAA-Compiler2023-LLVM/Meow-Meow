@@ -24,7 +24,7 @@ public class Lexer {
     }
 
     private boolean isNumber(char x){
-        return (x <= '9' && x >= '0') || x == 'X' || x == 'x';
+        return (x <= '9' && x >= '0');
     }
 
     private Lexer() throws FileNotFoundException {
@@ -83,12 +83,18 @@ public class Lexer {
     }
 
     private Token Number() throws IOException {
+        boolean isFloat = false;
         StringBuilder numBuilder = new StringBuilder(Character.toString(c));
-        while (isNumber(readChar())){
+        while (isNumber(c) || c == 'x' || c == 'X' || c == '.'){
+            readChar();
             numBuilder.append(c);
+            if(c == '.'){
+                isFloat = true;
+            }
         }
         in.unread(c);
         String num = numBuilder.toString();
+        if(isFloat) return new Token(Tokens.FLOATCON, num);
         return new Token(Tokens.INTCON, num);
     }
 
