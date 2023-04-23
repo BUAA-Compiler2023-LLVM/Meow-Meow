@@ -1,15 +1,15 @@
 package Frontend;
 
 public class Token {
-    private Tokens type;
+    private TokenType type;
     private String val;
 
-    public Token(Tokens type, String val){
+    public Token(TokenType type, String val){
         this.type = type;
         this.val = val;
     }
 
-    public Tokens getType() {
+    public TokenType getType() {
         return type;
     }
 

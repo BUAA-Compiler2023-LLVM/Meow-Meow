@@ -53,20 +53,20 @@ public class Lexer {
         in.unread(c);
         String ident = identBuilder.toString();
         return switch (ident) {
-            case "main" -> new Token(Tokens.MAINTK, ident);
-            case "const" -> new Token(Tokens.CONSTTK, ident);
-            case "int" -> new Token(Tokens.INTTK, ident);
-            case "float" -> new Token(Tokens.FLOATTK, ident);
-            case "break" -> new Token(Tokens.BREAKTK, ident);
-            case "continue" -> new Token(Tokens.CONTINUETK, ident);
-            case "if" -> new Token(Tokens.IFTK, ident);
-            case "else" -> new Token(Tokens.ELSETK, ident);
-            case "while" -> new Token(Tokens.WHILETK, ident);
-            case "getint" -> new Token(Tokens.GETINTTK, ident);
-            case "printf" -> new Token(Tokens.PRINTFTK, ident);
-            case "return" -> new Token(Tokens.RETURNTK, ident);
-            case "void" -> new Token(Tokens.VOIDTK, ident);
-            default -> new Token(Tokens.IDENFR, ident);
+            case "main" -> new Token(TokenType.MAINTK, ident);
+            case "const" -> new Token(TokenType.CONSTTK, ident);
+            case "int" -> new Token(TokenType.INTTK, ident);
+            case "float" -> new Token(TokenType.FLOATTK, ident);
+            case "break" -> new Token(TokenType.BREAKTK, ident);
+            case "continue" -> new Token(TokenType.CONTINUETK, ident);
+            case "if" -> new Token(TokenType.IFTK, ident);
+            case "else" -> new Token(TokenType.ELSETK, ident);
+            case "while" -> new Token(TokenType.WHILETK, ident);
+            case "getint" -> new Token(TokenType.GETINTTK, ident);
+            case "printf" -> new Token(TokenType.PRINTFTK, ident);
+            case "return" -> new Token(TokenType.RETURNTK, ident);
+            case "void" -> new Token(TokenType.VOIDTK, ident);
+            default -> new Token(TokenType.IDENFR, ident);
         };
 
 
@@ -79,23 +79,33 @@ public class Lexer {
         }
         FStringBuilder.append('"');
         String FString = FStringBuilder.toString();
-        return new Token(Tokens.STRCON, FString);
+        return new Token(TokenType.STRCON, FString);
     }
 
     private Token Number() throws IOException {
         boolean isFloat = false;
+        boolean isHex = false;
+        boolean isOct;
         StringBuilder numBuilder = new StringBuilder(Character.toString(c));
+        isOct = (c == '0');
         while (isNumber(c) || c == 'x' || c == 'X' || c == '.'){
             readChar();
             numBuilder.append(c);
             if(c == '.'){
                 isFloat = true;
+                isOct = false;
+            }
+            if(c == 'X' || c == 'x'){
+                isHex = true;
+                isOct = false;
             }
         }
         in.unread(c);
         String num = numBuilder.toString();
-        if(isFloat) return new Token(Tokens.FLOATCON, num);
-        return new Token(Tokens.INTCON, num);
+        if(isFloat) return new Token(TokenType.FLOATCON, num);
+        else if(isHex) return new Token(TokenType.HEXCON, num);
+        else if(isOct) return new Token(TokenType.OCTCON, num);
+        else return new Token(TokenType.DECCON, num);
     }
 
     private void Comment() throws IOException {
@@ -119,7 +129,7 @@ public class Lexer {
         }
     }
 
-    public Token getTok() throws IOException {
+    private Token getTok() throws IOException {
         while ((readIn = in.read()) != -1){
             c = (char)readIn;
 
@@ -143,74 +153,74 @@ public class Lexer {
                     readChar();
                     if(c != '*' && c != '/'){
                         in.unread(c);
-                        return new Token(Tokens.DIV, "/");
+                        return new Token(TokenType.DIV, "/");
                     }
                     else Comment();
                     break;
                 case '!':
                     if(readChar() == '=') {
-                        return new Token(Tokens.NEQ, "!=");
+                        return new Token(TokenType.NEQ, "!=");
                     }
                     else {
                         in.unread(readIn);
-                        return new Token(Tokens.NOT, "!");
+                        return new Token(TokenType.NOT, "!");
                     }
                 case '&':
                     if(readChar() == '&'){
-                        return new Token(Tokens.AND, "&&");
+                        return new Token(TokenType.AND, "&&");
                     }
                 case '|':
                     if(readChar() == '|'){
-                        return new Token(Tokens.OR, "||");
+                        return new Token(TokenType.OR, "||");
                     }
                 case '+':
-                    return new Token(Tokens.PLUS, "+");
+                    return new Token(TokenType.PLUS, "+");
                 case '-':
-                    return new Token(Tokens.MINU, "-");
+                    return new Token(TokenType.MINU, "-");
                 case '*':
-                    return new Token(Tokens.MULT, "*");
+                    return new Token(TokenType.MULT, "*");
                 case '%':
-                    return new Token(Tokens.MOD, "%");
+                    return new Token(TokenType.MOD, "%");
                 case '<':
                     if(readChar() == '='){
-                        return new Token(Tokens.LEQ, "<=");
+                        return new Token(TokenType.LEQ, "<=");
                     }
                     else{
                         in.unread(readIn);
-                        return new Token(Tokens.LSS, "<");
+                        return new Token(TokenType.LSS, "<");
                     }
                 case '>':
                     if(readChar() == '='){
-                        return new Token(Tokens.GEQ, ">=");
+                        return new Token(TokenType.GEQ, ">=");
                     }
                     else{
                         in.unread(readIn);
-                        return new Token(Tokens.GRE, ">");
+                        return new Token(TokenType.GRE, ">");
                     }
                 case '=':
                     if(readChar() == '='){
-                        return new Token(Tokens.EQL, "==");
+                        return new Token(TokenType.EQL, "==");
                     }
                     else {
                         in.unread(readIn);
-                        return new Token(Tokens.ASSIGN, "=");
+                        return new Token(TokenType.ASSIGN, "=");
                     }
                 case ';':
-                    return new Token(Tokens.SEMICN, ";");
+                    return new Token(TokenType.SEMICN, ";");
                 case ',':
-                    return new Token(Tokens.COMMA, ",");
+                    return new Token(TokenType.COMMA, ",");
                 case '(':
-                    return new Token(Tokens.LPARENT, "(");
+                    return new Token(TokenType.LPARENT, "(");
                 case ')':
-                    return new Token(Tokens.RPARENT, ")");
+                    return new Token(TokenType.RPARENT, ")");
                 case '[':
-                    return new Token(Tokens.LBRACK, "[");
+                    return new Token(TokenType.LBRACK, "[");
                 case ']':
-                    return new Token(Tokens.RBRACK, "]");
+                    return new Token(TokenType.RBRACK, "]");
                 case '{':
-                    return new Token(Tokens.LBRACE, "{");
+                    return new Token(TokenType.LBRACE, "{");
                 case '}':
-                    return new Token(Tokens.RBRACE, "}");
+                    return new Token(TokenType.RBRACE, "}");
                 default:
                     return null;
             }
@@ -218,4 +228,13 @@ public class Lexer {
         return null;
     }
 
+    public TokenList lex() throws IOException {
+        TokenList tokenList = new TokenList();
+        while (true){
+            Token token = this.getTok();
+            if(token == null) break;
+            tokenList.addToken(token);
+        }
+        return tokenList;
+    }
 }

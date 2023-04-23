@@ -1,8 +1,10 @@
 package Frontend;
 
-public enum Tokens {
+public enum TokenType {
     IDENFR, // ident
-    INTCON, // int-const
+    HEXCON, //  hex-const
+    OCTCON, //  oct-const
+    DECCON, //  dec-const
     FLOATCON,   //  float-const
     STRCON, // string-const
     MAINTK, // "main"
