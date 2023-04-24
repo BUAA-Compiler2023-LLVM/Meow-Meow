@@ -7,7 +7,7 @@ import java.util.ArrayList;
  */
 public class AST {
 
-    public ArrayList<CompUnit> units;
+    private final ArrayList<CompUnit> units;
 
     // CompUnit -> Decl | FuncDef
     public interface CompUnit {
@@ -390,7 +390,7 @@ public class AST {
                 floatConstVal = Float.parseFloat(number);
                 intConstVal = (int) floatConstVal;
             }
-            else if (type.equals("hex") || number.equals("oct") || number.equals("dec")) {
+            else if (type.equals("hex") || type.equals("oct") || type.equals("dec")) {
                 isIntConst = true;
                 intConstVal = switch (type) {
                     case "hex" -> Integer.parseInt(number.substring(2), 16);
@@ -464,5 +464,4 @@ public class AST {
     public ArrayList<CompUnit> getUnits() {
         return this.units;
     }
-
 }

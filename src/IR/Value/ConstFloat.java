@@ -1,5 +1,6 @@
 package IR.Value;
 
+import IR.Type.FloatType;
 import IR.Type.IntegerType;
 
 public class ConstFloat extends Const {
@@ -7,7 +8,7 @@ public class ConstFloat extends Const {
     public static ConstFloat const0 = new ConstFloat(0.0);
 
     public ConstFloat(double value) {
-        super(String.valueOf(value), IntegerType.I32);
+        super(String.valueOf(value), FloatType.F32);
         this.value = value;
     }
 

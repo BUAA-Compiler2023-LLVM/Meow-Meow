@@ -25,14 +25,4 @@ public class IRModule {
     public void addFunction(Function function){
         functions.add(function);
     }
-
-    public void removeFunc(Function function){
-        functions.remove(function);
-        for(Function callee : function.getCalleeList()){
-            callee.getCallerList().remove(function);
-        }
-        for(Function caller : function.getCallerList()){
-            caller.getCalleeList().remove(function);
-        }
-    }
 }

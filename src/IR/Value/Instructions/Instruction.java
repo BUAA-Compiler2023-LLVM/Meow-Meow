@@ -13,8 +13,6 @@ import java.util.HashMap;
 
 public abstract class Instruction extends User {
     private final BasicBlock parentbb;
-    private BasicBlock earliestBb;
-    private BasicBlock latestBb;
     private OP op;
 
     private final IList.INode<Instruction, BasicBlock> node;

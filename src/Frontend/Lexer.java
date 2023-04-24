@@ -86,10 +86,9 @@ public class Lexer {
         boolean isFloat = false;
         boolean isHex = false;
         boolean isOct;
-        StringBuilder numBuilder = new StringBuilder(Character.toString(c));
+        StringBuilder numBuilder = new StringBuilder();
         isOct = (c == '0');
         while (isNumber(c) || c == 'x' || c == 'X' || c == '.'){
-            readChar();
             numBuilder.append(c);
             if(c == '.'){
                 isFloat = true;
@@ -99,9 +98,11 @@ public class Lexer {
                 isHex = true;
                 isOct = false;
             }
+            readChar();
         }
         in.unread(c);
         String num = numBuilder.toString();
+        if(num.equals("0")) isOct = false;
         if(isFloat) return new Token(TokenType.FLOATCON, num);
         else if(isHex) return new Token(TokenType.HEXCON, num);
         else if(isOct) return new Token(TokenType.OCTCON, num);

@@ -251,7 +251,7 @@ public class Parser {
             Token number = tokenList.consume();
             return new AST.Number(number.getVal(), "dec");
         }
-        else if (priExp.getType().equals(TokenType.FLOATTK)) {
+        else if (priExp.getType().equals(TokenType.FLOATCON)) {
             Token number = tokenList.consume();
             return new AST.Number(number.getVal(), "float");
         }

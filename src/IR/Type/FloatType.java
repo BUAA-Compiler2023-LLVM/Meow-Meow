@@ -1,8 +1,10 @@
 package IR.Type;
 
 public class FloatType extends Type {
-    public FloatType(){
+    private FloatType(){
     }
+
+    public static FloatType F32 = new FloatType();
 
     @Override
     public boolean isFloatTy(){

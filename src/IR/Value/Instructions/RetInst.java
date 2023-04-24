@@ -33,6 +33,7 @@ public class RetInst extends Instruction {
 
         Value value = getValue();
         if(value.getType().isIntegerTy()) sb.append("i32 ");
+        else if(value.getType().isFloatTy()) sb.append("float i32 ");
 
         if(value instanceof ConstInteger constInt) {
             sb.append(constInt.getValue());
