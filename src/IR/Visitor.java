@@ -23,6 +23,9 @@ public class Visitor {
             }
             assert false;
         }
+        else if(primaryExpAST instanceof AST.Exp expAST){
+            visitExpAST(expAST);
+        }
     }
 
     private void visitUnaryExpAST(AST.UnaryExp unaryExpAST){
