@@ -1,10 +1,8 @@
 package IR;
 
 import Frontend.AST;
-import IR.Value.BasicBlock;
-import IR.Value.Function;
-import IR.Value.GlobalVar;
-import IR.Value.Value;
+import IR.Value.*;
+import IR.Value.Instructions.OP;
 
 import java.util.ArrayList;
 
@@ -29,6 +27,20 @@ public class Visitor {
 
     private void visitUnaryExpAST(AST.UnaryExp unaryExpAST){
         visitPrimaryExpAST(unaryExpAST.getPrimary());
+        ArrayList<String> unaryOPs = unaryExpAST.getUnaryOps();
+        int count = 0;
+        for(String unaryOP : unaryOPs){
+            if(unaryOP.equals("-")){
+                count++;
+            }
+            else if(unaryOP.equals("!")){
+                count = 0;
+                CurValue = f.buildBinaryInst(CurValue, ConstInteger.const0, "!=", CurBasicBlock);
+            }
+        }
+        if(count % 2 == 1){
+            CurValue = f.buildBinaryInst(ConstInteger.const0, CurValue, "-", CurBasicBlock);
+        }
     }
 
     private void visitBinaryExpAST(AST.BinaryExp binaryExpAST){

@@ -5,9 +5,9 @@ import IR.Type.IntegerType;
 
 public class ConstFloat extends Const {
     private final double value;
-    public static ConstFloat const0 = new ConstFloat(0.0);
+    public static ConstFloat const0 = new ConstFloat(0.0F);
 
-    public ConstFloat(double value) {
+    public ConstFloat(float value) {
         super(String.valueOf(value), FloatType.F32);
         this.value = value;
     }
