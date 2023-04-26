@@ -1,13 +1,14 @@
 package IR.Value.Instructions;
 
 import IR.Type.IntegerType;
+import IR.Type.Type;
 import IR.Value.BasicBlock;
 import IR.Value.Value;
 
 public class BinaryInst extends Instruction {
 
-    public BinaryInst(OP op, Value left, Value right, BasicBlock basicBlock) {
-        super("%" + (++Value.valNumber), IntegerType.I32, op, basicBlock);
+    public BinaryInst(OP op, Value left, Value right, Type type, BasicBlock basicBlock) {
+        super("%" + (++Value.valNumber), type, op, basicBlock);
         this.addOperand(left);
         this.addOperand(right);
     }
@@ -23,7 +24,8 @@ public class BinaryInst extends Instruction {
     @Override
     public String getInstString(){
         return getName() + " = " +
-                getLeftVal().getName() + " " + getOp() + " " +
+                getOp() + " " +
+                getLeftVal().getName() + " " +
                 getRightVal().getName();
     }
 }

@@ -1,7 +1,9 @@
 define i32 main() {
-block1:
-	%0 = 2 Mul 3
-	%1 = 1 Add %0
-	ret i32 %1
+%0:
+	%1 = sitofp 3 to float
+	%2 = fmul 2.1 %1
+	%3 = sitofp 1 to float
+	%4 = fadd %3 %2
+	ret float i32 %4
 }
 

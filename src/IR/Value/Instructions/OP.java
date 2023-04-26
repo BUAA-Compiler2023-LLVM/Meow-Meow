@@ -2,16 +2,19 @@ package IR.Value.Instructions;
 
 public enum OP {
     Add,
+    Fadd,
     Sub,
+    Fsub,
     Mul,
+    Fmul,
     Div,
+    Fdiv,
     Mod,
     Shl,
     Shr,
     And,
     Or,
     Xor,
-
     Lt,
     Le,
     Ge,
@@ -20,6 +23,8 @@ public enum OP {
     Ne,
     //conversion op
     Zext,
+    Ftoi,
+    Itof,
     //Mem
     Alloca,
     Load,
@@ -36,7 +41,26 @@ public enum OP {
     Call,
     Ret,
     //not op
-    Not,
-    Bitand
+    Not;
+
+    @Override
+    public String toString(){
+        String name = name();
+        return switch (name) {
+            case "Add" -> "add";
+            case "Fadd" -> "fadd";
+            case "Sub" -> "sub";
+            case "Fsub" -> "fsub";
+            case "Mul" -> "mul";
+            case "Fmul" -> "fmul";
+            case "Div" -> "div";
+            case "Fdiv" -> "fdiv";
+            case "Ne" -> "icmp ne";
+            case "Ftoi" -> "fptosi";
+            case "Itof" -> "sitofp";
+
+            default -> null;
+        };
+    }
 }
 

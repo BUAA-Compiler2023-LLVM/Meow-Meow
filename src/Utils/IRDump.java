@@ -1,6 +1,7 @@
 package Utils;
 
 import IR.IRModule;
+import IR.Value.Argument;
 import IR.Value.BasicBlock;
 import IR.Value.Function;
 import IR.Value.Instructions.Instruction;
@@ -41,7 +42,7 @@ public class IRDump {
             out.write("i32 ");
         }
         else if(function.getType().isFloatTy()){
-            out.write("float i32 ");
+            out.write("float ");
         }
         else out.write("void ");
 
@@ -58,9 +59,33 @@ public class IRDump {
 
     }
 
+    //  Name BasicBlock, Inst to let shit llvm run my damn program.
+    private static void RenameFunction(Function function){
+        int nowNum = 0;
+
+        ArrayList<Argument> args = function.getArgs();
+        for(Argument arg : args){
+            arg.setName("%" + nowNum++);
+        }
+
+        IList<BasicBlock, Function> basicBlocks = function.getBbs();
+        for (IList.INode<BasicBlock, Function> bbNode : basicBlocks) {
+            BasicBlock basicBlock = bbNode.getValue();
+            basicBlock.setName("%" + nowNum++);
+            IList<Instruction, BasicBlock> instructions = basicBlock.getInsts();
+            for (IList.INode<Instruction, BasicBlock> instNode : instructions) {
+                Instruction inst = instNode.getValue();
+                if (inst.hasName()) {
+                    inst.setName("%" + nowNum++);
+                }
+            }
+        }
+    }
+
     public static void DumpModule(IRModule irModule) throws IOException {
         ArrayList<Function> functions = irModule.getFunctions();
         for (Function function : functions) {
+            RenameFunction(function);
             DumpFunction(function);
             out.write("\n");
         }

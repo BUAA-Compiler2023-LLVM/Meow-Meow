@@ -1,6 +1,9 @@
 package IR;
 
 import Frontend.AST;
+import IR.Type.FloatType;
+import IR.Type.IntegerType;
+import IR.Type.Type;
 import IR.Value.*;
 import IR.Value.Instructions.OP;
 
@@ -55,6 +58,7 @@ public class Visitor {
             Value TmpValue = CurValue;
             visitExpAST(exps.get(i));
             CurValue = f.buildBinaryInst(TmpValue, CurValue, ops.get(i), CurBasicBlock);
+            //  log记录错误
         }
     }
 

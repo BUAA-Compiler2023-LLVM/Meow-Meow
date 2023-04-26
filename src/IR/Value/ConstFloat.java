@@ -18,6 +18,6 @@ public class ConstFloat extends Const {
 
     @Override
     public String toString() {
-        return "float i32 " + this.value;
+        return "float " + this.value;
     }
 }

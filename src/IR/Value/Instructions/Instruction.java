@@ -62,4 +62,8 @@ public abstract class Instruction extends User {
     public void insertToHead(BasicBlock bb){
         node.insertListHead(bb.getInsts());
     }
+
+    public boolean hasName(){
+        return true;
+    }
 }

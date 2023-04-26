@@ -13,6 +13,6 @@ public class FloatType extends Type {
 
     @Override
     public String toString(){
-        return "float i32";
+        return "float";
     }
 }

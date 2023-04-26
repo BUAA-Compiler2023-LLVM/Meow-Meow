@@ -45,4 +45,9 @@ public class RetInst extends Instruction {
         else sb.append(value.getName());
         return sb.toString();
     }
+
+    @Override
+    public boolean hasName(){
+        return false;
+    }
 }
