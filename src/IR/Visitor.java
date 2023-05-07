@@ -5,6 +5,7 @@ import IR.Type.FloatType;
 import IR.Type.IntegerType;
 import IR.Type.Type;
 import IR.Value.*;
+import IR.Value.Instructions.AllocInst;
 import IR.Value.Instructions.OP;
 
 import java.util.ArrayList;
@@ -20,6 +21,19 @@ public class Visitor {
     private final HashMap<String, Value> symTbl = new HashMap<>();
     private final IRBuildFactory f = IRBuildFactory.getInstance();
 
+    private Value find(String ident){
+        return symTbl.get(ident);
+    }
+
+    private void visitLValAST(AST.LVal lValAST){
+        String ident = lValAST.getIdent();
+        CurValue = find(ident);
+
+        if(CurValue instanceof AllocInst){
+            CurValue = f.buildLoadInst(CurValue, CurBasicBlock);
+        }
+    }
+
     private void visitPrimaryExpAST(AST.PrimaryExp primaryExpAST, boolean isConst){
         if(primaryExpAST instanceof AST.Number number){
             if(number.isIntConst){
@@ -34,8 +48,7 @@ public class Visitor {
             visitExpAST(expAST, isConst);
         }
         else if(primaryExpAST instanceof AST.LVal lValAST){
-            String ident = lValAST.getIdent();
-            CurValue = symTbl.get(ident);
+            visitLValAST(lValAST);
         }
     }
 
@@ -102,7 +115,7 @@ public class Visitor {
         boolean isConst = declAST.isConstant();
         String type = declAST.getBType();
         ArrayList<AST.Def> defs = declAST.getDefs();
-
+        //  ConstDecl
         if(isConst) {
             for (AST.Def def : defs) {
                 String ident = def.getIdent();
@@ -119,6 +132,27 @@ public class Visitor {
                     }
                     //  push进符号表
                     symTbl.put(ident, CurValue);
+                }
+            }
+        }
+        //  VarDecl
+        else{
+            for(AST.Def def : defs){
+                String ident = def.getIdent();
+                AST.Init init = def.getInit();
+
+                if(type.equals("int")){
+                    CurValue = f.buildAllocInst(IntegerType.I32, CurBasicBlock);
+                }
+                else if(type.equals("float")){
+                    CurValue = f.buildAllocInst(FloatType.F32, CurBasicBlock);
+                }
+                symTbl.put(ident, CurValue);
+                if (init instanceof AST.Exp expAST){
+                    Value TmpValue = CurValue;
+                    visitExpAST(expAST, false);
+
+                    f.buildStoreInst(CurValue, TmpValue, CurBasicBlock);
                 }
             }
         }

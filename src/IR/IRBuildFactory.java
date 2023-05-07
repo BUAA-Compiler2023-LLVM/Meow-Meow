@@ -1,9 +1,6 @@
 package IR;
 
-import IR.Type.FloatType;
-import IR.Type.IntegerType;
-import IR.Type.Type;
-import IR.Type.VoidType;
+import IR.Type.*;
 import IR.Value.*;
 import IR.Value.Instructions.*;
 
@@ -61,6 +58,20 @@ public class IRBuildFactory {
         };
     }
 
+    private Value unifyType(Value value, Type targetTy, BasicBlock bb){
+        Type type = value.getType();
+        if(type == IntegerType.I1 && targetTy == IntegerType.I32){
+            return buildConversionInst(value, "zext", bb);
+        }
+        else if(type == IntegerType.I32 && targetTy == FloatType.F32){
+            return buildConversionInst(value, "itof", bb);
+        }
+        else if(type == FloatType.F32 && targetTy == IntegerType.I32){
+            return buildConversionInst(value, "ftoi", bb);
+        }
+        return null;
+    }
+
     public Const buildNumber(int val){
         return new ConstInteger(val);
     }
@@ -84,18 +95,18 @@ public class IRBuildFactory {
         //  统一两个操作数的type
         //  先将1位的全部转化为I32
         if(leftType == IntegerType.I1){
-            left = buildConversionInst(left, "zext", bb);
+            left = unifyType(left, IntegerType.I32, bb);
         }
         if(rightType == IntegerType.I1){
-            right = buildConversionInst(right, "zext", bb);
+            right = unifyType(right, IntegerType.I32, bb);
         }
         //  此时只可能是I32或F32, 将I32强制转到F32
         if(leftType != rightType) {
             if (leftType == IntegerType.I32) {
-                right = buildConversionInst(left, "itof", bb);
+                left = unifyType(left, FloatType.F32, bb);
             }
             else if (rightType == IntegerType.I32) {
-                left = buildConversionInst(right, "itof", bb);
+                right = unifyType(right, FloatType.F32, bb);
             }
             type = FloatType.F32;
         }
@@ -155,5 +166,29 @@ public class IRBuildFactory {
             return new ConstFloat(calculate((float) left.getValue(), right.getValue(), op));
         }
         return null;
+    }
+
+    public AllocInst buildAllocInst(Type type, BasicBlock bb){
+        Type pointerTy = new PointerType(type);
+        AllocInst allocInst = new AllocInst(pointerTy, bb);
+        bb.addInst(allocInst);
+        return allocInst;
+    }
+
+    public void buildStoreInst(Value value, Value pointer, BasicBlock bb){
+        Type valueTy = value.getType();
+        PointerType pointerTy = (PointerType) pointer.getType();
+        if(valueTy != pointerTy.getEleType()){
+            value = unifyType(value, pointerTy.getEleType(), bb);
+        }
+        StoreInst storeInst = new StoreInst(value, pointer, bb);
+        bb.addInst(storeInst);
+    }
+
+    public LoadInst buildLoadInst(Value pointer, BasicBlock bb){
+        Type type = ((PointerType) pointer.getType()).getEleType();
+        LoadInst loadInst = new LoadInst(pointer, type, bb);
+        bb.addInst(loadInst);
+        return loadInst;
     }
 }
