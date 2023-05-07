@@ -19,11 +19,34 @@ public class Visitor {
     private BasicBlock CurBasicBlock;
     private Value CurValue;
     //  符号表
-    private final HashMap<String, Value> symTbl = new HashMap<>();
+    private final ArrayList<HashMap<String, Value>> symTbls = new ArrayList<>();
     private final IRBuildFactory f = IRBuildFactory.getInstance();
 
+    //  从符号表中查找某个ident
     private Value find(String ident){
-        return symTbl.get(ident);
+        int len = symTbls.size();
+        for(int i = len - 1; i >= 0; i--){
+            HashMap<String, Value> symTbl = symTbls.get(i);
+            Value res = symTbl.get(ident);
+            if(res != null){
+                return res;
+            }
+        }
+        return null;
+    }
+    //  向符号表中放入元素
+    private void pushSymbol(String ident, Value value){
+        int len = symTbls.size();
+        symTbls.get(len - 1).put(ident, value);
+    }
+
+    private void pushSymTbl(){
+        symTbls.add(new HashMap<>());
+    }
+
+    private void popSymTbl(){
+        int len = symTbls.size();
+        symTbls.remove(len - 1);
     }
 
     //  isFetch表示当目标变量为指针的情况是否要取值
@@ -32,6 +55,7 @@ public class Visitor {
         String ident = lValAST.getIdent();
         CurValue = find(ident);
 
+        assert CurValue != null;
         if(CurValue.getType() instanceof PointerType){
             if(isFetch) {
                 CurValue = f.buildLoadInst(CurValue, CurBasicBlock);
@@ -120,6 +144,12 @@ public class Visitor {
             visitExpAST(assignAST.getValue(), false);
             f.buildStoreInst(CurValue, pointer, CurBasicBlock);
         }
+        else if(stmtAST instanceof AST.ExpStmt expStmtAST){
+            visitExpAST(expStmtAST.getExp(), false);
+        }
+        else if(stmtAST instanceof AST.Block blockAST){
+            visitBlockAST(blockAST);
+        }
     }
 
     private void visitDeclAST(AST.Decl declAST){
@@ -142,7 +172,7 @@ public class Visitor {
                         CurValue = f.buildNumber((float) ((ConstInteger) CurValue).getValue());
                     }
                     //  push进符号表
-                    symTbl.put(ident, CurValue);
+                    pushSymbol(ident, CurValue);
                 }
             }
         }
@@ -158,7 +188,7 @@ public class Visitor {
                 else if(type.equals("float")){
                     CurValue = f.buildAllocInst(FloatType.F32, CurBasicBlock);
                 }
-                symTbl.put(ident, CurValue);
+                pushSymbol(ident, CurValue);
                 if (init instanceof AST.Exp expAST){
                     Value TmpValue = CurValue;
                     visitExpAST(expAST, false);
@@ -179,10 +209,14 @@ public class Visitor {
     }
 
     private void visitBlockAST(AST.Block blockAST){
+        pushSymTbl();
+
         ArrayList<AST.BlockItem> blockItemASTS = blockAST.getItems();
         for(AST.BlockItem blockItemAST : blockItemASTS){
             visitBlockItemAST(blockItemAST);
         }
+
+        popSymTbl();
     }
 
     private void visitFuncDefAST(AST.FuncDef funcDefAST){
