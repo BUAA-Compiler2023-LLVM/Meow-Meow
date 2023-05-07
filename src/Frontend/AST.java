@@ -182,17 +182,15 @@ public class AST {
         public Exp right;
 
         public Assign(LVal left, Exp right) {
-            assert left != null;
-            assert right != null;
             this.left = left;
             this.right = right;
         }
 
-        public LVal getLeft() {
+        public LVal getLVal() {
             return this.left;
         }
 
-        public Exp getRight() {
+        public Exp getValue() {
             return this.right;
         }
     }

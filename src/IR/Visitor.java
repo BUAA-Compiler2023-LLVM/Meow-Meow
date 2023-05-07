@@ -3,6 +3,7 @@ package IR;
 import Frontend.AST;
 import IR.Type.FloatType;
 import IR.Type.IntegerType;
+import IR.Type.PointerType;
 import IR.Type.Type;
 import IR.Value.*;
 import IR.Value.Instructions.AllocInst;
@@ -25,12 +26,16 @@ public class Visitor {
         return symTbl.get(ident);
     }
 
-    private void visitLValAST(AST.LVal lValAST){
+    //  isFetch表示当目标变量为指针的情况是否要取值
+    //  true返回值，false返回指针
+    private void visitLValAST(AST.LVal lValAST, boolean isFetch){
         String ident = lValAST.getIdent();
         CurValue = find(ident);
 
-        if(CurValue instanceof AllocInst){
-            CurValue = f.buildLoadInst(CurValue, CurBasicBlock);
+        if(CurValue.getType() instanceof PointerType){
+            if(isFetch) {
+                CurValue = f.buildLoadInst(CurValue, CurBasicBlock);
+            }
         }
     }
 
@@ -48,7 +53,7 @@ public class Visitor {
             visitExpAST(expAST, isConst);
         }
         else if(primaryExpAST instanceof AST.LVal lValAST){
-            visitLValAST(lValAST);
+            visitLValAST(lValAST, true);
         }
     }
 
@@ -108,6 +113,12 @@ public class Visitor {
         if(stmtAST instanceof AST.Return retAST){
             visitExpAST(retAST.getRetExp(), false);
             CurValue = f.buildRetInst(CurValue, CurBasicBlock);
+        }
+        else if(stmtAST instanceof AST.Assign assignAST){
+            visitLValAST(assignAST.getLVal(), false);
+            Value pointer = CurValue;
+            visitExpAST(assignAST.getValue(), false);
+            f.buildStoreInst(CurValue, pointer, CurBasicBlock);
         }
     }
 
