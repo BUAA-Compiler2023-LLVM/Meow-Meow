@@ -41,10 +41,30 @@ public class IRBuildFactory {
         };
     }
 
-    public Value buildNumber(int val){
+    private int calculate(int a, int b, String op){
+        return switch (op){
+            case "+" -> a + b;
+            case "-" -> a - b;
+            case "*" -> a * b;
+            case "/" -> a / b;
+            default -> 0;
+        };
+    }
+
+    private float calculate(float a, float b, String op){
+        return switch (op){
+            case "+" -> a + b;
+            case "-" -> a - b;
+            case "*" -> a * b;
+            case "/" -> a / b;
+            default -> 0;
+        };
+    }
+
+    public Const buildNumber(int val){
         return new ConstInteger(val);
     }
-    public Value buildNumber(float val){
+    public Const buildNumber(float val){
         return new ConstFloat(val);
     }
 
@@ -121,4 +141,19 @@ public class IRBuildFactory {
         return function;
     }
 
+    public Const buildCalculateNumber(Const _left, Const _right, String op){
+        if(_left instanceof ConstFloat left && _right instanceof ConstInteger right){
+            return new ConstFloat(calculate(left.getValue(), (float) right.getValue(), op));
+        }
+        else if(_left instanceof ConstFloat left && _right instanceof ConstFloat right){
+            return new ConstFloat(calculate(left.getValue(), right.getValue(), op));
+        }
+        else if(_left instanceof ConstInteger left && _right instanceof ConstInteger right){
+            return new ConstInteger(calculate(left.getValue(), right.getValue(), op));
+        }
+        else if(_left instanceof ConstInteger left && _right instanceof ConstFloat right){
+            return new ConstFloat(calculate((float) left.getValue(), right.getValue(), op));
+        }
+        return null;
+    }
 }

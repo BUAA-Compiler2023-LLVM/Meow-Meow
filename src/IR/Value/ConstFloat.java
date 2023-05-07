@@ -4,7 +4,7 @@ import IR.Type.FloatType;
 import IR.Type.IntegerType;
 
 public class ConstFloat extends Const {
-    private final double value;
+    private final float value;
     public static ConstFloat const0 = new ConstFloat(0.0F);
 
     public ConstFloat(float value) {
@@ -12,7 +12,7 @@ public class ConstFloat extends Const {
         this.value = value;
     }
 
-    public double getValue() {
+    public float getValue() {
         return value;
     }
 
