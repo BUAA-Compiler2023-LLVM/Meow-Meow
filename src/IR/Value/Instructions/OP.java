@@ -16,11 +16,17 @@ public enum OP {
     Or,
     Xor,
     Lt,
+    FLt,
     Le,
+    FLe,
     Ge,
+    FGe,
     Gt,
+    FGt,
     Eq,
+    FEq,
     Ne,
+    FNe,
     //conversion op
     Zext,
     Ftoi,
@@ -43,6 +49,14 @@ public enum OP {
     //not op
     Not;
 
+    public boolean isCmpOP(){
+        String name = name();
+        return switch (name) {
+            case "Ne", "FNe", "Eq", "FEq", "Lt", "Le", "FLt", "Gt", "FLe", "FGt", "Ge", "FGe" -> true;
+            default -> false;
+        };
+    }
+
     @Override
     public String toString(){
         String name = name();
@@ -56,6 +70,18 @@ public enum OP {
             case "Div" -> "div";
             case "Fdiv" -> "fdiv";
             case "Ne" -> "icmp ne";
+            case "FNe" -> "fcmp one";
+            case "Eq" -> "icmp eq";
+            case "FEq" -> "fcmp oeq";
+            case "Lt" -> "icmp lt";
+            case "FLt" -> "fcmp olt";
+            case "Le" -> "icmp le";
+            case "FLe" -> "fcmp ole";
+            case "Gt" -> "icmp gt";
+            case "FGt" -> "fcmp ogt";
+            case "Ge" -> "icmp ge";
+            case "FGe" -> "fcmp oge";
+
             case "Ftoi" -> "fptosi";
             case "Itof" -> "sitofp";
 

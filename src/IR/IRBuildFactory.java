@@ -1,15 +1,11 @@
 package IR;
 
-import Frontend.AST;
 import IR.Type.FloatType;
 import IR.Type.IntegerType;
 import IR.Type.Type;
 import IR.Type.VoidType;
 import IR.Value.*;
-import IR.Value.Instructions.BinaryInst;
-import IR.Value.Instructions.ConversionInst;
-import IR.Value.Instructions.OP;
-import IR.Value.Instructions.RetInst;
+import IR.Value.Instructions.*;
 
 public class IRBuildFactory {
     private IRBuildFactory(){}
@@ -61,25 +57,42 @@ public class IRBuildFactory {
         return conversionInst;
     }
 
-    public BinaryInst buildBinaryInst(Value left, Value right, String op, BasicBlock bb){
-        Type type = null;
+    public BinaryInst buildBinaryInst(Value left, Value right, String _op, BasicBlock bb){
+        Type type;
         Type leftType = left.getType();
         Type rightType = right.getType();
+        //  统一两个操作数的type
+        //  先将1位的全部转化为I32
+        if(leftType == IntegerType.I1){
+            left = buildConversionInst(left, "zext", bb);
+        }
+        if(rightType == IntegerType.I1){
+            right = buildConversionInst(right, "zext", bb);
+        }
+        //  此时只可能是I32或F32, 将I32强制转到F32
         if(leftType != rightType) {
-            if (leftType == FloatType.F32) {
-                right = buildConversionInst(right, "itof", bb);
+            if (leftType == IntegerType.I32) {
+                right = buildConversionInst(left, "itof", bb);
             }
-            else if (rightType == FloatType.F32) {
-                left = buildConversionInst(left, "itof", bb);
+            else if (rightType == IntegerType.I32) {
+                left = buildConversionInst(right, "itof", bb);
             }
             type = FloatType.F32;
         }
         else type = leftType;
         if(type.isFloatTy()){
-            op = op + "f";
+            _op = _op + "f";
         }
-        BinaryInst binaryInst = new BinaryInst(str2op(op), left, right, type, bb);
-        bb.addInst(binaryInst);
+
+        OP op = str2op(_op);
+        BinaryInst binaryInst;
+        if(op.isCmpOP()){
+            binaryInst = new CmpInst(op, left, right, bb);
+        }
+        else {
+            binaryInst = new BinaryInst(op, left, right, type, bb);
+            bb.addInst(binaryInst);
+        }
         return binaryInst;
     }
 
