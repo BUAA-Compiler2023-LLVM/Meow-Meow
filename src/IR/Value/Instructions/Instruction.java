@@ -66,4 +66,9 @@ public abstract class Instruction extends User {
     public boolean hasName(){
         return true;
     }
+
+    public void removeSelf(){
+        removeUseFromOperands();
+        node.removeFromList();
+    }
 }

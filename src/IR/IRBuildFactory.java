@@ -4,6 +4,8 @@ import IR.Type.*;
 import IR.Value.*;
 import IR.Value.Instructions.*;
 
+import java.util.ArrayList;
+
 public class IRBuildFactory {
     private IRBuildFactory(){}
 
@@ -63,6 +65,16 @@ public class IRBuildFactory {
             case "/" -> a / b;
             default -> 0;
         };
+    }
+
+    private void buildCallRelation(Function caller, Function callee){
+        if(callee.isLibFunction()) return;
+        if(!callee.getCallerList().contains(caller)) {
+            callee.addCaller(caller);
+        }
+        if(!caller.getCalleeList().contains(callee)){
+            caller.addCallee(callee);
+        }
     }
 
     private Value unifyType(Value value, Type targetTy, BasicBlock bb){
@@ -134,6 +146,29 @@ public class IRBuildFactory {
         }
         bb.addInst(binaryInst);
         return binaryInst;
+    }
+
+    public CallInst buildCallInst(Function callFunc, ArrayList<Value> values, BasicBlock bb){
+        CallInst callInst = new CallInst(callFunc, values, bb);
+        bb.addInst(callInst);
+
+        buildCallRelation(bb.getParentFunc(), callFunc);
+        return callInst;
+    }
+
+    public Argument buildArgument(String name, String typeStr, Function parentFunc){
+        Argument argument;
+        if(typeStr.equals("int")) argument = new Argument(name, IntegerType.I32, parentFunc);
+        else if(typeStr.equals("float")) argument = new Argument(name, FloatType.F32, parentFunc);
+        else argument = new Argument(name, new VoidType(), parentFunc);
+        parentFunc.addArg(argument);
+        return argument;
+    }
+
+    public void buildRetInst(BasicBlock bb){
+        Value voidValue = new Value("void", new VoidType());
+        RetInst retInst = new RetInst(bb, voidValue);
+        bb.addInst(retInst);
     }
 
     public RetInst buildRetInst(Value value, BasicBlock bb){

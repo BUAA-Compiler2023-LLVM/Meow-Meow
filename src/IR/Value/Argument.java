@@ -9,4 +9,9 @@ public class Argument extends Value{
         super(name, type);
         this.parentFunc = parentFunc;
     }
+
+    @Override
+    public String toString(){
+        return getType() + " " + getName();
+    }
 }

@@ -1,8 +1,12 @@
+int x = 2;
+
+int half(int x) {
+  return x / 2;
+}
+
+void f() {}
+
 int main() {
-  int a = 2;
-  if (a == 1 && a == 2) {
-    a = a + 1;
-  }
-  a = a + 1;
-  return a;
+  f();
+  return half(10);
 }

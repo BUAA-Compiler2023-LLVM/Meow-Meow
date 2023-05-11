@@ -1,9 +1,7 @@
 package Utils;
 
 import IR.IRModule;
-import IR.Value.Argument;
-import IR.Value.BasicBlock;
-import IR.Value.Function;
+import IR.Value.*;
 import IR.Value.Instructions.Instruction;
 import Utils.DataStruct.IList;
 
@@ -20,6 +18,11 @@ public class IRDump {
         } catch (IOException e) {
             throw new RuntimeException(e);
         }
+    }
+
+    private static void DumpGlobalVar(GlobalVar globalVar) throws IOException {
+        out.write(globalVar.getName() + " = global i32 ");
+        out.write(globalVar.getValue().getName());
     }
 
     private static void DumpInstruction(Instruction inst) throws IOException {
@@ -47,6 +50,11 @@ public class IRDump {
         else out.write("void ");
 
         out.write(function.getName() + "(");
+
+        ArrayList<Argument> args = function.getArgs();
+        for(Argument arg : args){
+            out.write(arg.toString());
+        }
 
         out.write(") {\n");
         IList<BasicBlock, Function> basicBlocks = function.getBbs();
@@ -83,6 +91,14 @@ public class IRDump {
     }
 
     public static void DumpModule(IRModule irModule) throws IOException {
+        ArrayList<GlobalVar> globalVars = irModule.getGlobalVars();
+        for(GlobalVar globalVar : globalVars){
+            if(!globalVar.isConst() || globalVar.getType().isArrayType()){
+                DumpGlobalVar(globalVar);
+                out.write("\n");
+            }
+        }
+
         ArrayList<Function> functions = irModule.getFunctions();
         for (Function function : functions) {
             RenameFunction(function);

@@ -6,8 +6,8 @@ import IR.Type.IntegerType;
 import IR.Type.PointerType;
 import IR.Type.Type;
 import IR.Value.*;
-import IR.Value.Instructions.AllocInst;
-import IR.Value.Instructions.OP;
+import IR.Value.Instructions.*;
+import Utils.DataStruct.IList;
 
 import java.util.ArrayList;
 import java.util.HashMap;
@@ -49,6 +49,14 @@ public class Visitor {
         symTbls.remove(len - 1);
     }
 
+    private final ArrayList<BasicBlock> whileEntryBLocks = new ArrayList<>();
+    private final ArrayList<BasicBlock> whileOutBlocks = new ArrayList<>();
+
+    //  argHashMap用于保存FuncFParams
+    //  因为当你访问FuncFParams时，你还没有进入Block，而只有进入Block你才能push新的符号表
+    //  所以为了把FuncFParams的声明也放进符号表，我们用tmpHashMap来保存
+    private final HashMap<String, Value> argHashMap = new HashMap<>();
+
     //  isFetch表示当目标变量为指针的情况是否要取值
     //  true返回值，false返回指针
     private void visitLValAST(AST.LVal lValAST, boolean isFetch){
@@ -78,6 +86,18 @@ public class Visitor {
         }
         else if(primaryExpAST instanceof AST.LVal lValAST){
             visitLValAST(lValAST, true);
+        }
+        else if(primaryExpAST instanceof AST.Call callAST){
+            Function function = (Function) find(callAST.getIdent());
+            ArrayList<AST.Exp> exps = callAST.getParams();
+
+            ArrayList<Value> values = new ArrayList<>();
+            for(AST.Exp exp : exps){
+                visitExpAST(exp, isConst);
+                values.add(CurValue);
+            }
+
+            CurValue = f.buildCallInst(function, values, CurBasicBlock);
         }
     }
 
@@ -195,7 +215,9 @@ public class Visitor {
             visitExpAST(expStmtAST.getExp(), false);
         }
         else if(stmtAST instanceof AST.Block blockAST){
+            pushSymTbl();
             visitBlockAST(blockAST);
+            popSymTbl();
         }
         else if(stmtAST instanceof AST.IfStmt ifStmt){
             BasicBlock TrueBlock = f.buildBasicBlock(CurFunction);
@@ -231,9 +253,50 @@ public class Visitor {
             }
             CurBasicBlock = NxtBlock;
         }
+        else if(stmtAST instanceof AST.WhileStmt whileStmt){
+            //  构建要跳转的CurCondBlock
+            BasicBlock CondBlock = f.buildBasicBlock(CurFunction);
+            f.buildBrInst(CondBlock, CurBasicBlock);
+            CurBasicBlock = CondBlock;
+
+            BasicBlock TrueBlock = f.buildBasicBlock(CurFunction);
+            BasicBlock FalseBlock = f.buildBasicBlock(CurFunction);
+            //  入栈，注意这里entry为CurCondBlock，因为continue要重新判断条件
+            whileEntryBLocks.add(CondBlock);
+            whileOutBlocks.add(FalseBlock);
+
+            visitLOrExpAST(whileStmt.getCond(), TrueBlock, FalseBlock);
+
+            CurBasicBlock = TrueBlock;
+            visitStmtAST(whileStmt.getBody());
+            f.buildBrInst(CondBlock, CurBasicBlock);
+            CurBasicBlock = FalseBlock;
+
+            //  while内的指令构建完了，出栈
+            whileEntryBLocks.remove(whileEntryBLocks.size() - 1);
+            whileOutBlocks.remove(whileOutBlocks.size() - 1);
+        }
+        else if(stmtAST instanceof AST.Break ){
+            if(whileOutBlocks.size() == 0) return;
+
+            int len = whileOutBlocks.size();
+            BasicBlock whileOutBlock = whileOutBlocks.get(len - 1);
+
+            f.buildBrInst(whileOutBlock, CurBasicBlock);
+            CurBasicBlock = f.buildBasicBlock(CurFunction);
+        }
+        else if(stmtAST instanceof AST.Continue ){
+            if(whileEntryBLocks.size() == 0) return;
+
+            int len = whileEntryBLocks.size();
+            BasicBlock whileEntryBlock = whileEntryBLocks.get(len - 1);
+
+            f.buildBrInst(whileEntryBlock, CurBasicBlock);
+            CurBasicBlock = f.buildBasicBlock(CurFunction);
+        }
     }
 
-    private void visitDeclAST(AST.Decl declAST){
+    private void visitDeclAST(AST.Decl declAST, boolean isGlobal){
         boolean isConst = declAST.isConstant();
         String type = declAST.getBType();
         ArrayList<AST.Def> defs = declAST.getDefs();
@@ -285,28 +348,68 @@ public class Visitor {
             visitStmtAST(stmtAST);
         }
         else if(blockItemAST instanceof AST.Decl declAST){
-            visitDeclAST(declAST);
+            visitDeclAST(declAST, false);
         }
     }
 
     private void visitBlockAST(AST.Block blockAST){
-        pushSymTbl();
-
         ArrayList<AST.BlockItem> blockItemASTS = blockAST.getItems();
         for(AST.BlockItem blockItemAST : blockItemASTS){
             visitBlockItemAST(blockItemAST);
         }
-
-        popSymTbl();
     }
 
 
     private void visitFuncDefAST(AST.FuncDef funcDefAST) {
         String ident = funcDefAST.getIdent();
         String type = funcDefAST.getType();
-        CurFunction = f.buildFunction(ident, type, module);
+        CurFunction = f.buildFunction("@" + ident, type, module);
+
+        pushSymbol(ident, CurFunction);
+        argHashMap.clear();
+
+        pushSymTbl();
+        if(funcDefAST.getFParams().size() > 0){
+            //  开始构建entry基本块
+            CurBasicBlock = f.buildBasicBlock(CurFunction);
+            ArrayList<AST.FuncFParam> funcFParams = funcDefAST.getFParams();
+            for(AST.FuncFParam funcFParam : funcFParams){
+                //  平平无奇的起名环节
+                String argName = funcFParam.getIdent();
+                String argType = funcFParam.getBType();
+
+                Argument argument = f.buildArgument(argName, argType, CurFunction);
+
+                AllocInst allocInst = f.buildAllocInst(argument.getType(), CurBasicBlock);
+                f.buildStoreInst(argument, allocInst, CurBasicBlock);
+                pushSymbol(argName, allocInst);
+            }
+        }
+
         CurBasicBlock = f.buildBasicBlock(CurFunction);
         visitBlockAST(funcDefAST.getBody());
+
+        popSymTbl();
+        for(IList.INode<BasicBlock, Function> bbNode : CurFunction.getBbs()){
+            BasicBlock bb = bbNode.getValue();
+            boolean isTerminal = false;
+            for(IList.INode<Instruction, BasicBlock> instNode : bb.getInsts()){
+                Instruction inst = instNode.getValue();
+                if(isTerminal){
+                    inst.removeSelf();
+                }
+                else{
+                    if(inst instanceof RetInst || inst instanceof BrInst){
+                        isTerminal = true;
+                    }
+                }
+            }
+
+            //  如果没有ret语句，构建一个ret void
+            if(!isTerminal){
+                f.buildRetInst(CurBasicBlock);
+            }
+        }
     }
 
     public IRModule visitAST(AST compAST) {
@@ -314,10 +417,14 @@ public class Visitor {
         ArrayList<GlobalVar> globalVars = new ArrayList<>();
 
         module = new IRModule(functions, globalVars);
+        pushSymTbl();
 
         for (AST.CompUnit compUnit : compAST.getUnits()) {
             if (compUnit instanceof AST.FuncDef funcDefAST) {
                 visitFuncDefAST(funcDefAST);
+            }
+            else if(compUnit instanceof AST.Decl declAST){
+                visitDeclAST(declAST, true);
             }
         }
 
