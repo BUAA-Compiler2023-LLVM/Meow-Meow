@@ -9,6 +9,8 @@ import java.util.ArrayList;
 public class Function extends Value{
     private final IList<BasicBlock, Function> bbs;
     private final ArrayList<Argument> args;
+    private boolean hasSideEffect;
+    private boolean useGV;
 
     //  Function的Type就是它返回值的type
     public Function(String name, Type type){
@@ -20,6 +22,14 @@ public class Function extends Value{
         super(name, type);
         this.bbs = bbs;
         this.args = args;
+    }
+
+    public void setHasSideEffect(boolean hasSideEffect){
+        this.hasSideEffect = hasSideEffect;
+    }
+
+    public void setUseGV(boolean useGV){
+        this.useGV = useGV;
     }
 
     public void addArg(Argument argument){ args.add(argument); }

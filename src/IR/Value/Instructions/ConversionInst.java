@@ -25,6 +25,9 @@ public class ConversionInst extends Instruction{
         else if(getOp() == OP.Itof){
             to = "to float";
         }
+        else if(getOp() == OP.Zext){
+            to = "to i32";
+        }
         return getName() + " = " + getOp() + " " +
                 getValue().getName() + " " + to;
     }

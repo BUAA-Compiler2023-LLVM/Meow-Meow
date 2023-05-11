@@ -84,7 +84,7 @@ public enum OP {
 
             case "Ftoi" -> "fptosi";
             case "Itof" -> "sitofp";
-
+            case "Zext" -> "zext";
             default -> null;
         };
     }

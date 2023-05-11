@@ -90,7 +90,7 @@ public class Visitor {
                 count++;
             } else if (unaryOP.equals("!")) {
                 count = 0;
-                CurValue = f.buildBinaryInst(CurValue, ConstInteger.const0, "!=", CurBasicBlock);
+                CurValue = f.buildBinaryInst(CurValue, ConstInteger.const0_1, "!=", CurBasicBlock);
             }
         }
         if (count % 2 == 1) {
@@ -101,7 +101,7 @@ public class Visitor {
                 CurValue = f.buildNumber(-constFloat.getValue());
             }
             else {
-                CurValue = f.buildBinaryInst(ConstInteger.const0, CurValue, "-", CurBasicBlock);
+                CurValue = f.buildBinaryInst(ConstInteger.const0_32, CurValue, "-", CurBasicBlock);
             }
         }
     }
@@ -133,6 +133,53 @@ public class Visitor {
         }
     }
 
+    private void visitLAndExpAST(AST.Exp lAndExpAST, BasicBlock TrueBlock, BasicBlock FalseBlock){
+        BasicBlock NxtLAndBlock;
+        AST.BinaryExp binaryExp = (AST.BinaryExp) lAndExpAST;
+        AST.Exp nowExp;
+        ArrayList<AST.Exp> follows = binaryExp.getFollows();
+
+        for(int i = 0; i <= follows.size(); i++){
+            if(i == 0) nowExp = binaryExp.getFirst();
+            else nowExp = follows.get(i - 1);
+
+            if(i != follows.size()){
+                NxtLAndBlock = f.buildBasicBlock(CurFunction);
+            }
+            else NxtLAndBlock = TrueBlock;
+
+            visitExpAST(nowExp, false);
+
+            CurValue = f.buildBinaryInst(CurValue, ConstInteger.const0_1, "!=", CurBasicBlock);
+
+            f.buildBrInst(CurValue, NxtLAndBlock, FalseBlock, CurBasicBlock);
+
+            CurBasicBlock = NxtLAndBlock;
+        }
+    }
+
+    private void visitLOrExpAST(AST.Exp lOrExpAST, BasicBlock TrueBlock, BasicBlock FalseBlock){
+        BasicBlock NxtLOrBlock;
+        AST.BinaryExp binaryExpAST = (AST.BinaryExp) lOrExpAST;
+        AST.Exp nowExp;
+        ArrayList<AST.Exp> follows = binaryExpAST.getFollows();
+
+        for(int i = 0; i <= follows.size(); i++){
+            //  确定nowExp(需要计算是否为true的值)
+            if(i == 0) nowExp = binaryExpAST.getFirst();
+            else nowExp = follows.get(i - 1);
+            //  确定目标跳转的TrueBlock和NxtBlock
+            if(i != follows.size()){
+                NxtLOrBlock = f.buildBasicBlock(CurFunction);
+            }
+            else NxtLOrBlock = FalseBlock;
+
+            visitLAndExpAST(nowExp, TrueBlock, NxtLOrBlock);
+
+            CurBasicBlock = NxtLOrBlock;
+        }
+    }
+
     private void visitStmtAST(AST.Stmt stmtAST){
         if(stmtAST instanceof AST.Return retAST){
             visitExpAST(retAST.getRetExp(), false);
@@ -149,6 +196,40 @@ public class Visitor {
         }
         else if(stmtAST instanceof AST.Block blockAST){
             visitBlockAST(blockAST);
+        }
+        else if(stmtAST instanceof AST.IfStmt ifStmt){
+            BasicBlock TrueBlock = f.buildBasicBlock(CurFunction);
+            BasicBlock NxtBlock = f.buildBasicBlock(CurFunction);
+            BasicBlock FalseBlock = null;
+            boolean hasElse = (ifStmt.getElseTarget() != null);
+            if(hasElse){
+                FalseBlock = f.buildBasicBlock(CurFunction);
+                visitLOrExpAST(ifStmt.getCond(), TrueBlock, FalseBlock);
+            }
+            else{
+                visitLOrExpAST(ifStmt.getCond(), TrueBlock, NxtBlock);
+            }
+            //  VisitCondAST之后，CurBlock的br已经构建完并指向正确的Block
+            //  接下来我们为TrueBlock填写指令
+            CurBasicBlock = TrueBlock;
+            visitStmtAST(ifStmt.getThenTarget());
+
+            //  下面先考虑ifStmt中CurBlock不发生变化的情况
+            //  即TrueBlock没有被构建br指令
+            //  那么我们显然要给它构建br指令并设置CurBlock为NxtBlock
+            //  然后我们发现就算CurBlock发生了变化，那么也是变成了TrueBlock里的NxtBlock
+            //  而且是没有终结的状态，因此我们下面两行代码也可以适用于这种情况,令其跳转
+            f.buildBrInst(NxtBlock, CurBasicBlock);
+
+            if(ifStmt.getElseTarget() != null){
+                //  开始构建FalseBlock
+                CurBasicBlock = FalseBlock;
+                visitStmtAST(ifStmt.getElseTarget());
+
+                //  原理同上，为CurBLock构建Br指令
+                f.buildBrInst(NxtBlock, CurBasicBlock);
+            }
+            CurBasicBlock = NxtBlock;
         }
     }
 
@@ -219,7 +300,8 @@ public class Visitor {
         popSymTbl();
     }
 
-    private void visitFuncDefAST(AST.FuncDef funcDefAST){
+
+    private void visitFuncDefAST(AST.FuncDef funcDefAST) {
         String ident = funcDefAST.getIdent();
         String type = funcDefAST.getType();
         CurFunction = f.buildFunction(ident, type, module);
@@ -227,14 +309,14 @@ public class Visitor {
         visitBlockAST(funcDefAST.getBody());
     }
 
-    public IRModule visitAST(AST compAST){
+    public IRModule visitAST(AST compAST) {
         ArrayList<Function> functions = new ArrayList<>();
         ArrayList<GlobalVar> globalVars = new ArrayList<>();
 
         module = new IRModule(functions, globalVars);
 
-        for(AST.CompUnit compUnit : compAST.getUnits()){
-            if(compUnit instanceof AST.FuncDef funcDefAST){
+        for (AST.CompUnit compUnit : compAST.getUnits()) {
+            if (compUnit instanceof AST.FuncDef funcDefAST) {
                 visitFuncDefAST(funcDefAST);
             }
         }

@@ -24,16 +24,23 @@ public class IRBuildFactory {
             case "/" -> OP.Div;
             case "/f" -> OP.Fdiv;
             case "<=" -> OP.Le;
+            case "<=f" -> OP.FLe;
             case "<" -> OP.Lt;
+            case "<f" -> OP.FLt;
             case ">=" -> OP.Ge;
+            case ">=f" -> OP.FGe;
             case ">" -> OP.Gt;
+            case ">f" -> OP.FGt;
             case "==" -> OP.Eq;
+            case "==f" -> OP.FEq;
             case "!=" -> OP.Ne;
+            case "!=f" -> OP.FNe;
             case "&&" -> OP.And;
             case "||" -> OP.Or;
             case "%" -> OP.Mod;
             case "ftoi" -> OP.Ftoi;
             case "itof" -> OP.Itof;
+            case "zext" -> OP.Zext;
             default -> null;
         };
     }
@@ -73,16 +80,18 @@ public class IRBuildFactory {
     }
 
     public Const buildNumber(int val){
-        return new ConstInteger(val);
+        return new ConstInteger(val, 32);
     }
     public Const buildNumber(float val){
         return new ConstFloat(val);
     }
 
     public ConversionInst buildConversionInst(Value value, String op, BasicBlock bb){
-        Type type = null;
-        if(op.equals("ftoi")) type = IntegerType.I32;
-        else if(op.equals("itof")) type = FloatType.F32;
+        Type type = switch (op) {
+            case "ftoi", "zext" -> IntegerType.I32;
+            case "itof" -> FloatType.F32;
+            default -> null;
+        };
         ConversionInst conversionInst = new ConversionInst(value, type, str2op(op), bb);
         bb.addInst(conversionInst);
         return conversionInst;
@@ -92,16 +101,16 @@ public class IRBuildFactory {
         Type type;
         Type leftType = left.getType();
         Type rightType = right.getType();
-        //  统一两个操作数的type
-        //  先将1位的全部转化为I32
-        if(leftType == IntegerType.I1){
-            left = unifyType(left, IntegerType.I32, bb);
-        }
-        if(rightType == IntegerType.I1){
-            right = unifyType(right, IntegerType.I32, bb);
-        }
-        //  此时只可能是I32或F32, 将I32强制转到F32
         if(leftType != rightType) {
+            //  统一两个操作数的type
+            //  先将1位的全部转化为I32
+            if(leftType == IntegerType.I1){
+                left = unifyType(left, IntegerType.I32, bb);
+            }
+            if(rightType == IntegerType.I1){
+                right = unifyType(right, IntegerType.I32, bb);
+            }
+            //  此时只可能是I32或F32, 将I32强制转到F32
             if (leftType == IntegerType.I32) {
                 left = unifyType(left, FloatType.F32, bb);
             }
@@ -122,8 +131,8 @@ public class IRBuildFactory {
         }
         else {
             binaryInst = new BinaryInst(op, left, right, type, bb);
-            bb.addInst(binaryInst);
         }
+        bb.addInst(binaryInst);
         return binaryInst;
     }
 
@@ -132,6 +141,28 @@ public class IRBuildFactory {
         RetInst retInst = new RetInst(bb, value);
         bb.addInst(retInst);
         return retInst;
+    }
+
+    public void buildBrInst(BasicBlock jumpBB, BasicBlock bb){
+        BrInst brInst = new BrInst(jumpBB, bb);
+        bb.addInst(brInst);
+
+        //  前驱后继关系
+        bb.getNxtBlocks().clear();
+        bb.setNxtBlock(jumpBB);
+        jumpBB.setPreBlock(bb);
+    }
+
+    public void buildBrInst(Value judVal, BasicBlock trueBlock, BasicBlock falseBlock, BasicBlock bb){
+        BrInst brInst = new BrInst(judVal, trueBlock, falseBlock, bb);
+        bb.addInst(brInst);
+
+        //  前驱后继关系
+        bb.getNxtBlocks().clear();
+        bb.setNxtBlock(trueBlock);
+        bb.setNxtBlock(falseBlock);
+        trueBlock.setPreBlock(bb);
+        falseBlock.setPreBlock(bb);
     }
 
     public BasicBlock buildBasicBlock(Function parentFunc){
@@ -160,7 +191,7 @@ public class IRBuildFactory {
             return new ConstFloat(calculate(left.getValue(), right.getValue(), op));
         }
         else if(_left instanceof ConstInteger left && _right instanceof ConstInteger right){
-            return new ConstInteger(calculate(left.getValue(), right.getValue(), op));
+            return new ConstInteger(calculate(left.getValue(), right.getValue(), op), 32);
         }
         else if(_left instanceof ConstInteger left && _right instanceof ConstFloat right){
             return new ConstFloat(calculate((float) left.getValue(), right.getValue(), op));
