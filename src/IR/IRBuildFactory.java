@@ -80,12 +80,16 @@ public class IRBuildFactory {
         return new ArrayType(indexs.get(0), type);
     }
 
-    public GlobalVar buildGlobalArray(String name, String type, ArrayList<Integer> indexs, ArrayList<Value> values){
-        Type eleType = null;
-        if(type.equals("int")) eleType = IntegerType.I32;
-        else if(type.equals("float")) eleType = FloatType.F32;
+    public GlobalVar buildGlobalArray(String name, Type eleType, ArrayList<Integer> indexs, ArrayList<Value> values){
         ArrayType arrayType = buildArrayType(indexs, eleType);
         return new GlobalVar("@" + name, arrayType, values);
+    }
+
+    public Value buildArray(Type eleType, ArrayList<Integer> indexs, BasicBlock bb){
+        ArrayType arrayType = buildArrayType(indexs, eleType);
+        AllocInst allocInst = new AllocInst(arrayType, bb);
+        bb.addInst(allocInst);
+        return allocInst;
     }
 
     private void buildCallRelation(Function caller, Function callee){
