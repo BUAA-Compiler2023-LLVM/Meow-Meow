@@ -298,10 +298,60 @@ public class Visitor {
         }
     }
 
-    private void visitConstDef(AST.Def def, String type){
+    private ArrayList<Value> visitInitArray(ArrayList<Integer> indexs, AST.InitArray initArray, String type, boolean isConst){
+        int curNum = 0;
+        int totSize = 1;
+        ArrayList<Value> values = new ArrayList<>();
+        Value fillValue = null;
+        if(type.equals("int")) fillValue = ConstInteger.const0_32;
+        else if(type.equals("float")) fillValue = ConstFloat.const0;
+        for (Integer index : indexs) {
+            totSize *= index;
+        }
+
+        for(AST.Init init : initArray.init){
+            if(init instanceof AST.Exp expAST){
+                curNum++;
+                visitExpAST(expAST, isConst);
+                values.add(CurValue);
+            }
+            else if(init instanceof AST.InitArray newInitArray){
+                ArrayList<Integer> newIndexs = new ArrayList<>();
+                int start = 0;
+                if(curNum == 0){
+                    start = 1;
+                }
+                else{
+                    int tmpMul = 1;
+                    for(int i = indexs.size() - 1; i >= 0; i--){
+                        tmpMul *= indexs.get(i);
+                        if(curNum % tmpMul != 0){
+                            start = i + 1;
+                            break;
+                        }
+                    }
+                }
+
+                for(int i = start; i < indexs.size(); i++){
+                    newIndexs.add(indexs.get(i));
+                }
+                ArrayList<Value> newValues = visitInitArray(newIndexs, newInitArray, type, isConst);
+                values.addAll(newValues);
+                curNum += newValues.size();
+            }
+        }
+
+        //  填充元素
+        for(int i = curNum; i < totSize; i++){
+            values.add(fillValue);
+        }
+        return values;
+    }
+
+    private void visitConstDef(AST.Def def, String type, boolean isGlobal){
         String ident = def.getIdent();
         AST.Init init = def.getInit();
-
+        //  普通常量
         if (init instanceof AST.Exp expAST) {
             visitExpAST(expAST, true);
             //  根据定义纠正类型
@@ -311,9 +361,30 @@ public class Visitor {
             else if(type.equals("float") && CurValue.getType().isIntegerTy()){
                 CurValue = f.buildNumber((float) ((ConstInteger) CurValue).getValue());
             }
-            //  push进符号表
-            pushSymbol(ident, CurValue);
         }
+        //  常量数组
+        else if(init instanceof AST.InitArray arrayAST){
+            ArrayList<AST.Exp> indexsAST = def.getIndexes();
+            ArrayList<Integer> indexs = new ArrayList<>();
+            ArrayList<Value> values;
+
+            for(AST.Exp exp : indexsAST){
+                visitExpAST(exp, true);
+                indexs.add(((ConstInteger) CurValue).getValue());
+            }
+
+            values = visitInitArray(indexs, arrayAST, type, true);
+
+            if(isGlobal) {
+                CurValue = f.buildGlobalArray(ident, type, indexs, values);
+                globalVars.add((GlobalVar) CurValue);
+            }
+            else{
+                // TODO 非全局常量数组
+            }
+        }
+        //  push进符号表
+        pushSymbol(ident, CurValue);
     }
 
     private void visitVarDef(AST.Def def, String type ,boolean isGlobal){
@@ -356,7 +427,7 @@ public class Visitor {
         ArrayList<AST.Def> defs = declAST.getDefs();
 
         for (AST.Def def : defs) {
-            if(isConst) visitConstDef(def, type);
+            if(isConst) visitConstDef(def, type, isGlobal);
             else visitVarDef(def, type, isGlobal);
         }
     }
@@ -408,6 +479,8 @@ public class Visitor {
         visitBlockAST(funcDefAST.getBody());
 
         popSymTbl();
+
+        //  删除掉br/ret后面不可达的语句
         for(IList.INode<BasicBlock, Function> bbNode : CurFunction.getBbs()){
             BasicBlock bb = bbNode.getValue();
             boolean isTerminal = false;

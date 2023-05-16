@@ -67,6 +67,27 @@ public class IRBuildFactory {
         };
     }
 
+    private ArrayType buildArrayType(ArrayList<Integer> indexs, Type eleType){
+        if(indexs.size() == 1){
+            return new ArrayType(indexs.get(0), eleType);
+        }
+
+        ArrayList<Integer> newIndexs = new ArrayList<>();
+        for(int i = 1; i < indexs.size(); i++){
+            newIndexs.add(indexs.get(i));
+        }
+        Type type = buildArrayType(newIndexs, eleType);
+        return new ArrayType(indexs.get(0), type);
+    }
+
+    public GlobalVar buildGlobalArray(String name, String type, ArrayList<Integer> indexs, ArrayList<Value> values){
+        Type eleType = null;
+        if(type.equals("int")) eleType = IntegerType.I32;
+        else if(type.equals("float")) eleType = FloatType.F32;
+        ArrayType arrayType = buildArrayType(indexs, eleType);
+        return new GlobalVar("@" + name, arrayType, values);
+    }
+
     private void buildCallRelation(Function caller, Function callee){
         if(callee.isLibFunction()) return;
         if(!callee.getCallerList().contains(caller)) {
