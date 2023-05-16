@@ -12,10 +12,7 @@ public class CallInst extends Instruction{
 
     public CallInst(Function function, ArrayList<Value> values, BasicBlock bb) {
         super("", function.getType(), OP.Call, bb);
-        if(function.getType().isIntegerTy()){
-            this.setName("%" + (++Value.valNumber));
-            this.hasName = true;
-        }
+        this.hasName = !function.getType().isVoidTy();
         this.function = function;
         for (Value value : values) {
             this.addOperand(value);
@@ -37,7 +34,7 @@ public class CallInst extends Instruction{
         if(!this.getType().isVoidTy()){
             sb.append(getName()).append(" = ");
         }
-        sb.append("call ").append(getFunction().getName()).append("(");
+        sb.append("call ").append(getFunction().getType()).append(getFunction().getName()).append("(");
         ArrayList<Value> operands = getOperands();
         for(int i = 0; i < operands.size(); i++){
             Value value = operands.get(i);

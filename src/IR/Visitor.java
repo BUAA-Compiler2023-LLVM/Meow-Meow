@@ -4,14 +4,15 @@ import Frontend.AST;
 import IR.Type.FloatType;
 import IR.Type.IntegerType;
 import IR.Type.PointerType;
-import IR.Type.Type;
 import IR.Value.*;
-import IR.Value.Instructions.*;
+import IR.Value.Instructions.AllocInst;
+import IR.Value.Instructions.BrInst;
+import IR.Value.Instructions.Instruction;
+import IR.Value.Instructions.RetInst;
 import Utils.DataStruct.IList;
 
 import java.util.ArrayList;
 import java.util.HashMap;
-import java.util.HashSet;
 
 public class Visitor {
     private IRModule module;
@@ -21,6 +22,7 @@ public class Visitor {
     //  符号表
     private final ArrayList<HashMap<String, Value>> symTbls = new ArrayList<>();
     private final IRBuildFactory f = IRBuildFactory.getInstance();
+    private final ArrayList<GlobalVar> globalVars = new ArrayList<>();
 
     //  从符号表中查找某个ident
     private Value find(String ident){
@@ -296,50 +298,66 @@ public class Visitor {
         }
     }
 
+    private void visitConstDef(AST.Def def, String type){
+        String ident = def.getIdent();
+        AST.Init init = def.getInit();
+
+        if (init instanceof AST.Exp expAST) {
+            visitExpAST(expAST, true);
+            //  根据定义纠正类型
+            if(type.equals("int") && CurValue.getType().isFloatTy()){
+                CurValue = f.buildNumber((int) ((ConstFloat) CurValue).getValue());
+            }
+            else if(type.equals("float") && CurValue.getType().isIntegerTy()){
+                CurValue = f.buildNumber((float) ((ConstInteger) CurValue).getValue());
+            }
+            //  push进符号表
+            pushSymbol(ident, CurValue);
+        }
+    }
+
+    private void visitVarDef(AST.Def def, String type ,boolean isGlobal){
+        String ident = def.getIdent();
+        AST.Init init = def.getInit();
+
+        if(isGlobal){
+            if(init instanceof AST.Exp expAST){
+                visitExpAST(expAST, false);
+                CurValue = f.buildGlobalVar(ident, CurValue.getType(), CurValue);
+            }
+            else if(init == null){
+                if(type.equals("int")){
+                    CurValue = f.buildGlobalVar(ident, IntegerType.I32, ConstInteger.const0_32);
+                }
+                else CurValue = f.buildGlobalVar(ident, FloatType.F32, ConstFloat.const0);
+            }
+            globalVars.add((GlobalVar) CurValue);
+        }
+        else {
+            if (type.equals("int")) {
+                CurValue = f.buildAllocInst(IntegerType.I32, CurBasicBlock);
+            }
+            else if (type.equals("float")) {
+                CurValue = f.buildAllocInst(FloatType.F32, CurBasicBlock);
+            }
+            if (init instanceof AST.Exp expAST){
+                Value TmpValue = CurValue;
+                visitExpAST(expAST, false);
+
+                f.buildStoreInst(CurValue, TmpValue, CurBasicBlock);
+            }
+        }
+        pushSymbol(ident, CurValue);
+    }
+
     private void visitDeclAST(AST.Decl declAST, boolean isGlobal){
         boolean isConst = declAST.isConstant();
         String type = declAST.getBType();
         ArrayList<AST.Def> defs = declAST.getDefs();
-        //  ConstDecl
-        if(isConst) {
-            for (AST.Def def : defs) {
-                String ident = def.getIdent();
-                AST.Init init = def.getInit();
 
-                if (init instanceof AST.Exp expAST) {
-                    visitExpAST(expAST, true);
-                    //  根据定义纠正类型
-                    if(type.equals("int") && CurValue.getType().isFloatTy()){
-                        CurValue = f.buildNumber((int) ((ConstFloat) CurValue).getValue());
-                    }
-                    else if(type.equals("float") && CurValue.getType().isIntegerTy()){
-                        CurValue = f.buildNumber((float) ((ConstInteger) CurValue).getValue());
-                    }
-                    //  push进符号表
-                    pushSymbol(ident, CurValue);
-                }
-            }
-        }
-        //  VarDecl
-        else{
-            for(AST.Def def : defs){
-                String ident = def.getIdent();
-                AST.Init init = def.getInit();
-
-                if(type.equals("int")){
-                    CurValue = f.buildAllocInst(IntegerType.I32, CurBasicBlock);
-                }
-                else if(type.equals("float")){
-                    CurValue = f.buildAllocInst(FloatType.F32, CurBasicBlock);
-                }
-                pushSymbol(ident, CurValue);
-                if (init instanceof AST.Exp expAST){
-                    Value TmpValue = CurValue;
-                    visitExpAST(expAST, false);
-
-                    f.buildStoreInst(CurValue, TmpValue, CurBasicBlock);
-                }
-            }
+        for (AST.Def def : defs) {
+            if(isConst) visitConstDef(def, type);
+            else visitVarDef(def, type, isGlobal);
         }
     }
 
@@ -414,7 +432,6 @@ public class Visitor {
 
     public IRModule visitAST(AST compAST) {
         ArrayList<Function> functions = new ArrayList<>();
-        ArrayList<GlobalVar> globalVars = new ArrayList<>();
 
         module = new IRModule(functions, globalVars);
         pushSymTbl();

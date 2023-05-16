@@ -98,6 +98,10 @@ public class IRBuildFactory {
         return new ConstFloat(val);
     }
 
+    public GlobalVar buildGlobalVar(String name, Type type, Value value){
+        return new GlobalVar("@" + name, new PointerType(type), value);
+    }
+
     public ConversionInst buildConversionInst(Value value, String op, BasicBlock bb){
         Type type = switch (op) {
             case "ftoi", "zext" -> IntegerType.I32;

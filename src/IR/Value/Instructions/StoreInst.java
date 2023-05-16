@@ -28,7 +28,12 @@ public class StoreInst extends Instruction{
     }
 
     @Override
+    public boolean hasName(){
+        return false;
+    }
+
+    @Override
     public String getInstString(){
-        return "store " + value + ", " + pointer;
+        return "store " + value + ", " + pointer.getName();
     }
 }

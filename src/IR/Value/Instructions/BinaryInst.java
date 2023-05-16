@@ -23,8 +23,13 @@ public class BinaryInst extends Instruction {
 
     @Override
     public String getInstString(){
+        String type_str;
+        if(getType().isIntegerTy()){
+            type_str = "i32";
+        }
+        else type_str = "float";
         return getName() + " = " +
-                getOp() + " " +
+                getOp() + " " + type_str + " " +
                 getLeftVal().getName() + " " +
                 getRightVal().getName();
     }

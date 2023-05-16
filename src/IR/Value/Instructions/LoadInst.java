@@ -20,6 +20,8 @@ public class LoadInst extends Instruction{
 
     @Override
     public String getInstString(){
-        return getName() + " = " + "load " + pointer.getType() + " " + pointer.getName();
+        Type type = ((PointerType) pointer.getType()).getEleType();
+        return getName() + " = " + "load " + type + ", "
+                + pointer.getType() + " " + pointer.getName();
     }
 }

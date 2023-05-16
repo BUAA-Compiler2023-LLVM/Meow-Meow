@@ -1,12 +1,6 @@
-int x = 2;
-
-int half(int x) {
-  return x / 2;
-}
-
-void f() {}
+int x[2] = {10, 20};
 
 int main() {
-  f();
-  return half(10);
+  int arr[5] = {1, 2, 3};
+  return arr[2];
 }

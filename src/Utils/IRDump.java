@@ -21,8 +21,8 @@ public class IRDump {
     }
 
     private static void DumpGlobalVar(GlobalVar globalVar) throws IOException {
-        out.write(globalVar.getName() + " = global i32 ");
-        out.write(globalVar.getValue().getName());
+        out.write(globalVar.toString());
+        out.write("\n");
     }
 
     private static void DumpInstruction(Instruction inst) throws IOException {
@@ -90,13 +90,17 @@ public class IRDump {
         }
     }
 
+    private static void DumpLib() throws IOException {
+        out.write("declare void @memset(i32*, i32, i32)\n");
+        out.write("declare i32 @printf(i8*, ...)\n");
+        out.write("declare i32 @getint()\n\n");
+    }
+
     public static void DumpModule(IRModule irModule) throws IOException {
+        DumpLib();
         ArrayList<GlobalVar> globalVars = irModule.getGlobalVars();
         for(GlobalVar globalVar : globalVars){
-            if(!globalVar.isConst() || globalVar.getType().isArrayType()){
-                DumpGlobalVar(globalVar);
-                out.write("\n");
-            }
+            DumpGlobalVar(globalVar);
         }
 
         ArrayList<Function> functions = irModule.getFunctions();
