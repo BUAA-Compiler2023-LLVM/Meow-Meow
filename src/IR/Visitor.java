@@ -356,88 +356,35 @@ public class Visitor {
         return values;
     }
 
-    private void visitConstDef(AST.Def def, String type, boolean isGlobal){
+    private void visitConstDef(AST.Def def, Type type, boolean isGlobal){
         String ident = def.getIdent();
         AST.Init init = def.getInit();
+        //  常量数组
+        if (def.indexes.size() != 0) {
+            visitArray(ident, init, def.indexes, type, isGlobal, true);
+        }
         //  普通常量
-        if (init instanceof AST.Exp expAST) {
-            visitExpAST(expAST, true);
+        else {
+            visitExpAST((AST.Exp) init, true);
             //  根据定义纠正类型
-            if(type.equals("int") && CurValue.getType().isFloatTy()){
+            if(type == IntegerType.I32 && CurValue.getType().isFloatTy()){
                 CurValue = f.buildNumber((int) ((ConstFloat) CurValue).getValue());
             }
-            else if(type.equals("float") && CurValue.getType().isIntegerTy()){
+            else if(type == FloatType.F32 && CurValue.getType().isIntegerTy()){
                 CurValue = f.buildNumber((float) ((ConstInteger) CurValue).getValue());
             }
+            pushSymbol(ident, CurValue);
         }
-        //  常量数组
-        else if(init instanceof AST.InitArray arrayAST){
-            //  TODO 优化
-        }
-        //  push进符号表
-        pushSymbol(ident, CurValue);
     }
 
-    private void visitVarDef(AST.Def def, String type_str ,boolean isGlobal){
+    private void visitVarDef(AST.Def def, Type type ,boolean isGlobal){
         String ident = def.getIdent();
         AST.Init init = def.getInit();
-        Type type = null;
-        Value fillValue = null;
-        if(type_str.equals("int")){
-            type = IntegerType.I32;
-            fillValue = ConstInteger.const0_32;
-        }
-        else if(type_str.equals("float")){
-            type = FloatType.F32;
-            fillValue = ConstFloat.const0;
-        }
+        Value fillValue = (type == IntegerType.I32 ? ConstInteger.const0_32 : ConstFloat.const0);
 
         //  数组
         if(def.indexes.size() != 0){
-            ArrayList<AST.Exp> indexsAST = def.getIndexes();
-            ArrayList<Integer> dimIndexs = new ArrayList<>();
-            for(AST.Exp exp : indexsAST){
-                visitExpAST(exp, true);
-                dimIndexs.add(((ConstInteger) CurValue).getValue());
-            }
-
-            ArrayList<Value> values = new ArrayList<>();
-            if(init instanceof AST.InitArray initArray){
-                //  flagValue标志某处是否是填充的0
-                Value flagValue = new Value("flag", new VoidType());
-                values = visitInitArray(dimIndexs, initArray, flagValue, true);
-            }
-
-            if(isGlobal){
-                for(int i = 0; i < values.size(); i++){
-                    if(values.get(i).getName().equals("flag")){
-                        values.set(i, fillValue);
-                    }
-                }
-                CurValue = f.buildGlobalArray(ident, type, dimIndexs, values);
-                globalVars.add((GlobalVar) CurValue);
-                pushSymbol(ident, CurValue);
-            }
-            else{
-                CurValue = f.buildArray(type, dimIndexs, CurBasicBlock);
-                pushSymbol(ident, CurValue);
-                ArrayType arrayType = (ArrayType) ((PointerType) CurValue.getType()).getEleType();
-                ArrayList<Value> indexs = new ArrayList<>();
-                int dim = arrayType.getDim();
-                for(int i = 0; i < dim; i++){
-                   indexs.add(ConstInteger.const0_32);
-                }
-                for(int i = 0; i < values.size(); i++){
-                    Value value = values.get(i);
-                    if(value.getName().equals("flag")){
-                        continue;
-                    }
-                    indexs.add(f.buildNumber(i));
-                    CurValue = f.buildGepInst(CurValue, indexs, CurBasicBlock);
-                    indexs.remove(indexs.size() - 1);
-                    f.buildStoreInst(value, CurValue, CurBasicBlock);
-                }
-            }
+            visitArray(ident, init, def.indexes, type, isGlobal, isGlobal);
         }
         //  普通变量
         else{
@@ -463,12 +410,62 @@ public class Visitor {
         }
     }
 
+    private void visitArray(String ident, AST.Init init, ArrayList<AST.Exp> indexsAST, Type type, boolean isGlobal, boolean isConst){
+        ArrayList<Integer> dimIndexs = new ArrayList<>();
+        Value fillValue = (type == IntegerType.I32 ? ConstInteger.const0_32 : ConstFloat.const0);
+
+        for(AST.Exp exp : indexsAST){
+            visitExpAST(exp, true);
+            dimIndexs.add(((ConstInteger) CurValue).getValue());
+        }
+        ArrayList<Value> values = new ArrayList<>();
+        if(init instanceof AST.InitArray initArray){
+            //  flagValue标志某处是否是填充的0
+            Value flagValue = new Value("flag", new VoidType());
+            values = visitInitArray(dimIndexs, initArray, flagValue, isConst);
+        }
+
+        if(isGlobal){
+            for(int i = 0; i < values.size(); i++){
+                if(values.get(i).getName().equals("flag")){
+                    values.set(i, fillValue);
+                }
+            }
+            CurValue = f.buildGlobalArray(ident, type, dimIndexs, values);
+            globalVars.add((GlobalVar) CurValue);
+            pushSymbol(ident, CurValue);
+        }
+        else{
+            CurValue = f.buildArray(type, dimIndexs, CurBasicBlock);
+            pushSymbol(ident, CurValue);
+            ArrayType arrayType = (ArrayType) ((PointerType) CurValue.getType()).getEleType();
+            ArrayList<Value> indexs = new ArrayList<>();
+            int dim = arrayType.getDim();
+            for(int i = 0; i < dim; i++){
+                indexs.add(ConstInteger.const0_32);
+            }
+            for(int i = 0; i < values.size(); i++){
+                Value value = values.get(i);
+                if(value.getName().equals("flag")){
+                    continue;
+                }
+                indexs.add(f.buildNumber(i));
+                CurValue = f.buildGepInst(CurValue, indexs, CurBasicBlock);
+                indexs.remove(indexs.size() - 1);
+                f.buildStoreInst(value, CurValue, CurBasicBlock);
+            }
+        }
+    }
+
     private void visitDeclAST(AST.Decl declAST, boolean isGlobal){
         boolean isConst = declAST.isConstant();
-        String type = declAST.getBType();
+        String typeStr = declAST.getBType();
         ArrayList<AST.Def> defs = declAST.getDefs();
 
         for (AST.Def def : defs) {
+            Type type = null;
+            if(typeStr.equals("int")) type = IntegerType.I32;
+            else if(typeStr.equals("float")) type = FloatType.F32;
             if(isConst) visitConstDef(def, type, isGlobal);
             else visitVarDef(def, type, isGlobal);
         }
@@ -562,4 +559,5 @@ public class Visitor {
 
         return module;
     }
+
 }
