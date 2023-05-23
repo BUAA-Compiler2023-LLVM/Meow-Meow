@@ -1,12 +1,12 @@
 package IR.Type;
 
 public class ArrayType extends Type{
-    int dim;
+    int num;
 
     Type eleType;
 
-    public ArrayType(int dim, Type eleType){
-        this.dim = dim;
+    public ArrayType(int num, Type eleType){
+        this.num = num;
         this.eleType = eleType;
     }
 
@@ -15,8 +15,26 @@ public class ArrayType extends Type{
         return true;
     }
 
+    public int getDim(){
+        if(eleType.isArrayType()){
+            return ((ArrayType) eleType).getDim() + 1;
+        }
+        else return 1;
+    }
+
+    public Type getEleType(){
+        return eleType;
+    }
+
+    public int getTotalSize(){
+        if(eleType.isArrayType()){
+            return ((ArrayType) eleType).getTotalSize() * num;
+        }
+        else return num;
+    }
+
     @Override
     public String toString(){
-        return "[" + dim + " x " + eleType + "]";
+        return "[" + num + " x " + eleType + "]";
     }
 }

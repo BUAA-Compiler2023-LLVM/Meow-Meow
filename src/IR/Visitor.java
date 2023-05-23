@@ -1,10 +1,7 @@
 package IR;
 
 import Frontend.AST;
-import IR.Type.FloatType;
-import IR.Type.IntegerType;
-import IR.Type.PointerType;
-import IR.Type.Type;
+import IR.Type.*;
 import IR.Value.*;
 import IR.Value.Instructions.AllocInst;
 import IR.Value.Instructions.BrInst;
@@ -68,6 +65,16 @@ public class Visitor {
 
         assert CurValue != null;
         if(CurValue.getType() instanceof PointerType){
+            if(lValAST.getIndexes().size() != 0){
+                Value TmpValue = CurValue;
+                ArrayList<Value> indexs = new ArrayList<>();
+                indexs.add(ConstInteger.const0_32);
+                for(AST.Exp exp : lValAST.getIndexes()){
+                    visitExpAST(exp, false);
+                    indexs.add(CurValue);
+                }
+                CurValue = f.buildGepInst(TmpValue, indexs, CurBasicBlock);
+            }
             if(isFetch) {
                 CurValue = f.buildLoadInst(CurValue, CurBasicBlock);
             }
@@ -388,34 +395,47 @@ public class Visitor {
         //  数组
         if(def.indexes.size() != 0){
             ArrayList<AST.Exp> indexsAST = def.getIndexes();
-            ArrayList<Integer> indexs = new ArrayList<>();
+            ArrayList<Integer> dimIndexs = new ArrayList<>();
             for(AST.Exp exp : indexsAST){
                 visitExpAST(exp, true);
-                indexs.add(((ConstInteger) CurValue).getValue());
+                dimIndexs.add(((ConstInteger) CurValue).getValue());
             }
 
             ArrayList<Value> values = new ArrayList<>();
             if(init instanceof AST.InitArray initArray){
-                values = visitInitArray(indexs, initArray, fillValue, true);
-            }
-            else{
-                int totSize = 1;
-                for (Integer index : indexs) {
-                    totSize *= index;
-                }
-                for(int i = 0; i < totSize; i++){
-                    values.add(fillValue);
-                }
+                //  flagValue标志某处是否是填充的0
+                Value flagValue = new Value("flag", new VoidType());
+                values = visitInitArray(dimIndexs, initArray, flagValue, true);
             }
 
             if(isGlobal){
-                CurValue = f.buildGlobalArray(ident, type, indexs, values);
+                for(int i = 0; i < values.size(); i++){
+                    if(values.get(i).getName().equals("flag")){
+                        values.set(i, fillValue);
+                    }
+                }
+                CurValue = f.buildGlobalArray(ident, type, dimIndexs, values);
                 globalVars.add((GlobalVar) CurValue);
+                pushSymbol(ident, CurValue);
             }
             else{
-                CurValue = f.buildArray(type, indexs, CurBasicBlock);
-                for(Value value : values){
-                    //  TODO 构建gep+store
+                CurValue = f.buildArray(type, dimIndexs, CurBasicBlock);
+                pushSymbol(ident, CurValue);
+                ArrayType arrayType = (ArrayType) ((PointerType) CurValue.getType()).getEleType();
+                ArrayList<Value> indexs = new ArrayList<>();
+                int dim = arrayType.getDim();
+                for(int i = 0; i < dim; i++){
+                   indexs.add(ConstInteger.const0_32);
+                }
+                for(int i = 0; i < values.size(); i++){
+                    Value value = values.get(i);
+                    if(value.getName().equals("flag")){
+                        continue;
+                    }
+                    indexs.add(f.buildNumber(i));
+                    CurValue = f.buildGepInst(CurValue, indexs, CurBasicBlock);
+                    indexs.remove(indexs.size() - 1);
+                    f.buildStoreInst(value, CurValue, CurBasicBlock);
                 }
             }
         }
@@ -439,9 +459,8 @@ public class Visitor {
                     CurValue = TmpValue;
                 }
             }
-
+            pushSymbol(ident, CurValue);
         }
-        pushSymbol(ident, CurValue);
     }
 
     private void visitDeclAST(AST.Decl declAST, boolean isGlobal){

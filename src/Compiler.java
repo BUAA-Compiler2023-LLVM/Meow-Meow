@@ -13,5 +13,7 @@ public class Compiler {
         IRModule irModule = new Visitor().visitAST(compAST);
 
         IRDump.DumpModule(irModule);
+
+
     }
 }

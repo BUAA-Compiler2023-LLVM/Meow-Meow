@@ -4,6 +4,7 @@ import IR.Type.*;
 import IR.Value.*;
 import IR.Value.Instructions.*;
 
+import java.awt.*;
 import java.util.ArrayList;
 
 public class IRBuildFactory {
@@ -85,11 +86,23 @@ public class IRBuildFactory {
         return new GlobalVar("@" + name, arrayType, values);
     }
 
+    //  传入一个指向目标数组的指针
+    public GepInst buildGepInst(Value target, ArrayList<Value> indexs, BasicBlock bb){
+        ArrayType arrayType = (ArrayType) ((PointerType) target.getType()).getEleType();
+        int dim = arrayType.getDim();
+        Type type = arrayType;
+        for(int i = 0; i < dim - 1; i++){
+            type = ((ArrayType) type).getEleType();
+        }
+
+        GepInst gepInst = new GepInst(target, indexs, new PointerType(type), bb);
+        bb.addInst(gepInst);
+        return gepInst;
+    }
+
     public Value buildArray(Type eleType, ArrayList<Integer> indexs, BasicBlock bb){
         ArrayType arrayType = buildArrayType(indexs, eleType);
-        AllocInst allocInst = new AllocInst(arrayType, bb);
-        bb.addInst(allocInst);
-        return allocInst;
+        return buildAllocInst(arrayType, bb);
     }
 
     private void buildCallRelation(Function caller, Function callee){
@@ -273,9 +286,6 @@ public class IRBuildFactory {
     public void buildStoreInst(Value value, Value pointer, BasicBlock bb){
         Type valueTy = value.getType();
         PointerType pointerTy = (PointerType) pointer.getType();
-        if(valueTy != pointerTy.getEleType()){
-            value = unifyType(value, pointerTy.getEleType(), bb);
-        }
         StoreInst storeInst = new StoreInst(value, pointer, bb);
         bb.addInst(storeInst);
     }

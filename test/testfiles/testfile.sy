@@ -1,5 +1,6 @@
-int arr[2][2] = {{1}};
 int main() {
-    int x = 3;
+int x = 1;
+int arr[2] = {x, 0};
+arr[x] = x;
   return x;
 }
