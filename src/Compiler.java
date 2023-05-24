@@ -1,3 +1,4 @@
+import Backend.IRVisitor;
 import Frontend.*;
 import IR.IRModule;
 import IR.Visitor;
@@ -14,6 +15,6 @@ public class Compiler {
 
         IRDump.DumpModule(irModule);
 
-
+        new IRVisitor().visit_irModule(irModule);
     }
 }
