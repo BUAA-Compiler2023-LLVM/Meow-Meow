@@ -92,8 +92,20 @@ public class IRDump {
 
     private static void DumpLib() throws IOException {
         out.write("declare void @memset(i32*, i32, i32)\n");
-        out.write("declare i32 @printf(i8*, ...)\n");
-        out.write("declare i32 @getint()\n\n");
+        out.write("declare i32 @getint()\n");
+        out.write("declare i32 @getch()\n");
+        out.write("declare i32 @getfarray(float*)\n");
+        out.write("declare void @putint(i32)\n");
+        out.write("declare void @putfarray(i32, float*)\n");
+        out.write("declare void @_sysy_starttime(i32)\n");
+        out.write("declare void @_sysy_stoptime(i32)\n");
+        out.write("declare i32 @getarray(i32*)\n");
+        out.write("declare void @putarray(i32, i32*)\n");
+        out.write("declare void @putfloat(float)\n");
+        out.write("declare void @putch(i32)\n");
+        out.write("declare float @getfloat()\n");
+        out.write("declare i32 @parallel_start()\n");
+        out.write("declare void @parallel_end(i32)\n");
     }
 
     public static void DumpModule(IRModule irModule) throws IOException {
