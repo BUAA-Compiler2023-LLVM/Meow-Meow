@@ -65,6 +65,8 @@ public class Visitor {
 
         assert CurValue != null;
         if(CurValue.getType() instanceof PointerType){
+            Type eleType = ((PointerType) CurValue.getType()).getEleType();
+
             if(lValAST.getIndexes().size() != 0){
                 Value TmpValue = CurValue;
                 ArrayList<Value> indexs = new ArrayList<>();
@@ -75,12 +77,16 @@ public class Visitor {
                 }
                 CurValue = f.buildGepInst(TmpValue, indexs, CurBasicBlock);
             }
-            if(isFetch) {
-                CurValue = f.buildLoadInst(CurValue, CurBasicBlock);
-            }
-        }
-        else if(CurValue instanceof GlobalVar){
 
+            if(isFetch) {
+                if(eleType.isArrayType()){
+                    ArrayList<Value> indexs = new ArrayList<>();
+                    indexs.add(ConstInteger.const0_32);
+                    indexs.add(ConstInteger.const0_32);
+                    CurValue = f.buildGepInst(CurValue, indexs, CurBasicBlock);
+                }
+                else CurValue = f.buildLoadInst(CurValue, CurBasicBlock);
+            }
         }
     }
 
@@ -502,9 +508,9 @@ public class Visitor {
         argHashMap.clear();
 
         pushSymTbl();
+        CurBasicBlock = f.buildBasicBlock(CurFunction);
         if(funcDefAST.getFParams().size() > 0){
             //  开始构建entry基本块
-            CurBasicBlock = f.buildBasicBlock(CurFunction);
             ArrayList<AST.FuncFParam> funcFParams = funcDefAST.getFParams();
             for(AST.FuncFParam funcFParam : funcFParams){
                 //  平平无奇的起名环节
@@ -516,12 +522,12 @@ public class Visitor {
                 AllocInst allocInst = f.buildAllocInst(argument.getType(), CurBasicBlock);
                 f.buildStoreInst(argument, allocInst, CurBasicBlock);
                 pushSymbol(argName, allocInst);
+
+                BasicBlock TmpBasicBlock = f.buildBasicBlock(CurFunction);
+                f.buildBrInst(TmpBasicBlock, CurBasicBlock);
+                CurBasicBlock = TmpBasicBlock;
             }
         }
-
-        BasicBlock TmpBasicBlock = f.buildBasicBlock(CurFunction);
-        f.buildBrInst(TmpBasicBlock, CurBasicBlock);
-        CurBasicBlock = TmpBasicBlock;
 
         visitBlockAST(funcDefAST.getBody());
 
