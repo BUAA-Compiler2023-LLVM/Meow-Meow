@@ -34,7 +34,7 @@ public class CallInst extends Instruction{
         if(!this.getType().isVoidTy()){
             sb.append(getName()).append(" = ");
         }
-        sb.append("call ").append(getFunction().getType()).append(getFunction().getName()).append("(");
+        sb.append("call ").append(getFunction().getType()).append(' ').append(getFunction().getName()).append("(");
         ArrayList<Value> operands = getOperands();
         for(int i = 0; i < operands.size(); i++){
             Value value = operands.get(i);

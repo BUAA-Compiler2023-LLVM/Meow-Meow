@@ -13,11 +13,26 @@ declare void @putch(i32)
 declare float @getfloat()
 declare i32 @parallel_start()
 declare void @parallel_end(i32)
+@a = global null
+define i32 @f(i32 %0) {
+%1:
+	%2 = alloca i32
+	store i32 %0, %2
+	br label %4
+%4:
+	%5 = load i32, i32* %2
+	%6 = getelementptr [3 x i32], [3 x i32]* @a, i32 0, i32 %5
+	%7 = load i32, i32* %6
+	ret i32 %7
+	br label block3
+}
+
 define i32 @main() {
-b0:
-	%0 = alloca i32
-	store i32 3, i32* %0
-	%1 = load i32, i32* %0
-	ret i32 %1
+%0:
+	%1 = alloca i32
+	store i32 2, %1
+	%2 = load i32, i32* %1
+	%3 = call i32 @f(i32 %2)
+	ret i32 %3
 }
 

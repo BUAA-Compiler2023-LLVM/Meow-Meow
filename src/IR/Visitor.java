@@ -79,6 +79,9 @@ public class Visitor {
                 CurValue = f.buildLoadInst(CurValue, CurBasicBlock);
             }
         }
+        else if(CurValue instanceof GlobalVar){
+
+        }
     }
 
     private void visitPrimaryExpAST(AST.PrimaryExp primaryExpAST, boolean isConst){
@@ -438,6 +441,8 @@ public class Visitor {
         else{
             CurValue = f.buildArray(type, dimIndexs, CurBasicBlock);
             pushSymbol(ident, CurValue);
+            Value baseValue = CurValue;
+
             ArrayType arrayType = (ArrayType) ((PointerType) CurValue.getType()).getEleType();
             ArrayList<Value> indexs = new ArrayList<>();
             int dim = arrayType.getDim();
@@ -450,7 +455,7 @@ public class Visitor {
                     continue;
                 }
                 indexs.add(f.buildNumber(i));
-                CurValue = f.buildGepInst(CurValue, indexs, CurBasicBlock);
+                CurValue = f.buildGepInst(baseValue, indexs, CurBasicBlock);
                 indexs.remove(indexs.size() - 1);
                 f.buildStoreInst(value, CurValue, CurBasicBlock);
             }
@@ -514,7 +519,10 @@ public class Visitor {
             }
         }
 
-        CurBasicBlock = f.buildBasicBlock(CurFunction);
+        BasicBlock TmpBasicBlock = f.buildBasicBlock(CurFunction);
+        f.buildBrInst(TmpBasicBlock, CurBasicBlock);
+        CurBasicBlock = TmpBasicBlock;
+
         visitBlockAST(funcDefAST.getBody());
 
         popSymTbl();

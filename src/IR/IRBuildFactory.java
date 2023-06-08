@@ -83,15 +83,13 @@ public class IRBuildFactory {
 
     public GlobalVar buildGlobalArray(String name, Type eleType, ArrayList<Integer> indexs, ArrayList<Value> values){
         ArrayType arrayType = buildArrayType(indexs, eleType);
-        return new GlobalVar("@" + name, arrayType, values);
+        return new GlobalVar("@" + name, new PointerType(arrayType), values);
     }
 
     //  传入一个指向目标数组的指针
     public GepInst buildGepInst(Value target, ArrayList<Value> indexs, BasicBlock bb){
-        ArrayType arrayType = (ArrayType) ((PointerType) target.getType()).getEleType();
-        int dim = arrayType.getDim();
-        Type type = arrayType;
-        for(int i = 0; i < dim - 1; i++){
+        Type type = ((PointerType) target.getType()).getEleType();
+        for(int i = 0; i < indexs.size() - 1; i++){
             type = ((ArrayType) type).getEleType();
         }
 
@@ -155,6 +153,12 @@ public class IRBuildFactory {
         Type type;
         Type leftType = left.getType();
         Type rightType = right.getType();
+//        if(leftType.isArrayType()){
+//            leftType = ((ArrayType) leftType).getEleType();
+//        }
+//        if(rightType.isArrayType()){
+//            rightType = ((ArrayType) rightType).getEleType();
+//        }
         if(leftType != rightType) {
             //  统一两个操作数的type
             //  先将1位的全部转化为I32
