@@ -14,8 +14,8 @@ public class Compiler {
         IRModule irModule = new Visitor().visitAST(compAST);
 
         IRDump.DumpModule(irModule);
-//
-//        Backend backend = new Backend(irModule);
-//        backend.print();
+
+        Backend backend = new Backend(irModule);
+        backend.print();
     }
 }
