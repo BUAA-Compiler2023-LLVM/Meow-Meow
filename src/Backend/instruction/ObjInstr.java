@@ -50,4 +50,7 @@ public class ObjInstr {
             removeUse(oldReg);
         addUse(newReg);
     }
+
+    public void replaceReg(ObjOperand oldReg, ObjOperand newReg) {}
+    public void replaceUseReg(ObjOperand oldReg, ObjOperand newReg) {}
 }
