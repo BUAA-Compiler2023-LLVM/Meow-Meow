@@ -516,17 +516,26 @@ public class Visitor {
                 //  平平无奇的起名环节
                 String argName = funcFParam.getIdent();
                 String argType = funcFParam.getBType();
-
-                Argument argument = f.buildArgument(argName, argType, CurFunction);
-
+                Argument argument;
+                if(funcFParam.array){
+                    ArrayList<Integer> sizes = new ArrayList<>();
+                    ArrayList<AST.Exp> sizesExp = funcFParam.getSizes();
+                    for (AST.Exp exp : sizesExp) {
+                        visitExpAST(exp, true);
+                        sizes.add(((ConstInteger) CurValue).getValue());
+                    }
+                    argument = f.buildArgument(argName, argType, CurFunction, sizes);
+                }
+                else {
+                    argument = f.buildArgument(argName, argType, CurFunction);
+                }
                 AllocInst allocInst = f.buildAllocInst(argument.getType(), CurBasicBlock);
                 f.buildStoreInst(argument, allocInst, CurBasicBlock);
                 pushSymbol(argName, allocInst);
-
-                BasicBlock TmpBasicBlock = f.buildBasicBlock(CurFunction);
-                f.buildBrInst(TmpBasicBlock, CurBasicBlock);
-                CurBasicBlock = TmpBasicBlock;
             }
+            BasicBlock TmpBasicBlock = f.buildBasicBlock(CurFunction);
+            f.buildBrInst(TmpBasicBlock, CurBasicBlock);
+            CurBasicBlock = TmpBasicBlock;
         }
 
         visitBlockAST(funcDefAST.getBody());

@@ -1,5 +1,6 @@
 package IR;
 
+import Frontend.AST;
 import IR.Type.*;
 import IR.Value.*;
 import IR.Value.Instructions.*;
@@ -68,7 +69,7 @@ public class IRBuildFactory {
         };
     }
 
-    private ArrayType buildArrayType(ArrayList<Integer> indexs, Type eleType){
+    private ArrayType getArrayType(ArrayList<Integer> indexs, Type eleType){
         if(indexs.size() == 1){
             return new ArrayType(indexs.get(0), eleType);
         }
@@ -77,12 +78,12 @@ public class IRBuildFactory {
         for(int i = 1; i < indexs.size(); i++){
             newIndexs.add(indexs.get(i));
         }
-        Type type = buildArrayType(newIndexs, eleType);
+        Type type = getArrayType(newIndexs, eleType);
         return new ArrayType(indexs.get(0), type);
     }
 
     public GlobalVar buildGlobalArray(String name, Type eleType, ArrayList<Integer> indexs, ArrayList<Value> values){
-        ArrayType arrayType = buildArrayType(indexs, eleType);
+        ArrayType arrayType = getArrayType(indexs, eleType);
         return new GlobalVar("@" + name, new PointerType(arrayType), values);
     }
 
@@ -99,7 +100,7 @@ public class IRBuildFactory {
     }
 
     public Value buildArray(Type eleType, ArrayList<Integer> indexs, BasicBlock bb){
-        ArrayType arrayType = buildArrayType(indexs, eleType);
+        ArrayType arrayType = getArrayType(indexs, eleType);
         return buildAllocInst(arrayType, bb);
     }
 
@@ -204,9 +205,20 @@ public class IRBuildFactory {
 
     public Argument buildArgument(String name, String typeStr, Function parentFunc){
         Argument argument;
-        if(typeStr.equals("int")) argument = new Argument(name, IntegerType.I32, parentFunc);
-        else if(typeStr.equals("float")) argument = new Argument(name, FloatType.F32, parentFunc);
+        if (typeStr.equals("int")) argument = new Argument(name, IntegerType.I32, parentFunc);
+        else if (typeStr.equals("float")) argument = new Argument(name, FloatType.F32, parentFunc);
         else argument = new Argument(name, new VoidType(), parentFunc);
+        parentFunc.addArg(argument);
+        return argument;
+    }
+
+    public Argument buildArgument(String name, String typeStr, Function parentFunc, ArrayList<Integer> indexs){
+        Type eleType;
+        if(typeStr.equals("int")) eleType = IntegerType.I32;
+        else eleType = FloatType.F32;
+        Type type = new PointerType(getArrayType(indexs, eleType));
+        Argument argument = new Argument(name, type, parentFunc);
+
         parentFunc.addArg(argument);
         return argument;
     }

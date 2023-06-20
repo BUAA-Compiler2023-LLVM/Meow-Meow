@@ -15,7 +15,7 @@ public class Compiler {
 
         IRDump.DumpModule(irModule);
 
-        Backend backend = new Backend(irModule);
-        backend.print();
+//        Backend backend = new Backend(irModule);
+//        backend.print();
     }
 }

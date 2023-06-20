@@ -52,8 +52,9 @@ public class IRDump {
         out.write(function.getName() + "(");
 
         ArrayList<Argument> args = function.getArgs();
-        for(Argument arg : args){
-            out.write(arg.toString());
+        for(int i = 0; i < args.size(); i++){
+            out.write(args.get(i).toString());
+            if(i != args.size() - 1) out.write(", ");
         }
 
         out.write(") {\n");

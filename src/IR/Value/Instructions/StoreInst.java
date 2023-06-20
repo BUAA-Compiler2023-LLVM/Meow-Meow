@@ -34,6 +34,6 @@ public class StoreInst extends Instruction{
 
     @Override
     public String getInstString(){
-        return "store " + value + ", " + pointer.getName();
+        return "store " + value + ", " + pointer;
     }
 }
