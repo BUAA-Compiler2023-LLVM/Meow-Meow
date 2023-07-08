@@ -1,8 +1,10 @@
 package IR.Value;
 
+import IR.Type.ArrayType;
 import IR.Type.PointerType;
 import IR.Type.Type;
 
+import java.awt.*;
 import java.util.ArrayList;
 
 public class GlobalVar extends Value{
@@ -35,15 +37,22 @@ public class GlobalVar extends Value{
     @Override
     public String toString(){
         String prefix = getName() + " = global ";
-        if(getType().isArrayType()){
+        PointerType type = (PointerType) getType();
+        Type eleType = type.getEleType();
+        if(eleType.isArrayType()){
             StringBuilder sb = new StringBuilder();
-            sb.append(prefix).append(getType())
-                    .append(" [");
-            for(int i = 0; i < values.size(); i++){
-                sb.append(values.get(i));
-                if(i != values.size() - 1) sb.append(", ");
+            sb.append(prefix).append(eleType);
+            if(values.size() == 0){
+                sb.append(" zeroinitializer");
             }
-            sb.append("]");
+            else{
+                sb.append("[");
+                for(int i = 0; i < values.size(); i++){
+                    sb.append(values.get(i));
+                    if(i != values.size() - 1) sb.append(", ");
+                }
+                sb.append("]");
+            }
             return sb.toString();
         }
         else {

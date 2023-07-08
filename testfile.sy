@@ -1,8 +1,7 @@
-int f(int arr[][2]){
-    return 1;
-}
-
-int main() {
-  int arr[2][2] = {1, 2};
-  return f(arr);
+//test domain of global var define and local define
+int aa[10][10];
+int a = 3;
+int b = 5;
+int main(){
+    return a;
 }

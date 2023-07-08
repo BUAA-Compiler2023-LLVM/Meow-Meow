@@ -207,6 +207,7 @@ public class IRBuildFactory {
         Argument argument;
         if (typeStr.equals("int")) argument = new Argument(name, IntegerType.I32, parentFunc);
         else if (typeStr.equals("float")) argument = new Argument(name, FloatType.F32, parentFunc);
+        else if(typeStr.equals("int*")) argument = new Argument(name, new PointerType(IntegerType.I32), parentFunc);
         else argument = new Argument(name, new VoidType(), parentFunc);
         parentFunc.addArg(argument);
         return argument;

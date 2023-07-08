@@ -2,6 +2,7 @@ import Backend.Backend;
 import Frontend.*;
 import IR.IRModule;
 import IR.Visitor;
+import Pass.PassManager;
 import Utils.IRDump;
 
 import java.io.IOException;
@@ -15,7 +16,12 @@ public class Compiler {
 
         IRDump.DumpModule(irModule);
 
+//        PassManager passManager = PassManager.getInstance();
+//        passManager.runIRPasses(irModule);
+
 //        Backend backend = new Backend(irModule);
+
+
 //        backend.print();
     }
 }

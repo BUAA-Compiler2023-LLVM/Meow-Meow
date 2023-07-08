@@ -62,15 +62,23 @@ public class Visitor {
     private void visitLValAST(AST.LVal lValAST, boolean isFetch){
         String ident = lValAST.getIdent();
         CurValue = find(ident);
+        boolean isArrayLVal = false;
 
         assert CurValue != null;
         if(CurValue.getType() instanceof PointerType){
             Type eleType = ((PointerType) CurValue.getType()).getEleType();
+            //  数组参数会出现**双层指针
+            if(eleType instanceof PointerType){
+                CurValue = f.buildLoadInst(CurValue, CurBasicBlock);
+                isArrayLVal = true;
+            }
 
             if(lValAST.getIndexes().size() != 0){
                 Value TmpValue = CurValue;
                 ArrayList<Value> indexs = new ArrayList<>();
-                indexs.add(ConstInteger.const0_32);
+                if(!isArrayLVal) {
+                    indexs.add(ConstInteger.const0_32);
+                }
                 for(AST.Exp exp : lValAST.getIndexes()){
                     visitExpAST(exp, false);
                     indexs.add(CurValue);
@@ -405,6 +413,7 @@ public class Visitor {
                 else if(init == null){
                     CurValue = f.buildGlobalVar(ident, type, fillValue);
                 }
+                globalVars.add((GlobalVar) CurValue);
             }
             else{
                 CurValue = f.buildAllocInst(type, CurBasicBlock);
@@ -524,7 +533,10 @@ public class Visitor {
                         visitExpAST(exp, true);
                         sizes.add(((ConstInteger) CurValue).getValue());
                     }
-                    argument = f.buildArgument(argName, argType, CurFunction, sizes);
+                    if(sizes.size() != 0) {
+                        argument = f.buildArgument(argName, argType, CurFunction, sizes);
+                    }
+                    else argument = f.buildArgument(argName, "int*", CurFunction);
                 }
                 else {
                     argument = f.buildArgument(argName, argType, CurFunction);

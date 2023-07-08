@@ -35,8 +35,7 @@ public class GepInst extends Instruction{
         sb.append(getName()).append(" = getelementptr ");
         Value target = getTarget();
         PointerType pointerType = (PointerType) target.getType();
-        ArrayType arrayType = (ArrayType) pointerType.getEleType();
-        sb.append(arrayType).append(", ");
+        sb.append(pointerType.getEleType()).append(", ");
         sb.append(pointerType).append(" ");
         sb.append(target.getName());
 

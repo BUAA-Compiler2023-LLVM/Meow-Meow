@@ -1,5 +1,6 @@
 package Pass;
 
+import Backend.component.ObjModule;
 import IR.IRModule;
 import Pass.Pass.*;
 
@@ -13,15 +14,29 @@ public class PassManager {
     }
     HashSet<String> openedPasses = new HashSet<>();
     ArrayList<IRPass> irPasses = new ArrayList<>();
+    ArrayList<ObjPass> objPasses = new ArrayList<>();
 
     private PassManager(){
+        //  这里放入所有pass,控制pass的顺序
 //        irPasses.add(new DCE());
+
+        //  然后根据需求开放pass
+//        openedPasses.add("DCE");
     }
+
 
     public void runIRPasses(IRModule irModule){
         for(IRPass irPass : irPasses){
             if(openedPasses.contains(irPass.getName())){
                 irPass.run(irModule);
+            }
+        }
+    }
+
+    public void runObjPasses(ObjModule objModule){
+        for(ObjPass objPass : objPasses){
+            if(openedPasses.contains(objPass.getName())){
+                objPass.run(objModule);
             }
         }
     }
