@@ -87,13 +87,13 @@ public class Visitor {
             }
 
             if(isFetch) {
-                if(eleType.isArrayType()){
-                    ArrayList<Value> indexs = new ArrayList<>();
-                    indexs.add(ConstInteger.const0_32);
-                    indexs.add(ConstInteger.const0_32);
-                    CurValue = f.buildGepInst(CurValue, indexs, CurBasicBlock);
-                }
-                else CurValue = f.buildLoadInst(CurValue, CurBasicBlock);
+//                if(eleType.isArrayType()){
+//                    ArrayList<Value> indexs = new ArrayList<>();
+//                    indexs.add(ConstInteger.const0_32);
+//                    indexs.add(ConstInteger.const0_32);
+//                    CurValue = f.buildGepInst(CurValue, indexs, CurBasicBlock);
+//                }
+                CurValue = f.buildLoadInst(CurValue, CurBasicBlock);
             }
         }
     }
@@ -345,7 +345,6 @@ public class Visitor {
                 visitExpAST(expAST, isConst);
                 values.add(CurValue);
                 //  TODO ！！！常量数组的优化！！！
-
             }
             else if(init instanceof AST.InitArray newInitArray){
                 ArrayList<Integer> newIndexs = new ArrayList<>();
@@ -473,8 +472,10 @@ public class Visitor {
             }
             for(int i = 0; i < values.size(); i++){
                 Value value = values.get(i);
+                //  局部变量没初始化似乎默认需要填0
                 if(value.getName().equals("flag")){
-                    continue;
+                    value = ConstInteger.const0_32;
+//                    continue;
                 }
                 indexs.add(f.buildNumber(i));
                 CurValue = f.buildGepInst(baseValue, indexs, CurBasicBlock);
