@@ -15,7 +15,7 @@ declare i32 @parallel_start()
 declare void @parallel_end(i32)
 define i32 @main() {
 b0:
-	%0 = icmp ne i32 0, 0
+	%0 = icmp ne i32 1, 0
 	br i1 %0, label %b4, label %b3
 b1:
 	%1 = icmp ne i32 5, 0
@@ -26,7 +26,7 @@ b3:
 	call void @putint(i32 1)
 	ret i32 1
 b4:
-	%2 = icmp ne i32 0, 0
+	%2 = icmp ne i32 1, 0
 	br i1 %2, label %b1, label %b3
 b5:
 	%3 = icmp ne i32 0, 0
@@ -38,7 +38,7 @@ b7:
 	ret i32 2
 b8:
 	%4 = zext i1 0 to i32
-	%5 = icmp ne i32 1, %4
+	%5 = icmp eq i32 1, %4
 	%6 = zext i1 %5 to i32
 	%7 = add i32 %6, 0
 	%8 = icmp ne i32 %7, 0
@@ -52,7 +52,7 @@ b11:
 	%9 = icmp ne i32 0, 0
 	br i1 %9, label %b16, label %b15
 b12:
-	%10 = icmp ne i32 0, 0
+	%10 = icmp ne i32 1, 0
 	br i1 %10, label %b9, label %b11
 b13:
 	call void @putint(i32 4)
@@ -60,7 +60,7 @@ b13:
 b14:
 	br label %b10
 b15:
-	%11 = icmp ne i32 0, 0
+	%11 = icmp ne i32 1, 0
 	br i1 %11, label %b17, label %b19
 b16:
 	%12 = icmp ne i32 5, 0
@@ -79,13 +79,13 @@ b20:
 b21:
 	br label %b18
 b22:
-	%14 = icmp ne i32 0, 0
+	%14 = icmp ne i32 1, 0
 	br i1 %14, label %b24, label %b26
 b23:
 	%15 = icmp ne i32 0, 0
 	br i1 %15, label %b20, label %b22
 b24:
-	%16 = icmp ne i32 0, 0
+	%16 = icmp ne i32 1, 0
 	br i1 %16, label %b27, label %b29
 b25:
 	br label %b21
@@ -94,7 +94,7 @@ b26:
 	ret i32 7
 b27:
 	%17 = zext i1 0 to i32
-	%18 = icmp ne i32 6, %17
+	%18 = icmp eq i32 6, %17
 	%19 = icmp ne i1 %18, 0
 	br i1 %19, label %b30, label %b32
 b28:

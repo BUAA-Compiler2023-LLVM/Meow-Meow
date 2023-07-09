@@ -57,6 +57,13 @@ public class IRBuildFactory {
             case "-" -> a - b;
             case "*" -> a * b;
             case "/" -> a / b;
+            case "%" -> a % b;
+            case "<" -> a < b ? 1 : 0;
+            case "<=" -> a <= b ? 1 : 0;
+            case ">" -> a > b ? 1 : 0;
+            case ">=" -> a >= b ? 1 : 0;
+            case "==" -> a == b ? 1 : 0;
+            case "!=" -> a != b ? 1 : 0;
             default -> 0;
         };
     }
@@ -67,6 +74,13 @@ public class IRBuildFactory {
             case "-" -> a - b;
             case "*" -> a * b;
             case "/" -> a / b;
+            case "%" -> a % b;
+            case "<" -> a < b ? 1 : 0;
+            case "<=" -> a <= b ? 1 : 0;
+            case ">" -> a > b ? 1 : 0;
+            case ">=" -> a >= b ? 1 : 0;
+            case "==" -> a == b ? 1 : 0;
+            case "!=" -> a != b ? 1 : 0;
             default -> 0;
         };
     }

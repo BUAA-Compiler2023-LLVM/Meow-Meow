@@ -137,7 +137,7 @@ public class Visitor {
                 count++;
             } else if (unaryOP.equals("!")) {
                 count = 0;
-                CurValue = f.buildBinaryInst(CurValue, ConstInteger.const0_1, "!=", CurBasicBlock);
+                CurValue = f.buildBinaryInst(CurValue, ConstInteger.const0_1, "==", CurBasicBlock);
             }
         }
         if (count % 2 == 1) {
