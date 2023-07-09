@@ -67,8 +67,9 @@ public enum OP {
             case "Fsub" -> "fsub";
             case "Mul" -> "mul";
             case "Fmul" -> "fmul";
-            case "Div" -> "div";
+            case "Div" -> "sdiv";
             case "Fdiv" -> "fdiv";
+            case "Mod" -> "srem";
             case "Ne" -> "icmp ne";
             case "FNe" -> "fcmp one";
             case "Eq" -> "icmp eq";
