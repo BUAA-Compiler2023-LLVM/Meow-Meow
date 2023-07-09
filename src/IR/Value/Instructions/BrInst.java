@@ -44,17 +44,22 @@ public class BrInst extends Instruction{
     }
 
     @Override
+    public boolean hasName(){
+        return false;
+    }
+
+    @Override
     public String getInstString(){
         StringBuilder sb = new StringBuilder();
         if(type == 2) {
-            sb.append("br i1 ");
-            sb.append(getJudVal().getName()).append(", ");
-            sb.append("label ").append(getTrueBlock().getName()).append(", ");
-            sb.append("label ").append(getFalseBlock().getName());
+            sb.append("br ");
+            sb.append(getJudVal()).append(", ");
+            sb.append("label %").append(getTrueBlock().getName()).append(", ");
+            sb.append("label %").append(getFalseBlock().getName());
         }
         //  直接跳转
         else {
-            sb.append("br label ");
+            sb.append("br label %");
             sb.append(getJumpBlock().getName());
         }
         return sb.toString();

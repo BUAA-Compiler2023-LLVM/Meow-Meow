@@ -29,6 +29,6 @@ public class ConversionInst extends Instruction{
             to = "to i32";
         }
         return getName() + " = " + getOp() + " " +
-                getValue().getName() + " " + to;
+                getValue() + " " + to;
     }
 }

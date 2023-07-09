@@ -116,7 +116,7 @@ public class IRBuildFactory {
         }
     }
 
-    private Value unifyType(Value value, Type targetTy, BasicBlock bb){
+    private Value turnType(Value value, Type targetTy, BasicBlock bb){
         Type type = value.getType();
         if(type == IntegerType.I1 && targetTy == IntegerType.I32){
             return buildConversionInst(value, "zext", bb);
@@ -131,7 +131,7 @@ public class IRBuildFactory {
     }
 
     public Const buildNumber(int val){
-        return new ConstInteger(val, 32);
+        return new ConstInteger(val, IntegerType.I32);
     }
     public Const buildNumber(float val){
         return new ConstFloat(val);
@@ -162,29 +162,15 @@ public class IRBuildFactory {
         Type type;
         Type leftType = left.getType();
         Type rightType = right.getType();
-//        if(leftType.isArrayType()){
-//            leftType = ((ArrayType) leftType).getEleType();
-//        }
-//        if(rightType.isArrayType()){
-//            rightType = ((ArrayType) rightType).getEleType();
-//        }
         if(leftType != rightType) {
-            //  统一两个操作数的type
             //  先将1位的全部转化为I32
             if(leftType == IntegerType.I1){
-                left = unifyType(left, IntegerType.I32, bb);
+                left = turnType(left, IntegerType.I32, bb);
             }
             if(rightType == IntegerType.I1){
-                right = unifyType(right, IntegerType.I32, bb);
+                right = turnType(right, IntegerType.I32, bb);
             }
-            //  此时只可能是I32或F32, 将I32强制转到F32
-            if (leftType == IntegerType.I32) {
-                left = unifyType(left, FloatType.F32, bb);
-            }
-            else if (rightType == IntegerType.I32) {
-                right = unifyType(right, FloatType.F32, bb);
-            }
-            type = FloatType.F32;
+            type = IntegerType.I32;
         }
         else type = leftType;
         if(type.isFloatTy()){
@@ -236,21 +222,18 @@ public class IRBuildFactory {
         Value voidValue = new Value("void", new VoidType());
         RetInst retInst = new RetInst(bb, voidValue);
         bb.addInst(retInst);
-        bb.setTerminal(true);
     }
 
     public RetInst buildRetInst(Value value, BasicBlock bb){
         assert value != null;
         RetInst retInst = new RetInst(bb, value);
         bb.addInst(retInst);
-        bb.setTerminal(true);
         return retInst;
     }
 
     public void buildBrInst(BasicBlock jumpBB, BasicBlock bb){
         BrInst brInst = new BrInst(jumpBB, bb);
         bb.addInst(brInst);
-        bb.setTerminal(true);
         //  前驱后继关系
         bb.getNxtBlocks().clear();
         bb.setNxtBlock(jumpBB);
@@ -260,7 +243,6 @@ public class IRBuildFactory {
     public void buildBrInst(Value judVal, BasicBlock trueBlock, BasicBlock falseBlock, BasicBlock bb){
         BrInst brInst = new BrInst(judVal, trueBlock, falseBlock, bb);
         bb.addInst(brInst);
-        bb.setTerminal(true);
         //  前驱后继关系
         bb.getNxtBlocks().clear();
         bb.setNxtBlock(trueBlock);
@@ -295,7 +277,7 @@ public class IRBuildFactory {
             return new ConstFloat(calculate(left.getValue(), right.getValue(), op));
         }
         else if(_left instanceof ConstInteger left && _right instanceof ConstInteger right){
-            return new ConstInteger(calculate(left.getValue(), right.getValue(), op), 32);
+            return new ConstInteger(calculate(left.getValue(), right.getValue(), op), IntegerType.I32);
         }
         else if(_left instanceof ConstInteger left && _right instanceof ConstFloat right){
             return new ConstFloat(calculate((float) left.getValue(), right.getValue(), op));

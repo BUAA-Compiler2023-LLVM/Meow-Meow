@@ -24,8 +24,12 @@ public class BinaryInst extends Instruction {
     @Override
     public String getInstString(){
         String type_str;
-        if(getType().isIntegerTy()){
+        Type valueTy = getLeftVal().getType();
+        if(valueTy == IntegerType.I32){
             type_str = "i32";
+        }
+        else if(valueTy == IntegerType.I1){
+            type_str = "i1";
         }
         else type_str = "float";
         return getName() + " = " +

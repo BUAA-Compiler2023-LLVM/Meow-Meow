@@ -197,8 +197,12 @@ public class Visitor {
 
             visitExpAST(nowExp, false);
 
-            CurValue = f.buildBinaryInst(CurValue, ConstInteger.const0_1, "!=", CurBasicBlock);
-
+            if(CurValue.getType() == IntegerType.I32){
+                CurValue = f.buildBinaryInst(CurValue, ConstInteger.const0_32, "!=", CurBasicBlock);
+            }
+            else{
+                CurValue = f.buildBinaryInst(CurValue, ConstInteger.const0_1, "!=", CurBasicBlock);
+            }
             f.buildBrInst(CurValue, NxtLAndBlock, FalseBlock, CurBasicBlock);
 
             CurBasicBlock = NxtLAndBlock;
@@ -557,13 +561,18 @@ public class Visitor {
 
         popSymTbl();
 
-        //  删除掉br/ret后面不可达的语句
-        for(IList.INode<BasicBlock, Function> bbNode : CurFunction.getBbs()){
-            BasicBlock bb = bbNode.getValue();
+        //  删除掉br/ret后面不可达的语句以及无语句的bb
+        IList.INode<BasicBlock, Function> itBbNode = CurFunction.getBbs().getHead();
+        while (itBbNode != null){
+            BasicBlock bb = itBbNode.getValue();
+            itBbNode = itBbNode.getNext();
             boolean isTerminal = false;
-            for(IList.INode<Instruction, BasicBlock> instNode : bb.getInsts()){
-                Instruction inst = instNode.getValue();
-                if(isTerminal){
+            IList.INode<Instruction, BasicBlock> itInstNode = bb.getInsts().getHead();
+
+            while (itInstNode != null){
+                Instruction inst = itInstNode.getValue();
+                itInstNode = itInstNode.getNext();
+                if (isTerminal){
                     inst.removeSelf();
                 }
                 else{
@@ -573,9 +582,12 @@ public class Visitor {
                 }
             }
 
-            //  如果没有ret语句，构建一个ret void
+            // 如果没有ret语句，构建一个ret void
             if(!isTerminal){
-                f.buildRetInst(CurBasicBlock);
+                if(CurFunction.getType().isVoidTy()){
+                    f.buildRetInst(CurBasicBlock);
+                }
+                else f.buildRetInst(ConstInteger.const0_32, CurBasicBlock);
             }
         }
     }
