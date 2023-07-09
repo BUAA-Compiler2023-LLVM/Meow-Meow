@@ -71,6 +71,7 @@ public class IRDump {
     //  Name BasicBlock, Inst to let shit llvm run my damn program.
     private static void RenameFunction(Function function){
         int nowNum = 0;
+        int blockNum = 0;
 
         ArrayList<Argument> args = function.getArgs();
         for(Argument arg : args){
@@ -80,7 +81,7 @@ public class IRDump {
         IList<BasicBlock, Function> basicBlocks = function.getBbs();
         for (IList.INode<BasicBlock, Function> bbNode : basicBlocks) {
             BasicBlock basicBlock = bbNode.getValue();
-            basicBlock.setName("%" + nowNum++);
+            basicBlock.setName("b" + blockNum++);
             IList<Instruction, BasicBlock> instructions = basicBlock.getInsts();
             for (IList.INode<Instruction, BasicBlock> instNode : instructions) {
                 Instruction inst = instNode.getValue();

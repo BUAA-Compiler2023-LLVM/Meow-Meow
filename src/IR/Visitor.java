@@ -230,6 +230,9 @@ public class Visitor {
     private void visitStmtAST(AST.Stmt stmtAST){
         if(stmtAST instanceof AST.Return retAST){
             visitExpAST(retAST.getRetExp(), false);
+            if(CurFunction.getName().equals("@main")){
+                f.buildPrintInst(CurValue, CurBasicBlock);
+            }
             CurValue = f.buildRetInst(CurValue, CurBasicBlock);
         }
         else if(stmtAST instanceof AST.Assign assignAST){

@@ -13,6 +13,7 @@ public class BasicBlock extends Value{
     private final IList<Instruction, BasicBlock> insts;
     public static int blockNum = 0;
     private final IList.INode<BasicBlock, Function> node;
+    private boolean isTerminal;
 
     public BasicBlock(){
         super("block" + ++blockNum, new VoidType());
@@ -20,6 +21,7 @@ public class BasicBlock extends Value{
         this.preBlocks = new ArrayList<>();
         this.nxtBlocks = new ArrayList<>();
         this.node = new IList.INode<>(this);
+        this.isTerminal = false;
     }
 
     public BasicBlock(Function function){
@@ -29,6 +31,7 @@ public class BasicBlock extends Value{
         this.preBlocks = new ArrayList<>();
         this.nxtBlocks = new ArrayList<>();
         this.node = new IList.INode<>(this);
+        this.isTerminal = false;
     }
 
     public IList.INode<BasicBlock, Function> getNode(){
@@ -36,8 +39,14 @@ public class BasicBlock extends Value{
     }
 
     //  Main Methods
+    public void setTerminal(boolean isTerminal){
+        this.isTerminal = isTerminal;
+    }
+
     public void addInst(Instruction inst){
-        inst.getNode().insertListEnd(insts);
+        if(!this.isTerminal) {
+            inst.getNode().insertListEnd(insts);
+        }
     }
 
     public void addInstToHead(Instruction inst){

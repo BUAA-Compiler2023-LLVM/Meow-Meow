@@ -111,7 +111,7 @@ public class Lexer {
 
     private void Comment() throws IOException {
         if(c == '/'){
-            while (c != '\n'){
+            while (c != '\n' && c != '\uFFFF'){
                 readChar();
             }
         }

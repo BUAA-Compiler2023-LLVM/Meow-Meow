@@ -6,4 +6,9 @@ public class VoidType extends Type{
     public boolean isVoidTy(){
         return true;
     }
+
+    @Override
+    public String toString(){
+        return "void";
+    }
 }

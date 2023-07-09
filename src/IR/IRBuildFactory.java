@@ -17,6 +17,8 @@ public class IRBuildFactory {
         return f;
     }
 
+    private final Function PrintFunc = new Function("@putint", new VoidType());
+
     private OP str2op(String str){
         return switch (str){
             case "+" -> OP.Add;
@@ -139,6 +141,12 @@ public class IRBuildFactory {
         return new GlobalVar("@" + name, new PointerType(type), value);
     }
 
+    public void buildPrintInst(Value value, BasicBlock bb){
+        ArrayList<Value> values = new ArrayList<>();
+        values.add(value);
+        buildCallInst(PrintFunc, values, bb);
+    }
+
     public ConversionInst buildConversionInst(Value value, String op, BasicBlock bb){
         Type type = switch (op) {
             case "ftoi", "zext" -> IntegerType.I32;
@@ -228,19 +236,21 @@ public class IRBuildFactory {
         Value voidValue = new Value("void", new VoidType());
         RetInst retInst = new RetInst(bb, voidValue);
         bb.addInst(retInst);
+        bb.setTerminal(true);
     }
 
     public RetInst buildRetInst(Value value, BasicBlock bb){
         assert value != null;
         RetInst retInst = new RetInst(bb, value);
         bb.addInst(retInst);
+        bb.setTerminal(true);
         return retInst;
     }
 
     public void buildBrInst(BasicBlock jumpBB, BasicBlock bb){
         BrInst brInst = new BrInst(jumpBB, bb);
         bb.addInst(brInst);
-
+        bb.setTerminal(true);
         //  前驱后继关系
         bb.getNxtBlocks().clear();
         bb.setNxtBlock(jumpBB);
@@ -250,7 +260,7 @@ public class IRBuildFactory {
     public void buildBrInst(Value judVal, BasicBlock trueBlock, BasicBlock falseBlock, BasicBlock bb){
         BrInst brInst = new BrInst(judVal, trueBlock, falseBlock, bb);
         bb.addInst(brInst);
-
+        bb.setTerminal(true);
         //  前驱后继关系
         bb.getNxtBlocks().clear();
         bb.setNxtBlock(trueBlock);

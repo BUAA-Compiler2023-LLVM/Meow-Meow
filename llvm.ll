@@ -13,12 +13,19 @@ declare void @putch(i32)
 declare float @getfloat()
 declare i32 @parallel_start()
 declare void @parallel_end(i32)
-@aa = global [10 x [10 x i32]] zeroinitializer
-@a = global i32 3
-@b = global i32 5
 define i32 @main() {
-%0:
-	%1 = load i32, i32* @a
-	ret i32 %1
+b0:
+	%0 = alloca i32
+	%1 = alloca i32
+	store i32 8, i32* %1
+	%2 = alloca i32
+	store i32 12, i32* %2
+	%3 = load i32, i32* %1
+	%4 = load i32, i32* %2
+	%5 = add i32 %3, %4
+	store i32 %5, i32* %0
+	%6 = load i32, i32* %0
+	call void @putint(i32 %6)
+	ret i32 %6
 }
 

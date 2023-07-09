@@ -30,7 +30,7 @@ public class BinaryInst extends Instruction {
         else type_str = "float";
         return getName() + " = " +
                 getOp() + " " + type_str + " " +
-                getLeftVal().getName() + " " +
+                getLeftVal().getName() + ", " +
                 getRightVal().getName();
     }
 }
