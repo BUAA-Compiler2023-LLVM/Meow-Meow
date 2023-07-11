@@ -16,12 +16,12 @@ public class Compiler {
 
         IRDump.DumpModule(irModule);
 
-        PassManager passManager = PassManager.getInstance();
-        passManager.runIRPasses(irModule);
+//        PassManager passManager = PassManager.getInstance();
+//        passManager.runIRPasses(irModule);
 
-        Backend backend = new Backend(irModule);
+//        Backend backend = new Backend(irModule);
 
 
-        backend.print();
+//        backend.print();
     }
 }
