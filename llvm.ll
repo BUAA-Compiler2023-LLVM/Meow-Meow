@@ -15,26 +15,23 @@ declare i32 @parallel_start()
 declare void @parallel_end(i32)
 define i32 @main() {
 b0:
-	%0 = alloca [4 x [2 x i32]]
-	%1 = getelementptr [4 x [2 x i32]], [4 x [2 x i32]]* %0, i32 0, i32 0, i32 0
-	store i32 0, i32* %1
-	%2 = getelementptr [4 x [2 x i32]], [4 x [2 x i32]]* %0, i32 0, i32 0, i32 1
-	store i32 0, i32* %2
-	%3 = getelementptr [4 x [2 x i32]], [4 x [2 x i32]]* %0, i32 0, i32 0, i32 2
-	store i32 0, i32* %3
-	%4 = getelementptr [4 x [2 x i32]], [4 x [2 x i32]]* %0, i32 0, i32 0, i32 3
-	store i32 0, i32* %4
-	%5 = getelementptr [4 x [2 x i32]], [4 x [2 x i32]]* %0, i32 0, i32 0, i32 4
-	store i32 0, i32* %5
-	%6 = getelementptr [4 x [2 x i32]], [4 x [2 x i32]]* %0, i32 0, i32 0, i32 5
-	store i32 0, i32* %6
-	%7 = getelementptr [4 x [2 x i32]], [4 x [2 x i32]]* %0, i32 0, i32 0, i32 6
-	store i32 0, i32* %7
-	%8 = getelementptr [4 x [2 x i32]], [4 x [2 x i32]]* %0, i32 0, i32 0, i32 7
-	store i32 0, i32* %8
-	%9 = getelementptr [4 x [2 x i32]], [4 x [2 x i32]]* %0, i32 0, i32 0, i32 0
-	%10 = load i32, i32* %9
-	call void @putint(i32 %10)
-	ret i32 %10
+	%0 = alloca i32
+	store i32 10, i32* %0
+	%1 = load i32, i32* %0
+	%2 = add i32 %1, 1
+	store i32 %2, i32* %0
+	%3 = load i32, i32* %0
+	%4 = icmp eq i32 %3, 11
+	%5 = icmp ne i1 %4, 0
+	br i1 %5, label %b1, label %b3
+b1:
+	%6 = load i32, i32* %0
+	call void @putint(i32 %6)
+	ret i32 %6
+b2:
+	ret i32 0
+b3:
+	call void @putint(i32 0)
+	ret i32 0
 }
 

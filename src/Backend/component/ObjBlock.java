@@ -32,4 +32,11 @@ public class ObjBlock {
             System.out.println(i.toString());
         }
     }
+
+    public String getName() {
+        return name;
+    }
+    public void setName(String name) {
+        this.name = name;
+    }
 }

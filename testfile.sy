@@ -1,5 +1,8 @@
-
-int main(){
-    int e[4][2] = {};
-    return e[0][0];
+int main() {
+    int x = 10;
+    x = x + 1;
+    if (x == 11)
+        return x;
+    else
+        return 0;
 }

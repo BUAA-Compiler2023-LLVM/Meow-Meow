@@ -99,6 +99,32 @@ public class IrParser {
             if(irInst.getOp() == OP.Add)
                 parseAdd((BinaryInst) irInst, irBlock, irFunction);
         }
+        else if(irInst instanceof BrInst)
+            parseBr((BrInst) irInst, irBlock, irFunction);
+    }
+
+    private void parseBr(BrInst inst, BasicBlock irBlock, Function irFunction) {
+        ObjBlock objBlock = bMap.get(irBlock);
+
+        if(inst.getJudVal() != null) {
+            Value irCondition = inst.getJudVal();
+            BasicBlock irTrueBlock = inst.getTrueBlock();
+            BasicBlock irFalseBlock = inst.getFalseBlock();
+
+            if(irCondition instanceof ConstInteger) {
+                int condImm = ((ConstInteger) irCondition).getValue();
+                if(condImm > 0) {
+
+                }
+            }
+            else if(irCondition instanceof CmpInst) {
+
+            }
+        }
+        else {
+
+        }
+
     }
 
     private void parseAdd(BinaryInst inst, BasicBlock irBlock, Function irFunction) {
