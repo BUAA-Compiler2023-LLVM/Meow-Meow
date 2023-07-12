@@ -464,17 +464,10 @@ public class Visitor {
         }
         ArrayList<Value> values = new ArrayList<>();
         if(init instanceof AST.InitArray initArray){
-            //  flagValue标志某处是否是填充的0
-            Value flagValue = new Value("flag", VoidType.voidType);
-            values = visitInitArray(dimIndexs, initArray, flagValue, isConst);
+            values = visitInitArray(dimIndexs, initArray, fillValue, isConst);
         }
 
         if(isGlobal){
-            for(int i = 0; i < values.size(); i++){
-                if(values.get(i).getName().equals("flag")){
-                    values.set(i, fillValue);
-                }
-            }
             CurValue = f.buildGlobalArray(ident, type, dimIndexs, values);
             globalVars.add((GlobalVar) CurValue);
             pushSymbol(ident, CurValue);
@@ -492,11 +485,6 @@ public class Visitor {
             }
             for(int i = 0; i < values.size(); i++){
                 Value value = values.get(i);
-                //  局部变量没初始化似乎默认需要填0
-                if(value.getName().equals("flag")){
-                    value = ConstInteger.const0_32;
-//                    continue;
-                }
                 indexs.add(f.buildNumber(i));
                 CurValue = f.buildGepInst(baseValue, indexs, CurBasicBlock);
                 indexs.remove(indexs.size() - 1);

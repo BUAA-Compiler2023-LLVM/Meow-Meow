@@ -13,9 +13,10 @@ declare void @putch(i32)
 declare float @getfloat()
 declare i32 @parallel_start()
 declare void @parallel_end(i32)
+@b = global [5 x [3 x i32]] [[3 x i32] [i32 0, i32 0, i32 0], [3 x i32] [i32 0, i32 0, i32 0], [3 x i32] [i32 0, i32 0, i32 0], [3 x i32] [i32 0, i32 0, i32 0], [3 x i32] [i32 0, i32 0, i32 0]]
 define i32 @main() {
 b0:
-	call void @putint(i32 3)
-	ret i32 3
+	call void @putint(i32 5)
+	ret i32 5
 }
 
