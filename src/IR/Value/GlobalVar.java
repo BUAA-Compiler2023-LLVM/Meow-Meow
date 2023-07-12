@@ -61,8 +61,7 @@ public class GlobalVar extends Value{
         return sb.toString();
     }
 
-    @Override
-    public String toString(){
+    public String toInstString(){
         String prefix = getName() + " = global ";
         PointerType type = (PointerType) getType();
         Type eleType = type.getEleType();
@@ -79,4 +78,5 @@ public class GlobalVar extends Value{
             return prefix + getValue();
         }
     }
+
 }

@@ -19,8 +19,6 @@ public enum TokenType {
     AND,    //  "&&"
     OR,     //  "||"
     WHILETK,    //  "while"
-    GETINTTK,   //  "getint"
-    PRINTFTK,   //  "printf"
     RETURNTK,   //  "return"
     PLUS,   //  "+"
     MINU,   //  "-"

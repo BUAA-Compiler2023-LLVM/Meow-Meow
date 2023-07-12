@@ -21,7 +21,7 @@ public class IRDump {
     }
 
     private static void DumpGlobalVar(GlobalVar globalVar) throws IOException {
-        out.write(globalVar.toString());
+        out.write(globalVar.toInstString());
         out.write("\n");
     }
 

@@ -62,8 +62,6 @@ public class Lexer {
             case "if" -> new Token(TokenType.IFTK, ident);
             case "else" -> new Token(TokenType.ELSETK, ident);
             case "while" -> new Token(TokenType.WHILETK, ident);
-            case "getint" -> new Token(TokenType.GETINTTK, ident);
-            case "printf" -> new Token(TokenType.PRINTFTK, ident);
             case "return" -> new Token(TokenType.RETURNTK, ident);
             case "void" -> new Token(TokenType.VOIDTK, ident);
             default -> new Token(TokenType.IDENFR, ident);
