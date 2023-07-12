@@ -14,13 +14,13 @@ public class BrInst extends Instruction{
     private BasicBlock JumpBlock;
 
     public BrInst(BasicBlock jumpBb, BasicBlock bb) {
-        super("", new VoidType(), OP.Br, bb);
+        super("", VoidType.voidType, OP.Br, bb);
         this.JumpBlock = jumpBb;
         this.type = 1;
     }
 
     public BrInst(Value value, BasicBlock trueBlock, BasicBlock falseBlock, BasicBlock bb){
-        super("", new VoidType(), OP.Br, bb);
+        super("", VoidType.voidType, OP.Br, bb);
         this.TrueBlock = trueBlock;
         this.FalseBlock = falseBlock;
         this.judVal = value;

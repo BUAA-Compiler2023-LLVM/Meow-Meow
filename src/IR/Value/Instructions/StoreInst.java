@@ -12,7 +12,7 @@ public class StoreInst extends Instruction{
     private final Value pointer;
 
     public StoreInst(Value value, Value pointer,BasicBlock basicBlock) {
-        super("%" + (++Value.valNumber), new VoidType(), OP.Store, basicBlock);
+        super("%" + (++Value.valNumber), VoidType.voidType, OP.Store, basicBlock);
         this.addOperand(value);
         this.addOperand(pointer);
         this.value = value;

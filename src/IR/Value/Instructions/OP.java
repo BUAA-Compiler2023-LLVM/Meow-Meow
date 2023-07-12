@@ -74,13 +74,13 @@ public enum OP {
             case "FNe" -> "fcmp one";
             case "Eq" -> "icmp eq";
             case "FEq" -> "fcmp oeq";
-            case "Lt" -> "icmp lt";
+            case "Lt" -> "icmp slt";
             case "FLt" -> "fcmp olt";
-            case "Le" -> "icmp le";
+            case "Le" -> "icmp sle";
             case "FLe" -> "fcmp ole";
-            case "Gt" -> "icmp gt";
+            case "Gt" -> "icmp sgt";
             case "FGt" -> "fcmp ogt";
-            case "Ge" -> "icmp ge";
+            case "Ge" -> "icmp sge";
             case "FGe" -> "fcmp oge";
 
             case "Ftoi" -> "fptosi";

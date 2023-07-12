@@ -1,8 +1,5 @@
-int main() {
-    int x = 10;
-    x = x + 1;
-    if (x == 11)
-        return x;
-    else
-        return 0;
+const int a[5]={0,1,2,3,4};
+
+int main(){
+    return a[4];
 }

@@ -22,6 +22,14 @@ public class Visitor {
     private final IRBuildFactory f = IRBuildFactory.getInstance();
     private final ArrayList<GlobalVar> globalVars = new ArrayList<>();
 
+    //  库函数
+    private final Function PrintFunc = new Function("@putint", VoidType.voidType);
+    private final Function InputFunc = new Function("@getint", IntegerType.I32);
+    private final Function PrintChFunc = new Function("@putch", VoidType.voidType);
+    private final Function InputChFunc = new Function("@getch", IntegerType.I32);
+    private final Function PrintArrFunc = new Function("@putarray", VoidType.voidType);
+    private final Function InputArrFunc = new Function("@getarray", IntegerType.I32);
+
     //  从符号表中查找某个ident
     private Value find(String ident){
         int len = symTbls.size();
@@ -32,7 +40,17 @@ public class Visitor {
                 return res;
             }
         }
-        return null;
+
+        return switch (ident) {
+            case "getint" -> InputFunc;
+            case "putint" -> PrintFunc;
+            case "getch" -> InputChFunc;
+            case "putch" -> PrintChFunc;
+            case "getarray" -> InputArrFunc;
+            case "putarray" -> PrintArrFunc;
+            default -> null;
+        };
+
     }
     //  向符号表中放入元素
     private void pushSymbol(String ident, Value value){
@@ -235,7 +253,9 @@ public class Visitor {
         if(stmtAST instanceof AST.Return retAST){
             visitExpAST(retAST.getRetExp(), false);
             if(CurFunction.getName().equals("@main")){
-                f.buildPrintInst(CurValue, CurBasicBlock);
+                ArrayList<Value> values = new ArrayList<>();
+                values.add(CurValue);
+                f.buildCallInst(PrintFunc, values, CurBasicBlock);
             }
             CurValue = f.buildRetInst(CurValue, CurBasicBlock);
         }
@@ -445,7 +465,7 @@ public class Visitor {
         ArrayList<Value> values = new ArrayList<>();
         if(init instanceof AST.InitArray initArray){
             //  flagValue标志某处是否是填充的0
-            Value flagValue = new Value("flag", new VoidType());
+            Value flagValue = new Value("flag", VoidType.voidType);
             values = visitInitArray(dimIndexs, initArray, flagValue, isConst);
         }
 

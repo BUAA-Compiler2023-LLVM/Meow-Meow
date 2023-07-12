@@ -15,7 +15,7 @@ public class BasicBlock extends Value{
     private final IList.INode<BasicBlock, Function> node;
 
     public BasicBlock(){
-        super("block" + ++blockNum, new VoidType());
+        super("block" + ++blockNum, VoidType.voidType);
         this.insts = new IList<>(this);
         this.preBlocks = new ArrayList<>();
         this.nxtBlocks = new ArrayList<>();
@@ -23,7 +23,7 @@ public class BasicBlock extends Value{
     }
 
     public BasicBlock(Function function){
-        super("block" + ++blockNum, new VoidType());
+        super("block" + ++blockNum, VoidType.voidType);
         this.insts = new IList<>(this);
         this.parentFunc = function;
         this.preBlocks = new ArrayList<>();

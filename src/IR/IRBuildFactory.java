@@ -17,7 +17,6 @@ public class IRBuildFactory {
         return f;
     }
 
-    private final Function PrintFunc = new Function("@putint", new VoidType());
 
     private OP str2op(String str){
         return switch (str){
@@ -155,12 +154,6 @@ public class IRBuildFactory {
         return new GlobalVar("@" + name, new PointerType(type), value);
     }
 
-    public void buildPrintInst(Value value, BasicBlock bb){
-        ArrayList<Value> values = new ArrayList<>();
-        values.add(value);
-        buildCallInst(PrintFunc, values, bb);
-    }
-
     public ConversionInst buildConversionInst(Value value, String op, BasicBlock bb){
         Type type = switch (op) {
             case "ftoi", "zext" -> IntegerType.I32;
@@ -216,7 +209,7 @@ public class IRBuildFactory {
         if (typeStr.equals("int")) argument = new Argument(name, IntegerType.I32, parentFunc);
         else if (typeStr.equals("float")) argument = new Argument(name, FloatType.F32, parentFunc);
         else if(typeStr.equals("int*")) argument = new Argument(name, new PointerType(IntegerType.I32), parentFunc);
-        else argument = new Argument(name, new VoidType(), parentFunc);
+        else argument = new Argument(name, VoidType.voidType, parentFunc);
         parentFunc.addArg(argument);
         return argument;
     }
@@ -233,7 +226,7 @@ public class IRBuildFactory {
     }
 
     public void buildRetInst(BasicBlock bb){
-        Value voidValue = new Value("void", new VoidType());
+        Value voidValue = new Value("void", VoidType.voidType);
         RetInst retInst = new RetInst(bb, voidValue);
         bb.addInst(retInst);
     }
@@ -277,7 +270,7 @@ public class IRBuildFactory {
             function = new Function(name, IntegerType.I32);
         }
         else {
-            function = new Function(name, new VoidType());
+            function = new Function(name, VoidType.voidType);
         }
         module.addFunction(function);
         return function;
