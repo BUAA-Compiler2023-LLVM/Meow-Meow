@@ -7,7 +7,6 @@ public enum TokenType {
     DECCON, //  dec-const
     FLOATCON,   //  float-const
     STRCON, // string-const
-    MAINTK, // "main"
     CONSTTK,    //  "const"
     INTTK,  //  "int"
     FLOATTK,    //  "float"

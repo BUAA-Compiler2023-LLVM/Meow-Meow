@@ -53,7 +53,6 @@ public class Lexer {
         in.unread(c);
         String ident = identBuilder.toString();
         return switch (ident) {
-            case "main" -> new Token(TokenType.MAINTK, ident);
             case "const" -> new Token(TokenType.CONSTTK, ident);
             case "int" -> new Token(TokenType.INTTK, ident);
             case "float" -> new Token(TokenType.FLOATTK, ident);

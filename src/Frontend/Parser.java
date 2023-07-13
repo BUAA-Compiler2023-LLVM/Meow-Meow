@@ -25,7 +25,7 @@ public class Parser {
 
     private AST.FuncDef parseFuncDef(){
         Token type = tokenList.consume(TokenType.VOIDTK, TokenType.INTTK, TokenType.FLOATTK);
-        Token ident = tokenList.consume(TokenType.IDENFR, TokenType.MAINTK);
+        Token ident = tokenList.consume(TokenType.IDENFR);
         ArrayList<AST.FuncFParam> fParams = new ArrayList<>();
         tokenList.consume(TokenType.LPARENT);
         if (!tokenList.get().getType().equals(TokenType.RPARENT)) {

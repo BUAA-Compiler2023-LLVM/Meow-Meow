@@ -31,6 +31,8 @@ public class Visitor {
     private final Function PrintArrFunc = new Function("@putarray", VoidType.voidType);
     private final Function InputArrFunc = new Function("@getarray", IntegerType.I32);
 
+    private boolean isPrint = false;
+
     //  从符号表中查找某个ident
     private Value find(String ident){
         int len = symTbls.size();
@@ -40,6 +42,10 @@ public class Visitor {
             if(res != null){
                 return res;
             }
+        }
+
+        if(ident.equals("putint") || ident.equals("putch") || ident.equals("putarray")){
+            isPrint = true;
         }
 
         return switch (ident) {
@@ -166,7 +172,8 @@ public class Visitor {
         visitPrimaryExpAST(unaryExpAST.getPrimary(), isConst);
         ArrayList<String> unaryOPs = unaryExpAST.getUnaryOps();
         int count = 0;
-        for (String unaryOP : unaryOPs) {
+        for (int i = unaryOPs.size() - 1; i >= 0; i--) {
+            String unaryOP = unaryOPs.get(i);
             if (unaryOP.equals("-")) {
                 count++;
             } else if (unaryOP.equals("!")) {
@@ -270,9 +277,15 @@ public class Visitor {
             if(retAST.getRetExp() != null) {
                 visitExpAST(retAST.getRetExp(), false);
                 if(CurFunction.getName().equals("@main")){
-                    ArrayList<Value> values = new ArrayList<>();
-                    values.add(CurValue);
-                    f.buildCallInst(PrintFunc, values, CurBasicBlock);
+                    if(isPrint){
+                        ArrayList<Value> values = new ArrayList<>();
+                        values.add(new ConstInteger(10, IntegerType.I32));
+                        f.buildCallInst(PrintChFunc, values, CurBasicBlock);
+                    }
+                    //  输出返回值
+                    ArrayList<Value> values_2 = new ArrayList<>();
+                    values_2.add(CurValue);
+                    f.buildCallInst(PrintFunc, values_2, CurBasicBlock);
                 }
                 CurValue = f.buildRetInst(CurValue, CurBasicBlock);
             }
