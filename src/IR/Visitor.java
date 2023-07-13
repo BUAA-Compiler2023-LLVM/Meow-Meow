@@ -9,6 +9,7 @@ import IR.Value.Instructions.Instruction;
 import IR.Value.Instructions.RetInst;
 import Utils.DataStruct.IList;
 
+import java.awt.*;
 import java.util.ArrayList;
 import java.util.HashMap;
 
@@ -80,38 +81,53 @@ public class Visitor {
     private void visitLValAST(AST.LVal lValAST, boolean isFetch){
         String ident = lValAST.getIdent();
         CurValue = find(ident);
-        boolean isArrayLVal = false;
+        boolean isParam = false;
 
         assert CurValue != null;
-        if(CurValue.getType() instanceof PointerType){
+        /*
+        * 传入的LVal参数有几种情况
+        * 1. 普通的i32*
+        * 2. 数组[4 * i32]*
+        * 3. 数组参数 [4 * i32]**
+        * 4. 数组参数 i32**
+        * 5. 常数
+        *
+        * 注意，数组参数一定和isFetch=True配套出现，
+        * 因为不会出现为数组指针赋值的情况
+        *
+        * */
+        if(CurValue.getType().isPointerType()) {
             Type eleType = ((PointerType) CurValue.getType()).getEleType();
-            //  数组参数会出现**双层指针
-            if(eleType instanceof PointerType){
-                CurValue = f.buildLoadInst(CurValue, CurBasicBlock);
-                isArrayLVal = true;
-            }
+            //  处理数组参数
 
-            if(lValAST.getIndexes().size() != 0){
-                Value TmpValue = CurValue;
+            //  处理indexes
+            if (lValAST.getIndexes().size() != 0) {
                 ArrayList<Value> indexs = new ArrayList<>();
-                if(!isArrayLVal) {
+                if (eleType instanceof PointerType) {
+                    CurValue = f.buildLoadInst(CurValue, CurBasicBlock);
+                }
+                else {
                     indexs.add(ConstInteger.const0_32);
                 }
-                for(AST.Exp exp : lValAST.getIndexes()){
+                Value TmpValue = CurValue;
+                for (AST.Exp exp : lValAST.getIndexes()) {
                     visitExpAST(exp, false);
                     indexs.add(CurValue);
                 }
                 CurValue = f.buildGepInst(TmpValue, indexs, CurBasicBlock);
             }
 
-            if(isFetch) {
-//                if(eleType.isArrayType()){
-//                    ArrayList<Value> indexs = new ArrayList<>();
-//                    indexs.add(ConstInteger.const0_32);
-//                    indexs.add(ConstInteger.const0_32);
-//                    CurValue = f.buildGepInst(CurValue, indexs, CurBasicBlock);
-//                }
-                CurValue = f.buildLoadInst(CurValue, CurBasicBlock);
+            if (isFetch) {
+                Type type = ((PointerType) CurValue.getType()).getEleType();
+                if (type.isArrayType()) {
+                    ArrayList<Value> indexs = new ArrayList<>();
+                    indexs.add(ConstInteger.const0_32);
+                    indexs.add(ConstInteger.const0_32);
+                    CurValue = f.buildGepInst(CurValue, indexs, CurBasicBlock);
+                }
+                else  {
+                    CurValue = f.buildLoadInst(CurValue, CurBasicBlock);
+                }
             }
         }
     }
@@ -251,13 +267,18 @@ public class Visitor {
 
     private void visitStmtAST(AST.Stmt stmtAST){
         if(stmtAST instanceof AST.Return retAST){
-            visitExpAST(retAST.getRetExp(), false);
-            if(CurFunction.getName().equals("@main")){
-                ArrayList<Value> values = new ArrayList<>();
-                values.add(CurValue);
-                f.buildCallInst(PrintFunc, values, CurBasicBlock);
+            if(retAST.getRetExp() != null) {
+                visitExpAST(retAST.getRetExp(), false);
+                if(CurFunction.getName().equals("@main")){
+                    ArrayList<Value> values = new ArrayList<>();
+                    values.add(CurValue);
+                    f.buildCallInst(PrintFunc, values, CurBasicBlock);
+                }
+                CurValue = f.buildRetInst(CurValue, CurBasicBlock);
             }
-            CurValue = f.buildRetInst(CurValue, CurBasicBlock);
+            else{
+                f.buildRetInst(CurBasicBlock);
+            }
         }
         else if(stmtAST instanceof AST.Assign assignAST){
             visitLValAST(assignAST.getLVal(), false);

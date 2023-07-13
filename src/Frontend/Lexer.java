@@ -86,7 +86,7 @@ public class Lexer {
         boolean isOct;
         StringBuilder numBuilder = new StringBuilder();
         isOct = (c == '0');
-        while (isNumber(c) || c == 'x' || c == 'X' || c == '.'){
+        while (isNumber(c) || c == 'x' || c == 'X' || c == '.' || (c >= 'a' && c <= 'f') || (c >= 'A' && c <= 'F')){
             numBuilder.append(c);
             if(c == '.'){
                 isFloat = true;

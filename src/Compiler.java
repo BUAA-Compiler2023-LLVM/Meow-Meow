@@ -20,8 +20,6 @@ public class Compiler {
 //        passManager.runIRPasses(irModule);
 
 //        Backend backend = new Backend(irModule);
-
-
 //        backend.print();
     }
 }
