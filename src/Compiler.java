@@ -16,7 +16,7 @@ public class Compiler {
         IRModule irModule = new Visitor().visitAST(compAST);
 
         PassManager passManager = PassManager.getInstance();
-//        passManager.runIRPasses(irModule);
+        passManager.runIRPasses(irModule);
 
         IRDump.DumpModule(irModule);
 

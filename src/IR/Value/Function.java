@@ -15,6 +15,11 @@ public class Function extends Value{
     private HashMap<BasicBlock, HashSet<BasicBlock>> dom;
     private boolean hasSideEffect;
     private boolean useGV;
+    private boolean canGVN = false;
+    private boolean isLibFunc = false;
+    private final HashSet<GlobalVar> loadGVs;
+    private final HashSet<GlobalVar> storeGVs;
+
     //  callerList记录调用这个function的其他函数
     private final ArrayList<Function> callerList;
     //  calleeList记录这个function调用的其他函数
@@ -27,6 +32,8 @@ public class Function extends Value{
         this.args = new ArrayList<>();
         this.callerList = new ArrayList<>();
         this.calleeList = new ArrayList<>();
+        this.loadGVs = new HashSet<>();
+        this.storeGVs = new HashSet<>();
     }
     public Function(String name, Type type, IList<BasicBlock, Function> bbs, ArrayList<Argument> args){
         super(name, type);
@@ -34,6 +41,8 @@ public class Function extends Value{
         this.args = args;
         this.callerList = new ArrayList<>();
         this.calleeList = new ArrayList<>();
+        this.loadGVs = new HashSet<>();
+        this.storeGVs = new HashSet<>();
     }
 
     public void setIdoms(HashMap<BasicBlock, ArrayList<BasicBlock>> idoms) {
@@ -93,6 +102,34 @@ public class Function extends Value{
     }
 
     public boolean isLibFunction(){
-        return this.getName().equals("@getint") || this.getName().equals("@memset") || this.getName().equals("@printf");
+        return isLibFunc;
+    }
+
+    public void setAsLibFunction(){
+        this.isLibFunc = true;
+    }
+
+    public boolean isHasSideEffect(){
+        return hasSideEffect;
+    }
+
+    public boolean isUseGV(){
+        return useGV;
+    }
+
+    public void addLoadGV(GlobalVar gv){
+        loadGVs.add(gv);
+    }
+
+    public void addStoreGV(GlobalVar gv){
+        storeGVs.add(gv);
+    }
+
+    public HashSet<GlobalVar> getLoadGVs(){
+        return loadGVs;
+    }
+
+    public HashSet<GlobalVar> getStoreGVs(){
+        return storeGVs;
     }
 }

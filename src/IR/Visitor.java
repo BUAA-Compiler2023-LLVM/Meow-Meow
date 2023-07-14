@@ -679,6 +679,18 @@ public class Visitor {
 
         InputArrFunc.addArg(new Argument("x", new PointerType(IntegerType.I32), InputArrFunc));
         InputFArrFunc.addArg(new Argument("x", new PointerType(FloatType.F32), InputFArrFunc));
+
+        PrintFunc.setAsLibFunction();
+        PrintChFunc.setAsLibFunction();
+        PrintFloatFunc.setAsLibFunction();
+        PrintArrFunc.setAsLibFunction();
+        PrintFArrFunc.setAsLibFunction();
+
+        InputArrFunc.setAsLibFunction();
+        InputChFunc.setAsLibFunction();
+        InputFloatFunc.setAsLibFunction();
+        InputArrFunc.setAsLibFunction();
+        InputFArrFunc.setAsLibFunction();
     }
 
     public IRModule visitAST(AST compAST) {
