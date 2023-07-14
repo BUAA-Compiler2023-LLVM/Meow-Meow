@@ -8,23 +8,18 @@ import IR.Value.Value;
 
 public class StoreInst extends Instruction{
 
-    private final Value value;
-    private final Value pointer;
-
     public StoreInst(Value value, Value pointer,BasicBlock basicBlock) {
         super("%" + (++Value.valNumber), VoidType.voidType, OP.Store, basicBlock);
         this.addOperand(value);
         this.addOperand(pointer);
-        this.value = value;
-        this.pointer = pointer;
     }
 
     public Value getValue(){
-        return value;
+        return getOperand(0);
     }
 
     public Value getPointer(){
-        return pointer;
+        return getOperand(1);
     }
 
     @Override
@@ -34,6 +29,6 @@ public class StoreInst extends Instruction{
 
     @Override
     public String getInstString(){
-        return "store " + value + ", " + pointer;
+        return "store " + getValue() + ", " + getPointer();
     }
 }

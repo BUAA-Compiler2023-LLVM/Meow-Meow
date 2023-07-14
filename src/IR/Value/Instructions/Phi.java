@@ -40,7 +40,7 @@ public class Phi extends Instruction {
             }
             sb.append("[ ");
             sb.append(useValue.getName()).append(", ");
-            sb.append(getParentbb().getPreBlocks().get(i).getName()).append(" ]");
+            sb.append("%").append(getParentbb().getPreBlocks().get(i).getName()).append(" ]");
         }
         return sb.toString();
     }
