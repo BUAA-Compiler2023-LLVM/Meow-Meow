@@ -696,8 +696,6 @@ public class Visitor {
                 visitDeclAST(declAST, true);
             }
         }
-
         return module;
     }
-
 }

@@ -276,6 +276,12 @@ public class IRBuildFactory {
 //        falseBlock.setPreBlock(bb);
     }
 
+    public Phi buildPhi(BasicBlock bb, Type type, ArrayList<Value> values){
+        Phi phi = new Phi(type, bb, values);
+        bb.addInstToHead(phi);
+        return phi;
+    }
+
     public BasicBlock buildBasicBlock(Function parentFunc){
         BasicBlock bb = new BasicBlock(parentFunc);
         parentFunc.getBbs().add(bb.getNode());
