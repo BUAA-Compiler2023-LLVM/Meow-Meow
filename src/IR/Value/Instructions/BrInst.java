@@ -43,6 +43,10 @@ public class BrInst extends Instruction{
         return JumpBlock;
     }
 
+    public boolean isJump(){
+        return type == 1;
+    }
+
     @Override
     public boolean hasName(){
         return false;

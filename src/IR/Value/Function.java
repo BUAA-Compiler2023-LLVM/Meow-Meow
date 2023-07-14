@@ -5,10 +5,14 @@ import IR.Type.Type;
 import Utils.DataStruct.IList;
 
 import java.util.ArrayList;
+import java.util.HashMap;
+import java.util.HashSet;
 
 public class Function extends Value{
     private final IList<BasicBlock, Function> bbs;
     private final ArrayList<Argument> args;
+    private HashMap<BasicBlock, ArrayList<BasicBlock>> idoms;
+    private HashMap<BasicBlock, HashSet<BasicBlock>> dom;
     private boolean hasSideEffect;
     private boolean useGV;
     //  callerList记录调用这个function的其他函数
@@ -30,6 +34,25 @@ public class Function extends Value{
         this.args = args;
         this.callerList = new ArrayList<>();
         this.calleeList = new ArrayList<>();
+    }
+
+    public void setIdoms(HashMap<BasicBlock, ArrayList<BasicBlock>> idoms) {
+        this.idoms = idoms;
+        for(IList.INode<BasicBlock, Function> bbNode : bbs){
+            BasicBlock bb = bbNode.getValue();
+            bb.setIdoms(idoms.get(bb));
+            for(BasicBlock idomBb : idoms.get(bb)){
+                idomBb.setIdominator(bb);
+            }
+        }
+    }
+
+    public HashMap<BasicBlock, ArrayList<BasicBlock>> getIdoms() {
+        return idoms;
+    }
+
+    public void setDom(HashMap<BasicBlock, HashSet<BasicBlock>> dom){
+        this.dom = dom;
     }
 
     public void addCaller(Function function){

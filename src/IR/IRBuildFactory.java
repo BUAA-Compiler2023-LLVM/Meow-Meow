@@ -259,21 +259,21 @@ public class IRBuildFactory {
     public void buildBrInst(BasicBlock jumpBB, BasicBlock bb){
         BrInst brInst = new BrInst(jumpBB, bb);
         bb.addInst(brInst);
-        //  前驱后继关系
-        bb.getNxtBlocks().clear();
-        bb.setNxtBlock(jumpBB);
-        jumpBB.setPreBlock(bb);
+//        //  前驱后继关系
+//        bb.getNxtBlocks().clear();
+//        bb.setNxtBlock(jumpBB);
+//        jumpBB.setPreBlock(bb);
     }
 
     public void buildBrInst(Value judVal, BasicBlock trueBlock, BasicBlock falseBlock, BasicBlock bb){
         BrInst brInst = new BrInst(judVal, trueBlock, falseBlock, bb);
         bb.addInst(brInst);
-        //  前驱后继关系
-        bb.getNxtBlocks().clear();
-        bb.setNxtBlock(trueBlock);
-        bb.setNxtBlock(falseBlock);
-        trueBlock.setPreBlock(bb);
-        falseBlock.setPreBlock(bb);
+//        //  前驱后继关系
+//        bb.getNxtBlocks().clear();
+//        bb.setNxtBlock(trueBlock);
+//        bb.setNxtBlock(falseBlock);
+//        trueBlock.setPreBlock(bb);
+//        falseBlock.setPreBlock(bb);
     }
 
     public BasicBlock buildBasicBlock(Function parentFunc){

@@ -13,6 +13,9 @@ public class BasicBlock extends Value{
     private final IList<Instruction, BasicBlock> insts;
     public static int blockNum = 0;
     private final IList.INode<BasicBlock, Function> node;
+    private ArrayList<BasicBlock> idoms;
+    private BasicBlock idominator;
+    private int domLV;
 
     public BasicBlock(){
         super("block" + ++blockNum, VoidType.voidType);
@@ -65,6 +68,18 @@ public class BasicBlock extends Value{
         if(!nxtBlocks.contains(bb)) {
             nxtBlocks.add(bb);
         }
+    }
+
+    public void setIdoms(ArrayList<BasicBlock> idoms){
+        this.idoms = idoms;
+    }
+
+    public void setDomLV(int domLV){
+        this.domLV = domLV;
+    }
+
+    public void setIdominator(BasicBlock idominator){
+        this.idominator = idominator;
     }
 
     public void removeSelf(){
