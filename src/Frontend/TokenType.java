@@ -5,7 +5,8 @@ public enum TokenType {
     HEXCON, //  hex-const
     OCTCON, //  oct-const
     DECCON, //  dec-const
-    FLOATCON,   //  float-const
+    HEXFCON,
+    DECFCON,   //  float-const
     STRCON, // string-const
     CONSTTK,    //  "const"
     INTTK,  //  "int"

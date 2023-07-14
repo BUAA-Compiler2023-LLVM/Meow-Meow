@@ -251,9 +251,13 @@ public class Parser {
             Token number = tokenList.consume();
             return new AST.Number(number.getVal(), "dec");
         }
-        else if (priExp.getType().equals(TokenType.FLOATCON)) {
+        else if (priExp.getType().equals(TokenType.DECFCON)) {
             Token number = tokenList.consume();
-            return new AST.Number(number.getVal(), "float");
+            return new AST.Number(number.getVal(), "decfloat");
+        }
+        else if (priExp.getType().equals(TokenType.HEXFCON)){
+            Token number = tokenList.consume();
+            return new AST.Number(number.getVal(), "hexfloat");
         }
         else if (priExp.getType().equals(TokenType.IDENFR) && tokenList.ahead(1).getType().equals(TokenType.LPARENT)) {
             return parseCall();

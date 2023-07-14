@@ -79,28 +79,56 @@ public class Lexer {
         return new Token(TokenType.STRCON, FString);
     }
 
+    /*
+    * 产生整数/浮点数Token
+    * Dec浮点数定义：
+    * 1. [digit-seq].digit-seq [e+/-digit-seq]
+    * 2. digit-seq.[e+/-digit-seq]
+    * 3. digit-seq
+    *
+    * */
     private Token Number() throws IOException {
         boolean isFloat = false;
         boolean isHex = false;
         boolean isOct;
         StringBuilder numBuilder = new StringBuilder();
         isOct = (c == '0');
-        while (isNumber(c) || c == 'x' || c == 'X' || c == '.' || (c >= 'a' && c <= 'f') || (c >= 'A' && c <= 'F')){
-            numBuilder.append(c);
+        while (isNumber(c) || c == 'x' || c == 'X' || c == '+' || c == '-'
+                || c == 'p' || c == 'P' || c == '.' ||
+                (c >= 'a' && c <= 'f') || (c >= 'A' && c <= 'F')){
             if(c == '.'){
                 isFloat = true;
                 isOct = false;
             }
-            if(c == 'X' || c == 'x'){
+            else if(c == 'X' || c == 'x'){
                 isHex = true;
                 isOct = false;
             }
+            else if(c == 'p' || c == 'P'){
+                isFloat = true;
+                isHex = true;
+            }
+            else if((c == 'e' || c == 'E') && !isHex){
+                isFloat = true;
+            }
+            else if(c == '+' || c == '-'){
+                String nowStr = numBuilder.toString();
+                char last = nowStr.charAt(nowStr.length() - 1);
+                if(last != 'p' && last != 'P' && last != 'e' && last != 'E'){
+                    break;
+                }
+                if((last == 'e' || last == 'E') && !isFloat){
+                    break;
+                }
+            }
+            numBuilder.append(c);
             readChar();
         }
         in.unread(c);
         String num = numBuilder.toString();
         if(num.equals("0")) isOct = false;
-        if(isFloat) return new Token(TokenType.FLOATCON, num);
+        if(isFloat && isHex) return new Token(TokenType.HEXFCON, num);
+        else if(isFloat) return new Token(TokenType.DECFCON, num);
         else if(isHex) return new Token(TokenType.HEXCON, num);
         else if(isOct) return new Token(TokenType.OCTCON, num);
         else return new Token(TokenType.DECCON, num);
@@ -139,7 +167,7 @@ public class Lexer {
             if(isAlpha(c) || c == '_'){
                 return Ident();
             }
-            if(isNumber(c)){
+            if(isNumber(c) || c == '.'){
                 return Number();
             }
             if(c == '"'){
