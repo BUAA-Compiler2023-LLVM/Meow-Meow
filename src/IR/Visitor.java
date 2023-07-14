@@ -662,7 +662,8 @@ public class Visitor {
                 if(CurFunction.getType().isVoidTy()){
                     f.buildRetInst(CurBasicBlock);
                 }
-                else f.buildRetInst(ConstInteger.const0_32, CurBasicBlock);
+                else if(CurFunction.getType().isIntegerTy()) f.buildRetInst(ConstInteger.const0_32, CurBasicBlock);
+                else if(CurFunction.getType().isFloatTy()) f.buildRetInst(ConstFloat.const0, CurBasicBlock);
             }
         }
     }
