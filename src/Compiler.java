@@ -20,8 +20,7 @@ public class Compiler {
 
         IRDump.DumpModule(irModule);
 
-//        Backend backend = new Backend(irModule);
-        // backend.print();
-//        RISC_Dump.DumpBackend(backend);
+        Backend backend = new Backend(irModule);
+        RISC_Dump.DumpBackend(backend);
     }
 }
