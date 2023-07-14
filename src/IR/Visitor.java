@@ -30,6 +30,10 @@ public class Visitor {
     private final Function InputChFunc = new Function("@getch", IntegerType.I32);
     private final Function PrintArrFunc = new Function("@putarray", VoidType.voidType);
     private final Function InputArrFunc = new Function("@getarray", IntegerType.I32);
+    private final Function PrintFloatFunc = new Function("@putfloat", VoidType.voidType);
+    private final Function InputFloatFunc = new Function("@getfloat", FloatType.F32);
+    private final Function PrintFArrFunc = new Function("@putfarray", VoidType.voidType);
+    private final Function InputFArrFunc = new Function("@getfarray", IntegerType.I32);
 
     private boolean isPrint = false;
 
@@ -55,6 +59,10 @@ public class Visitor {
             case "putch" -> PrintChFunc;
             case "getarray" -> InputArrFunc;
             case "putarray" -> PrintArrFunc;
+            case "getfloat" -> InputFloatFunc;
+            case "putfloat" -> PrintFloatFunc;
+            case "getfarray" -> InputFArrFunc;
+            case "putfarray" -> PrintFArrFunc;
             default -> null;
         };
 
@@ -159,9 +167,23 @@ public class Visitor {
             ArrayList<AST.Exp> exps = callAST.getParams();
 
             ArrayList<Value> values = new ArrayList<>();
+
             for(AST.Exp exp : exps){
                 visitExpAST(exp, isConst);
                 values.add(CurValue);
+            }
+
+            ArrayList<Argument> arguments = function.getArgs();
+            for(int i = 0; i < values.size(); i++){
+                Value value = values.get(i);
+                Type argType = arguments.get(i).getType();
+                Type CurType = value.getType();
+                if(CurType == IntegerType.I32 && argType == FloatType.F32){
+                    values.set(i, f.buildConversionInst(value, "itof", CurBasicBlock));
+                }
+                else if(CurType == FloatType.F32 && argType == IntegerType.I32){
+                    values.set(i, f.buildConversionInst(value, "ftoi", CurBasicBlock));
+                }
             }
 
             CurValue = f.buildCallInst(function, values, CurBasicBlock);
@@ -287,6 +309,16 @@ public class Visitor {
                     values_2.add(CurValue);
                     f.buildCallInst(PrintFunc, values_2, CurBasicBlock);
                 }
+
+                Type CurType = CurValue.getType();
+                Type CurFuncType = CurFunction.getType();
+                if(CurType == IntegerType.I32 && CurFuncType == FloatType.F32){
+                    CurValue = f.buildConversionInst(CurValue, "itof", CurBasicBlock);
+                }
+                else if(CurFuncType == IntegerType.I32 && CurType == FloatType.F32){
+                    CurValue = f.buildConversionInst(CurValue, "ftoi", CurBasicBlock);
+                }
+
                 CurValue = f.buildRetInst(CurValue, CurBasicBlock);
             }
             else{
@@ -635,10 +667,24 @@ public class Visitor {
         }
     }
 
+    private void initLibFunc(){
+        PrintFunc.addArg(new Argument("x", IntegerType.I32, PrintFunc));
+        PrintChFunc.addArg(new Argument("x", IntegerType.I32, PrintChFunc));
+        PrintFloatFunc.addArg(new Argument("x", FloatType.F32, PrintFloatFunc));
+        PrintArrFunc.addArg(new Argument("x", IntegerType.I32, PrintArrFunc));
+        PrintArrFunc.addArg(new Argument("x2", new PointerType(IntegerType.I32), PrintArrFunc));
+        PrintFArrFunc.addArg(new Argument("x", IntegerType.I32, PrintFArrFunc));
+        PrintFArrFunc.addArg(new Argument("x2", new PointerType(FloatType.F32), PrintFArrFunc));
+
+        InputArrFunc.addArg(new Argument("x", new PointerType(IntegerType.I32), InputArrFunc));
+        InputFArrFunc.addArg(new Argument("x", new PointerType(FloatType.F32), InputFArrFunc));
+    }
+
     public IRModule visitAST(AST compAST) {
         ArrayList<Function> functions = new ArrayList<>();
-
         module = new IRModule(functions, globalVars);
+
+        initLibFunc();
         pushSymTbl();
 
         for (AST.CompUnit compUnit : compAST.getUnits()) {

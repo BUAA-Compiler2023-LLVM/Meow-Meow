@@ -178,8 +178,24 @@ public class IRBuildFactory {
                 right = turnType(right, IntegerType.I32, bb);
             }
             type = IntegerType.I32;
+
+            assert left != null;
+            leftType = left.getType();
+            assert right != null;
+            rightType = right.getType();
+
+            if(leftType == FloatType.F32 && rightType == IntegerType.I32){
+                right = turnType(right, FloatType.F32, bb);
+                type = FloatType.F32;
+            }
+            if(rightType == FloatType.F32 && leftType == IntegerType.I32){
+                left = turnType(left, FloatType.F32, bb);
+                type = FloatType.F32;
+            }
         }
         else type = leftType;
+
+        assert type != null;
         if(type.isFloatTy()){
             _op = _op + "f";
         }
@@ -269,6 +285,9 @@ public class IRBuildFactory {
         if(type.equals("int")){
             function = new Function(name, IntegerType.I32);
         }
+        else if(type.equals("float")){
+            function = new Function(name, FloatType.F32);
+        }
         else {
             function = new Function(name, VoidType.voidType);
         }
@@ -302,6 +321,14 @@ public class IRBuildFactory {
     public void buildStoreInst(Value value, Value pointer, BasicBlock bb){
         Type valueTy = value.getType();
         PointerType pointerTy = (PointerType) pointer.getType();
+        Type eleTy = pointerTy.getEleType();
+        if(valueTy == IntegerType.I32 && eleTy == FloatType.F32){
+            value = f.buildConversionInst(value, "itof", bb);
+        }
+        else if(valueTy == FloatType.F32 && eleTy == IntegerType.I32){
+            value = f.buildConversionInst(value, "ftoi", bb);
+        }
+
         StoreInst storeInst = new StoreInst(value, pointer, bb);
         bb.addInst(storeInst);
     }
