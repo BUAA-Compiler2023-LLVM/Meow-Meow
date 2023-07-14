@@ -6,6 +6,7 @@ import Backend.component.ObjGlobalVariable;
 import Backend.component.ObjModule;
 import Backend.instruction.*;
 import Backend.operand.*;
+import Frontend.AST;
 import IR.IRModule;
 import IR.Type.PointerType;
 import IR.Type.Type;
@@ -13,10 +14,11 @@ import IR.Value.*;
 import IR.Value.Instructions.*;
 import Utils.DataStruct.IList;
 
+import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.Optional;
 
-import static Backend.operand.ObjPhyReg.ZERO;
+import static Backend.operand.ObjPhyReg.*;
 
 public class IrParser {
     private IRModule irModule;
@@ -71,15 +73,57 @@ public class IrParser {
                 parseFunction(f);
     }
     private void parseFunction(Function f) {
+        ObjFunction objF = fMap.get(f);
+        for(IList.INode<BasicBlock, Function> b : f.getBbs()) {
+            BasicBlock irBlock = b.getValue();
+            for(IList.INode<Instruction, BasicBlock> inst : irBlock.getInsts()) {
+                Instruction irInst = inst.getValue();
+                if(irInst instanceof CallInst) {
+                    ArrayList<Value> operands = irInst.getOperands();
+                    int arg_nums = operands.size();
+                    objF.setArgsSize((arg_nums - 8) * 4);
+                    objF.setRsize();
+                }
+            }
+        }
+
         for(IList.INode<BasicBlock, Function> b : f.getBbs()) {
             BasicBlock irBlock = b.getValue();
             parseBlock(irBlock, f);
         }
-        BasicBlock b = f.getBbs().getHead().getValue();
-        ObjFunction objF = fMap.get(f);
-        ObjOperand alloc = parseConstIntOperand(-objF.getAllocaSize(), 12, f, b);
-        ObjBinary add = ObjBinary.getAdd(ObjPhyReg.SP, ObjPhyReg.SP, alloc);
 
+        BasicBlock b = f.getBbs().getHead().getValue();
+
+        ArrayList<Argument> args = f.getArgs();
+        int args_num = args.size();
+        int num_A = args_num;
+        if(num_A > 8)
+            num_A = 8;
+        for(int i = 0; i < num_A; i ++) {
+            Value arg = args.get(i);
+            ObjOperand operand = parseOperand(arg, 0, f, b);
+            ObjMove objMove = new ObjMove(operand, A.get(i));
+            objF.getFirstBlock().addInstrHead(objMove);
+        }
+        int off = objF.getStackSize();
+        for(int i = 8; i < args_num; i ++) {
+            Value arg = args.get(i);
+            ObjOperand operand = parseOperand(arg, 0, f, b);
+
+            ObjImm12 Imm = new ObjImm12(off + (i - 8) * 4);
+            ObjLoad objLoad = new ObjLoad(operand, SP, Imm);
+            objF.getFirstBlock().addInstrHead(objLoad);
+        }
+
+
+        if(objF.getRsize() > 0) {
+            ObjImm12 Imm = new ObjImm12(objF.getStackSize() - 4);
+            ObjStore objStore = new ObjStore(RA, SP, Imm);
+            objF.getFirstBlock().addInstrHead(objStore);
+        }
+
+        ObjOperand alloc = parseConstIntOperand(-objF.getStackSize(), 12, f, b);
+        ObjBinary add = ObjBinary.getAdd(ObjPhyReg.SP, ObjPhyReg.SP, alloc);
         objF.getFirstBlock().addInstrHead(add);
     }
     private void parseBlock(BasicBlock b, Function f) {
@@ -106,6 +150,41 @@ public class IrParser {
         }
         else if(irInst instanceof BrInst)
             parseBr((BrInst) irInst, irBlock, irFunction);
+        else if(irInst instanceof CallInst)
+            parseCall((CallInst) irInst, irBlock, irFunction);
+    }
+
+    private void parseCall(CallInst inst, BasicBlock irBlock, Function irFunction) {
+        ObjFunction objFunction = fMap.get(irFunction);
+        ObjBlock objBlock = bMap.get(irBlock);
+        // System.out.println(inst.getFunction().getName());
+        if(inst.getFunction().getName() == "@putint")
+            return ;
+        ObjFunction tarFunction = fMap.get(inst.getFunction());
+
+        ArrayList<Value> operands = inst.getOperands();
+        int arg_nums = operands.size();
+        int num_A = arg_nums;
+        if(num_A > 8)
+            num_A = 8;
+
+        for(int i = 0; i < num_A; i ++) {
+            Value arg = operands.get(i);
+            ObjOperand objOperand = parseOperand(arg, 12, irFunction, irBlock);
+            ObjMove objMove = new ObjMove(A.get(i), objOperand);
+            objBlock.addInstr(objMove);
+        }
+        for(int i = 8; i < arg_nums; i ++) {
+            Value arg = operands.get(i);
+            ObjOperand objOperand = parseOperand(arg, 12, irFunction, irBlock);
+
+            ObjImm12 offset = new ObjImm12((i - 8) * 4);
+            ObjStore objStore = new ObjStore(objOperand, SP, offset);
+            objBlock.addInstr(objStore);
+        }
+
+        ObjCall objCall = new ObjCall(tarFunction);
+        objBlock.addInstr(objCall);
     }
 
     private void parseIcmp(CmpInst inst, BasicBlock irBlock, Function irFunction) {
@@ -308,7 +387,8 @@ public class IrParser {
         ObjFunction objFunction = fMap.get(irFunction);
 
         Type pointeeType = ((PointerType) inst.getType()).getEleType();
-        ObjOperand offset = parseConstIntOperand(objFunction.getAllocaSize(), 12, irFunction, irBlock);
+        int off = objFunction.getArgsSize() + objFunction.getAllocaSize();
+        ObjOperand offset = parseConstIntOperand(off, 12, irFunction, irBlock);
         objFunction.addAllocaSize(4);
 
         ObjOperand dst = parseOperand(inst, 0, irFunction, irBlock);
@@ -322,7 +402,7 @@ public class IrParser {
         Value irRetValue = inst.getValue();
         if(irRetValue != null) {
             ObjOperand objRet = parseOperand(irRetValue, 32, irFunction, irBlock);
-            ObjMove objMove = new ObjMove(ObjPhyReg.A0, objRet);
+            ObjMove objMove = new ObjMove(ObjPhyReg.A.get(0), objRet);
             objBlock.addInstr(objMove);
         }
         objBlock.addInstr(new ObjRet());
