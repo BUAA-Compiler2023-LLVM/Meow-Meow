@@ -221,11 +221,13 @@ public class IRBuildFactory {
     }
 
     public Argument buildArgument(String name, String typeStr, Function parentFunc){
-        Argument argument;
-        if (typeStr.equals("int")) argument = new Argument(name, IntegerType.I32, parentFunc);
-        else if (typeStr.equals("float")) argument = new Argument(name, FloatType.F32, parentFunc);
-        else if(typeStr.equals("int*")) argument = new Argument(name, new PointerType(IntegerType.I32), parentFunc);
-        else argument = new Argument(name, VoidType.voidType, parentFunc);
+        Argument argument = switch (typeStr) {
+            case "int" -> new Argument(name, IntegerType.I32, parentFunc);
+            case "float" -> new Argument(name, FloatType.F32, parentFunc);
+            case "int*" -> new Argument(name, new PointerType(IntegerType.I32), parentFunc);
+            case "float*" -> new Argument(name, new PointerType(FloatType.F32), parentFunc);
+            default -> new Argument(name, VoidType.voidType, parentFunc);
+        };
         parentFunc.addArg(argument);
         return argument;
     }

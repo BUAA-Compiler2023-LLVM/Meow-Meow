@@ -618,7 +618,7 @@ public class Visitor {
                     if(sizes.size() != 0) {
                         argument = f.buildArgument(argName, argType, CurFunction, sizes);
                     }
-                    else argument = f.buildArgument(argName, "int*", CurFunction);
+                    else argument = f.buildArgument(argName, argType + "*", CurFunction);
                 }
                 else {
                     argument = f.buildArgument(argName, argType, CurFunction);
