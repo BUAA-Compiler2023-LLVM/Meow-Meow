@@ -383,7 +383,7 @@ public class AST {
             assert number != null;
             this.number = number;
 
-            if (type.equals("float")) {
+            if (type.equals("decfloat") || type.equals("hexfloat")) {
                 isFloatConst = true;
                 floatConstVal = Float.parseFloat(number);
                 intConstVal = (int) floatConstVal;
