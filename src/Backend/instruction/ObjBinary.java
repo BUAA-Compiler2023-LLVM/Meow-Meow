@@ -61,15 +61,21 @@ public class ObjBinary extends ObjInstr {
     public static ObjBinary getSlt(ObjOperand dst, ObjOperand src1, ObjOperand src2) {
         return new ObjBinary("slt", dst, src1, src2);
     }
+    public static ObjBinary getSlti(ObjOperand dst, ObjOperand src1, ObjOperand src2) {
+        return new ObjBinary("slti", dst, src1, src2);
+    }
+    public static ObjBinary getSltu(ObjOperand dst, ObjOperand src1, ObjOperand src2) {
+        return new ObjBinary("sltu", dst, src1, src2);
+    }
     public static ObjBinary getSgt(ObjOperand dst, ObjOperand src1, ObjOperand src2) {
         return new ObjBinary("sgt", dst, src1, src2);
     }
-    public static ObjBinary getSeqz(ObjOperand dst, ObjOperand src1, ObjOperand src2) {
-        return new ObjBinary("seqz", dst, src1, src2);
-    }
-    public static ObjBinary getSnez(ObjOperand dst, ObjOperand src1, ObjOperand src2) {
-        return new ObjBinary("snez", dst, src1, src2);
-    }
+//    public static ObjBinary getSeqz(ObjOperand dst, ObjOperand src1, ObjOperand src2) {
+//        return new ObjBinary("seqz", dst, src1, src2);
+//    }
+//    public static ObjBinary getSnez(ObjOperand dst, ObjOperand src1, ObjOperand src2) {
+//        return new ObjBinary("snez", dst, src1, src2);
+//    }
     public static ObjBinary getXor(ObjOperand dst, ObjOperand src1, ObjOperand src2) {
         return new ObjBinary("xor", dst, src1, src2);
     }

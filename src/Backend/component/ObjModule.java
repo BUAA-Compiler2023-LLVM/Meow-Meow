@@ -1,5 +1,10 @@
 package Backend.component;
 
+import Utils.Config;
+
+import java.io.BufferedWriter;
+import java.io.FileWriter;
+import java.io.IOException;
 import java.util.ArrayList;
 
 public class ObjModule {
@@ -10,6 +15,9 @@ public class ObjModule {
     public ObjModule() {
         globalVariables = new ArrayList<>();
         functions = new ArrayList<>();
+    }
+    public ArrayList<ObjFunction> getFunctions() {
+        return functions;
     }
 
     public void addGlobalVariable(ObjGlobalVariable g) {

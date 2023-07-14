@@ -31,6 +31,10 @@ public class ObjFunction {
         this.allocaSize = 0;
     }
 
+    public IList<ObjBlock, ObjFunction> getObjBlocks() {
+        return objBlocks;
+    }
+
     public String getName() {
         return name;
     }
