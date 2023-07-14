@@ -4,6 +4,7 @@ import IR.IRModule;
 import IR.Visitor;
 import Pass.PassManager;
 import Utils.IRDump;
+import Utils.RISC_Dump;
 
 import java.io.IOException;
 
@@ -16,10 +17,11 @@ public class Compiler {
 
         IRDump.DumpModule(irModule);
 
-//        PassManager passManager = PassManager.getInstance();
-//        passManager.runIRPasses(irModule);
+        PassManager passManager = PassManager.getInstance();
+        passManager.runIRPasses(irModule);
 
-//        Backend backend = new Backend(irModule);
-//        backend.print();
+        Backend backend = new Backend(irModule);
+        // backend.print();
+        RISC_Dump.DumpBackend(backend);
     }
 }

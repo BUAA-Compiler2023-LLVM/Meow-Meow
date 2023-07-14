@@ -16,6 +16,8 @@ import Utils.DataStruct.IList;
 import java.util.HashMap;
 import java.util.Optional;
 
+import static Backend.operand.ObjPhyReg.ZERO;
+
 public class IrParser {
     private IRModule irModule;
     private ObjModule objModule;
@@ -87,6 +89,7 @@ public class IrParser {
         }
     }
     private void parseInstruction(Instruction irInst, BasicBlock irBlock, Function irFunction) {
+        // System.out.println(irInst instanceof  CmpInst);
         if(irInst instanceof RetInst)
             parseRet((RetInst) irInst, irBlock, irFunction);
         else if(irInst instanceof AllocInst)
@@ -95,6 +98,8 @@ public class IrParser {
             parseLoad((LoadInst) irInst, irBlock, irFunction);
         else if(irInst instanceof StoreInst)
             parseStore((StoreInst) irInst, irBlock, irFunction);
+        else if(irInst instanceof  CmpInst)
+            parseIcmp((CmpInst) irInst, irBlock, irFunction);
         else if(irInst instanceof BinaryInst) {
             if(irInst.getOp() == OP.Add)
                 parseAdd((BinaryInst) irInst, irBlock, irFunction);
@@ -102,6 +107,107 @@ public class IrParser {
         else if(irInst instanceof BrInst)
             parseBr((BrInst) irInst, irBlock, irFunction);
     }
+
+    private void parseIcmp(CmpInst inst, BasicBlock irBlock, Function irFunction) {
+        OP op = inst.getOp();
+        ObjOperand dst = parseOperand(inst, 0, irFunction, irBlock);
+        Value left = inst.getLeftVal(), right = inst.getRightVal();
+        ObjBlock objBlock = bMap.get(irBlock);
+        ObjFunction objFunction = fMap.get(irFunction);
+
+        // ne eq lt le gt ge
+        if(op == OP.Ne) {
+            ObjOperand objLeft = parseOperand(left, 0, irFunction, irBlock);
+            ObjOperand objRight = parseOperand(right, 12, irFunction, irBlock);
+            ObjVirReg tmpReg = new ObjVirReg();
+            objFunction.addUsedVirReg(tmpReg);
+
+            ObjBinary objBinary;
+            if(objRight instanceof ObjImm12)
+                objBinary = ObjBinary.getXori(tmpReg, objLeft, objRight);
+            else
+                objBinary = ObjBinary.getXor(tmpReg, objLeft, objRight);
+            objBlock.addInstr(objBinary);
+
+            ObjBinary objBinary2 = ObjBinary.getSltu(dst, ZERO, tmpReg);
+            objBlock.addInstr(objBinary2);
+        }
+        else if(op == OP.Eq) { // ( a xor b == 0 )
+            ObjOperand objLeft = parseOperand(left, 0, irFunction, irBlock);
+            ObjOperand objRight = parseOperand(right, 12, irFunction, irBlock);
+            ObjVirReg tmpReg = new ObjVirReg();
+            objFunction.addUsedVirReg(tmpReg);
+
+            ObjBinary objBinary;
+            if(objRight instanceof ObjImm12)
+                objBinary = ObjBinary.getXori(tmpReg, objLeft, objRight);
+            else
+                objBinary = ObjBinary.getXor(tmpReg, objLeft, objRight);
+            objBlock.addInstr(objBinary);
+
+            ObjVirReg tmpReg2 = new ObjVirReg();
+            objFunction.addUsedVirReg(tmpReg2);
+            ObjBinary objBinary2 = ObjBinary.getSltu(tmpReg2, ZERO, tmpReg);
+            objBlock.addInstr(objBinary2);
+
+            ObjBinary objBinary3 = ObjBinary.getXori(dst, tmpReg2, new ObjImm12(1));
+            objBlock.addInstr(objBinary3);
+        }
+        else if(op == OP.Lt) {
+            ObjOperand objLeft = parseOperand(left, 0, irFunction, irBlock);
+            ObjOperand objRight = parseOperand(right, 12, irFunction, irBlock);
+
+            ObjBinary objBinary;
+            if(objRight instanceof ObjImm12)
+                objBinary = ObjBinary.getSlti(dst, objLeft, objRight);
+            else
+                objBinary = ObjBinary.getSlt(dst, objLeft, objRight);
+            objBlock.addInstr(objBinary);
+        }
+        else if(op == OP.Le) { // left <= Right    !( Right < left )
+            ObjOperand objLeft = parseOperand(left, 12, irFunction, irBlock);
+            ObjOperand objRight = parseOperand(right, 0, irFunction, irBlock);
+            ObjVirReg tmpReg = new ObjVirReg();
+            objFunction.addUsedVirReg(tmpReg);
+
+            ObjBinary objBinary;
+            if(objLeft instanceof ObjImm12)
+                objBinary = ObjBinary.getSlti(tmpReg, objRight, objLeft);
+            else
+                objBinary = ObjBinary.getSlt(tmpReg, objRight, objLeft);
+            objBlock.addInstr(objBinary);
+
+            ObjBinary objBinary2 = ObjBinary.getXori(dst, tmpReg, new ObjImm12(1));
+            objBlock.addInstr(objBinary2);
+        }
+        else if(op == OP.Gt) { // (left > Right)
+            ObjOperand objLeft = parseOperand(left, 12, irFunction, irBlock);
+            ObjOperand objRight = parseOperand(right, 0, irFunction, irBlock);
+            ObjBinary objBinary;
+            if(objLeft instanceof ObjImm12)
+                objBinary = ObjBinary.getSlti(dst, objRight, objLeft);
+            else
+                objBinary = ObjBinary.getSlt(dst, objRight, objLeft);
+            objBlock.addInstr(objBinary);
+        }
+        else if(op == OP.Ge) { // left >= Right    ! ( left < Right )
+            ObjOperand objLeft = parseOperand(left, 0, irFunction, irBlock);
+            ObjOperand objRight = parseOperand(right, 12, irFunction, irBlock);
+            ObjVirReg tmpReg = new ObjVirReg();
+            objFunction.addUsedVirReg(tmpReg);
+
+            ObjBinary objBinary;
+            if(objRight instanceof ObjImm12)
+                objBinary = ObjBinary.getSlti(tmpReg, objLeft, objRight);
+            else
+                objBinary = ObjBinary.getSlt(tmpReg, objLeft, objRight);
+            objBlock.addInstr(objBinary);
+
+            ObjBinary objBinary2 = ObjBinary.getXori(dst, tmpReg, new ObjImm12(1));
+            objBlock.addInstr(objBinary2);
+        }
+    }
+
 
     private void parseBr(BrInst inst, BasicBlock irBlock, Function irFunction) {
         ObjBlock objBlock = bMap.get(irBlock);
@@ -113,18 +219,39 @@ public class IrParser {
 
             if(irCondition instanceof ConstInteger) {
                 int condImm = ((ConstInteger) irCondition).getValue();
-                if(condImm > 0) {
-
+                if(condImm != 0) {
+                    ObjBranch objBranch = new ObjBranch(bMap.get(irTrueBlock));
+                    objBlock.addInstr(objBranch);
+                    objBlock.setTrueBlock(bMap.get(irTrueBlock));
+                }
+                else {
+                    ObjBranch objBranch = new ObjBranch(bMap.get(irFalseBlock));
+                    objBlock.addInstr(objBranch);
+                    objBlock.setTrueBlock(bMap.get(irFalseBlock));
                 }
             }
-            else if(irCondition instanceof CmpInst) {
+            else if(irCondition instanceof CmpInst){
+                CmpInst condition = (CmpInst) irCondition;
+                ObjOperand cond = operandMap.get(condition);
 
+                ObjBlock objTrueBlock = bMap.get(irTrueBlock);
+                ObjBlock objFalseBlock = bMap.get(irFalseBlock);
+
+                ObjBranch objBranch = new ObjBranch(false, cond, objTrueBlock);
+                objBlock.addInstr(objBranch);
+                ObjBranch objBranch1 = new ObjBranch(objFalseBlock);
+                objBlock.addInstr(objBranch1);
+
+                objBlock.setTrueBlock(bMap.get(irTrueBlock));
+                objBlock.setFalseBlock(bMap.get(irFalseBlock));
             }
         }
         else {
-
+            ObjBlock objTargetBlock = bMap.get(inst.getJumpBlock());
+            ObjBranch objBranch = new ObjBranch(objTargetBlock);
+            objBlock.addInstr(objBranch);
+            objBlock.setTrueBlock(objTargetBlock);
         }
-
     }
 
     private void parseAdd(BinaryInst inst, BasicBlock irBlock, Function irFunction) {
@@ -223,7 +350,7 @@ public class IrParser {
                     || ((objOperand instanceof ObjImm12) && canImm < 12)) {
 
                 if(((ObjImm) objOperand).getImmediate() == 0)
-                    return ObjPhyReg.ZERO;
+                    return ZERO;
                 else {
                     ObjOperand tmp = genTmpReg(irFunction);
                     ObjMove objMove = new ObjMove(tmp, objOperand);
