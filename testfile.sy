@@ -4,9 +4,13 @@ int add(int a, int b) {
 int zero() {
     return 0;
 }
+int add10(int a0, int a1, int a2, int a3, int a4, int a5, int a6, int a7, int a8, int a9) {
+    return a0 + a9;
+}
 int main() {
     int a = 1;
     int b = zero();
     int c = add(a, b);
-    return c;
+    int d = add10(0, 1, 2, 3, 4, 5, 6, 7, 8, 9);
+    return c + d;
 }
