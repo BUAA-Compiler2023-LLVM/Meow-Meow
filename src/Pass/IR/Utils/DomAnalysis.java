@@ -22,6 +22,7 @@ public class DomAnalysis{
 
         //  allBlocks记录有效的Block(即与bbEntry全联通的BasicBlock)
         ArrayList<BasicBlock> allBlocks = new ArrayList<>();
+        HashSet<BasicBlock> allBlocksSet = new HashSet<>();
         //  用队列q进行bfs计算allBlocks
         Queue<BasicBlock> q = new LinkedList<>();
         HashSet<BasicBlock> deletedBlock = new HashSet<>();
@@ -55,19 +56,23 @@ public class DomAnalysis{
         //  根据CFG图初始化数据结构
         //  先计算有效的所有block
         q.add(function.getBbEntry());
+        allBlocks.add(function.getBbEntry());
+        allBlocksSet.add(function.getBbEntry());
         while (!q.isEmpty()){
             BasicBlock nowBb = q.poll();
-            allBlocks.add(nowBb);
             for(BasicBlock nxtBb : nowBb.getNxtBlocks()){
-                if(!allBlocks.contains(nxtBb)){
+                if(!allBlocksSet.contains(nxtBb)){
                     q.add(nxtBb);
+                    allBlocks.add(nxtBb);
+                    allBlocksSet.add(nxtBb);
                 }
             }
         }
+
         //  顺便把没用的block删了
         for (IList.INode<BasicBlock, Function> bbNode : function.getBbs()){
             BasicBlock bb = bbNode.getValue();
-            if(!allBlocks.contains(bb)){
+            if(!allBlocksSet.contains(bb)){
                 deletedBlock.add(bb);
             }
         }
