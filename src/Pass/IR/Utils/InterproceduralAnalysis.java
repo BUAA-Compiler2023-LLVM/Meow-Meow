@@ -21,7 +21,7 @@ public class InterproceduralAnalysis{
             function.setUseGV(false);
         }
 
-        //  标记是否使用全局变量
+        //  标记直接使用全局变量的函数
         for(Function function : module.getFunctions()){
             for(IList.INode<BasicBlock, Function> bbNode : function.getBbs()){
                 BasicBlock bb = bbNode.getValue();
@@ -36,10 +36,7 @@ public class InterproceduralAnalysis{
                         Value array = AliasAnalysis.getArrRoot(pointer);
                         if (AliasAnalysis.isGlobal(array)) {
                             function.setUseGV(true);
-                            //  用load去处理一个数组，那eleType肯定是i32啊(不过为了以防bug先加上)
-                            if (((PointerType) array.getType()).getEleType().isIntegerTy()) {
-                                function.addLoadGV((GlobalVar) array);
-                            }
+                            function.addLoadGV((GlobalVar) array);
                         }
                     }
                     else if(inst instanceof StoreInst) {
@@ -50,9 +47,7 @@ public class InterproceduralAnalysis{
                         Value array = AliasAnalysis.getArrRoot(pointer);
                         if (AliasAnalysis.isGlobal(array) || AliasAnalysis.isParam(array)) {
                             function.setHasSideEffect(true);
-                            if (((PointerType) array.getType()).getEleType().isIntegerTy()) {
-                                function.addStoreGV((GlobalVar) array);
-                            }
+                            function.addStoreGV((GlobalVar) array);
                         }
                     }
                     else if(inst instanceof CallInst){
@@ -64,7 +59,7 @@ public class InterproceduralAnalysis{
             }
         }
 
-        // 递归标记
+        // 递归标记间接使用全局变量的函数
         for(Function function : module.getFunctions()) {
             if(function.isHasSideEffect()) {
                 markSideEffect(function);

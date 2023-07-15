@@ -28,6 +28,9 @@ public class ConversionInst extends Instruction{
         else if(getOp() == OP.Zext){
             to = "to i32";
         }
+        else if(getOp() == OP.BitCast){
+            to = "to i32*";
+        }
         return getName() + " = " + getOp() + " " +
                 getValue() + " " + to;
     }

@@ -46,6 +46,7 @@ public class IRBuildFactory {
             case "ftoi" -> OP.Ftoi;
             case "itof" -> OP.Itof;
             case "zext" -> OP.Zext;
+            case "bitcast" -> OP.BitCast;
             default -> null;
         };
     }
@@ -158,6 +159,7 @@ public class IRBuildFactory {
         Type type = switch (op) {
             case "ftoi", "zext" -> IntegerType.I32;
             case "itof" -> FloatType.F32;
+            case "bitcast" -> new PointerType(IntegerType.I32);
             default -> null;
         };
         ConversionInst conversionInst = new ConversionInst(value, type, str2op(op), bb);

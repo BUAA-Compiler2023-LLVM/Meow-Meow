@@ -34,6 +34,7 @@ public class Visitor {
     private final Function InputFloatFunc = new Function("@getfloat", FloatType.F32);
     private final Function PrintFArrFunc = new Function("@putfarray", VoidType.voidType);
     private final Function InputFArrFunc = new Function("@getfarray", IntegerType.I32);
+    private final Function MemsetFunc = new Function("@memset", VoidType.voidType);
 
     private boolean isPrint = false;
 
@@ -523,6 +524,8 @@ public class Visitor {
     private void visitArray(String ident, AST.Init init, ArrayList<AST.Exp> indexsAST, Type type, boolean isGlobal, boolean isConst){
         ArrayList<Integer> dimIndexs = new ArrayList<>();
         Value fillValue = (type == IntegerType.I32 ? ConstInteger.const0_32 : ConstFloat.const0);
+        //  局部数组填充的地方用flag先标记上，之后gep会跳过这些默认填充的数据
+        if(!isGlobal) fillValue = new Value("flag", VoidType.voidType);
 
         for(AST.Exp exp : indexsAST){
             visitExpAST(exp, true);
@@ -530,7 +533,9 @@ public class Visitor {
         }
         ArrayList<Value> values = new ArrayList<>();
         if(init instanceof AST.InitArray initArray){
-            values = visitInitArray(dimIndexs, initArray, fillValue, isConst);
+            if(initArray.init.size() != 0 || !isGlobal) {
+                values = visitInitArray(dimIndexs, initArray, fillValue, isConst);
+            }
         }
 
         if(isGlobal){
@@ -546,13 +551,35 @@ public class Visitor {
             ArrayType arrayType = (ArrayType) ((PointerType) CurValue.getType()).getEleType();
             ArrayList<Value> indexs = new ArrayList<>();
             int dim = arrayType.getDim();
-            for(int i = 0; i < dim; i++){
+
+            //  memset
+            //  先用gep获取头部i32*指针
+            for(int i = 0; i <= dim; i++){
                 indexs.add(ConstInteger.const0_32);
             }
+            CurValue = f.buildGepInst(baseValue, indexs, CurBasicBlock);
+            if(type.isFloatTy()){
+                CurValue = f.buildConversionInst(CurValue, "bitcast", CurBasicBlock);
+            }
+
+            ArrayList<Value> memValues = new ArrayList<>();
+            memValues.add(CurValue);
+            memValues.add(ConstInteger.const0_32);
+            memValues.add(new ConstInteger(values.size() * 4, IntegerType.I32));
+            f.buildCallInst(MemsetFunc, memValues, CurBasicBlock);
+
+            //  开始gep+store初始化局部数组值
+            indexs.remove(indexs.size() - 1);
             for(int i = 0; i < values.size(); i++){
                 Value value = values.get(i);
+                if(value.getName().equals("flag")){
+                    if(type.isIntegerTy()) values.set(i, ConstInteger.const0_32);
+                    else if(type.isFloatTy()) values.set(i, ConstFloat.const0);
+                    continue;
+                }
                 indexs.add(f.buildNumber(i));
                 CurValue = f.buildGepInst(baseValue, indexs, CurBasicBlock);
+
                 indexs.remove(indexs.size() - 1);
                 f.buildStoreInst(value, CurValue, CurBasicBlock);
             }
@@ -680,6 +707,10 @@ public class Visitor {
         InputArrFunc.addArg(new Argument("x", new PointerType(IntegerType.I32), InputArrFunc));
         InputFArrFunc.addArg(new Argument("x", new PointerType(FloatType.F32), InputFArrFunc));
 
+        MemsetFunc.addArg(new Argument("x", new PointerType(IntegerType.I32), MemsetFunc));
+        MemsetFunc.addArg(new Argument("x2", IntegerType.I32, MemsetFunc));
+        MemsetFunc.addArg(new Argument("x3", IntegerType.I32, MemsetFunc));
+
         PrintFunc.setAsLibFunction();
         PrintChFunc.setAsLibFunction();
         PrintFloatFunc.setAsLibFunction();
@@ -691,6 +722,8 @@ public class Visitor {
         InputFloatFunc.setAsLibFunction();
         InputArrFunc.setAsLibFunction();
         InputFArrFunc.setAsLibFunction();
+
+        MemsetFunc.setAsLibFunction();
     }
 
     public IRModule visitAST(AST compAST) {

@@ -47,7 +47,8 @@ public enum OP {
     Call,
     Ret,
     //not op
-    Not;
+    Not,
+    BitCast;
 
     public boolean isCmpOP(){
         String name = name();
@@ -86,6 +87,7 @@ public enum OP {
             case "Ftoi" -> "fptosi";
             case "Itof" -> "sitofp";
             case "Zext" -> "zext";
+            case "BitCast" -> "bitcast";
             default -> null;
         };
     }

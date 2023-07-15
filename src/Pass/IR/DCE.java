@@ -54,6 +54,7 @@ public class DCE implements Pass.IRPass {
                 }
             }
         }
+
         for(IList.INode<BasicBlock, Function> bbNode : function.getBbs()){
             BasicBlock bb = bbNode.getValue();
             for(IList.INode<Instruction, BasicBlock> instNode : bb.getInsts()){
@@ -81,6 +82,12 @@ public class DCE implements Pass.IRPass {
         }
     }
 
+    /*
+    * 判断一个指令是否有副作用：
+    * 1. Br, Ret, Store
+    * 2. Call lib_func/有副作用的func
+    *
+    * */
     private boolean isUseful(Instruction inst){
         OP op = inst.getOp();
         //  Q: 为什么store也是有用的?
