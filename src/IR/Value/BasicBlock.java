@@ -14,7 +14,9 @@ public class BasicBlock extends Value{
     public static int blockNum = 0;
     private final IList.INode<BasicBlock, Function> node;
     private ArrayList<BasicBlock> idoms;
+    private ArrayList<BasicBlock> pidoms;
     private BasicBlock idominator;
+    private BasicBlock pidominator;
     private int domLV;
 
     public BasicBlock(){
@@ -73,6 +75,9 @@ public class BasicBlock extends Value{
     public void setIdoms(ArrayList<BasicBlock> idoms){
         this.idoms = idoms;
     }
+    public void setPIdoms(ArrayList<BasicBlock> pidoms){
+        this.pidoms = pidoms;
+    }
 
     public void setDomLV(int domLV){
         this.domLV = domLV;
@@ -80,6 +85,9 @@ public class BasicBlock extends Value{
 
     public void setIdominator(BasicBlock idominator){
         this.idominator = idominator;
+    }
+    public void setPIdominator(BasicBlock pidominator){
+        this.pidominator = pidominator;
     }
 
     public void removeSelf(){

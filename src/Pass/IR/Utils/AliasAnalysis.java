@@ -10,8 +10,7 @@ import IR.Value.Value;
 
 public class AliasAnalysis {
 
-    //  获取某个数组value的根定义，要么是alloc指令，要么是全局数组
-    //  如果是alloc返回根定义，全局数组返回null
+    //  获取某个数组value的根定义，要么是alloc指令(局部数组或参数数组)，要么是全局数组
     public static Value getArrRoot(Value pointer){
         Value iter = pointer;
 
@@ -25,31 +24,14 @@ public class AliasAnalysis {
             }
         }
 
-        //  全局数组返回null
-        //  AllocInst要判断一下是否为参数数组
-        if (iter instanceof AllocInst || iter instanceof GlobalVar) {
-            //  参数数组
-            if (iter instanceof AllocInst && ((AllocInst) iter).getAllocType().isPointerType()) {
-                for (Use use : iter.getUseList()) {
-                    if (use.getUser() instanceof StoreInst) {
-                        StoreInst storeInst = (StoreInst) use.getUser();
-                        iter = storeInst.getPointer();
-                    }
-                }
-            }
-            return iter;
-        }
-        else {
-            return null;
-        }
+        return iter;
     }
 
     public static boolean isGlobal(Value array){
         return array instanceof GlobalVar;
     }
     public static boolean isParam(Value array){
-        if(array instanceof AllocInst){
-            AllocInst allocInst = (AllocInst) array;
+        if(array instanceof AllocInst allocInst){
             return allocInst.getAllocType().isPointerType();
         }
         return false;

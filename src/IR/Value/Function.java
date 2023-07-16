@@ -12,8 +12,10 @@ public class Function extends Value{
     private final IList<BasicBlock, Function> bbs;
     private final ArrayList<Argument> args;
     private HashMap<BasicBlock, ArrayList<BasicBlock>> idoms;
+    private HashMap<BasicBlock, ArrayList<BasicBlock>> pidoms;
     private HashMap<BasicBlock, HashSet<BasicBlock>> dom;
-    private boolean hasSideEffect;
+    private HashMap<BasicBlock, HashSet<BasicBlock>> pdom;
+    private boolean mayHasSideEffect;
     private boolean useGV;
     private boolean canGVN = false;
     private boolean isLibFunc = false;
@@ -56,12 +58,27 @@ public class Function extends Value{
         }
     }
 
+    public void setPIdoms(HashMap<BasicBlock, ArrayList<BasicBlock>> pidoms){
+        this.pidoms = pidoms;
+        for(IList.INode<BasicBlock, Function> bbNode : bbs){
+            BasicBlock bb = bbNode.getValue();
+            bb.setPIdoms(pidoms.get(bb));
+            for(BasicBlock pidomBb : pidoms.get(bb)){
+                pidomBb.setPIdominator(bb);
+            }
+        }
+    }
+
     public HashMap<BasicBlock, ArrayList<BasicBlock>> getIdoms() {
         return idoms;
     }
 
     public void setDom(HashMap<BasicBlock, HashSet<BasicBlock>> dom){
         this.dom = dom;
+    }
+
+    public void setPDom(HashMap<BasicBlock, HashSet<BasicBlock>> pdom){
+        this.pdom = pdom;
     }
 
     public void addCaller(Function function){
@@ -79,8 +96,8 @@ public class Function extends Value{
         return calleeList;
     }
 
-    public void setHasSideEffect(boolean hasSideEffect){
-        this.hasSideEffect = hasSideEffect;
+    public void setMayHasSideEffect(boolean mayHasSideEffect){
+        this.mayHasSideEffect = mayHasSideEffect;
     }
 
     public void setUseGV(boolean useGV){
@@ -109,8 +126,8 @@ public class Function extends Value{
         this.isLibFunc = true;
     }
 
-    public boolean isHasSideEffect(){
-        return hasSideEffect;
+    public boolean isMayHasSideEffect(){
+        return mayHasSideEffect;
     }
 
     public boolean isUseGV(){

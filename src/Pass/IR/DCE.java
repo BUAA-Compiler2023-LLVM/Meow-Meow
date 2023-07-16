@@ -15,7 +15,13 @@ import Utils.DataStruct.IList;
 
 import java.util.ArrayList;
 import java.util.HashSet;
+import java.util.LinkedList;
+import java.util.Queue;
 
+/*  参考论文 https://yunmingzhang.files.wordpress.com/2013/12/dcereport-2.pdf
+*   在此基础上做了一些更改:
+*   Call指令也有可能被删除，这取决于过程间分析中该函数是否有副作用
+* */
 public class DCE implements Pass.IRPass {
 
     @Override
@@ -23,13 +29,18 @@ public class DCE implements Pass.IRPass {
         return "DCE";
     }
 
-    private HashSet<Instruction> usefulInsts;
+    private Queue<Instruction> usefulInsts;
+    private HashSet<Instruction> usefulInstSet;
+    private HashSet<BasicBlock> usefulBbSet;
+
     @Override
     public void run(IRModule module) {
         ArrayList<Function> uselessFuncs = new ArrayList<>();
         InterproceduralAnalysis.run(module);
         for(Function function : module.getFunctions()){
-            usefulInsts = new HashSet<>();
+            usefulInsts = new LinkedList<>();
+            usefulInstSet = new HashSet<>();
+            usefulBbSet = new HashSet<>();
             if(function.getCallerList().isEmpty() && !function.getName().equals("@main")){
                 uselessFuncs.add(function);
             }
@@ -37,6 +48,8 @@ public class DCE implements Pass.IRPass {
                 runDCE(function);
             }
         }
+
+
         for(Function uselessFunc : uselessFuncs){
             module.getFunctions().remove(uselessFunc);
         }
@@ -44,62 +57,44 @@ public class DCE implements Pass.IRPass {
 
     private void runDCE(Function function){
         ArrayList<Instruction> deletedInsts = new ArrayList<>();
-//        removeUselessStore(function);
+        //  Initialize Phase
         for(IList.INode<BasicBlock, Function> bbNode : function.getBbs()){
             BasicBlock bb = bbNode.getValue();
             for(IList.INode<Instruction, BasicBlock> instNode : bb.getInsts()){
                 Instruction inst = instNode.getValue();
                 if(isUseful(inst)){
-                    findUsefulClosure(inst);
+                    usefulInsts.add(inst);
+                }
+            }
+        }
+        //  Mark Phase
+        while (!usefulInsts.isEmpty()){
+            Instruction inst = usefulInsts.poll();
+            for(Value value : inst.getOperands()){
+                if(value instanceof Instruction newInst){
+                    usefulInstSet.add(newInst);
+                    usefulInsts.add(newInst);
                 }
             }
         }
 
-        for(IList.INode<BasicBlock, Function> bbNode : function.getBbs()){
-            BasicBlock bb = bbNode.getValue();
-            for(IList.INode<Instruction, BasicBlock> instNode : bb.getInsts()){
-                Instruction inst = instNode.getValue();
-                if(!usefulInsts.contains(inst)){
-                    deletedInsts.add(inst);
-                }
-            }
-        }
 
-        for(Instruction deleteInst : deletedInsts){
-            deleteInst.removeSelf();
-        }
-    }
-
-    private void findUsefulClosure(Instruction inst){
-        if(usefulInsts.contains(inst)){
-            return ;
-        }
-        usefulInsts.add(inst);
-        for(Value value : inst.getOperands()){
-            if(value instanceof Instruction){
-                findUsefulClosure((Instruction) value);
-            }
-        }
     }
 
     /*
-    * 判断一个指令是否有副作用：
-    * 1. Br, Ret, Store
-    * 2. Call lib_func/有副作用的func
+    * 判断一个指令是否为usefulInst：
+    * 1. Terminator: Ret
+    * 2. MayHasSideEffect: Store, Call
     *
     * */
     private boolean isUseful(Instruction inst){
         OP op = inst.getOp();
-        //  Q: 为什么store也是有用的?
-        if(op == OP.Br || op == OP.Ret || op == OP.Store){
-            return true;
+        if(op == OP.Call){
+            Function function = ((CallInst) inst).getFunction();
+            if(function.isLibFunction()) return true;
+            else return function.isMayHasSideEffect();
         }
-        else if(op == OP.Call){
-            Function callFunc = ((CallInst) inst).getFunction();
-            if(callFunc.isLibFunction()) return true;
-            return callFunc.isHasSideEffect();
-        }
-        return false;
+        return op == OP.Ret || op == OP.Store;
     }
 
     //  removeUselessStore删除一系列store相同指针构成的指令集中前面无用的store

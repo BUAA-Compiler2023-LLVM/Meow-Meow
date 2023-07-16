@@ -8,7 +8,6 @@ import IR.Value.Value;
 public class BrInst extends Instruction{
 
     private final int type;
-    private Value judVal;
     private BasicBlock TrueBlock;
     private BasicBlock FalseBlock;
     private BasicBlock JumpBlock;
@@ -21,14 +20,14 @@ public class BrInst extends Instruction{
 
     public BrInst(Value value, BasicBlock trueBlock, BasicBlock falseBlock, BasicBlock bb){
         super("", VoidType.voidType, OP.Br, bb);
+        addOperand(value);
         this.TrueBlock = trueBlock;
         this.FalseBlock = falseBlock;
-        this.judVal = value;
         this.type = 2;
     }
 
     public Value getJudVal(){
-        return judVal;
+        return getOperand(0);
     }
 
     public BasicBlock getTrueBlock(){

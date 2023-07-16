@@ -11,14 +11,17 @@ import java.util.*;
 
 public class DomAnalysis{
     public static DomAnalysisRes run(Function function){
-        HashSet<Pair<BasicBlock, BasicBlock>> CFGEdge = new HashSet<>();
         HashMap<BasicBlock, ArrayList<BasicBlock>> df = new HashMap<>();
+        HashMap<BasicBlock, ArrayList<BasicBlock>> rdf = new HashMap<>();
         //  dom记录每个块被哪些块支配
         HashMap<BasicBlock, HashSet<BasicBlock>> dom = new HashMap<>();
+        HashMap<BasicBlock, HashSet<BasicBlock>> pdom = new HashMap<>();
         //  idom记录每个Bb的直接支配者
         HashMap<BasicBlock, BasicBlock> idom = new HashMap<>();
+        HashMap<BasicBlock, BasicBlock> pidom = new HashMap<>();
         //  idoms记录每个Bb直接支配哪些块
         HashMap<BasicBlock, ArrayList<BasicBlock>> idoms = new HashMap<>();
+        HashMap<BasicBlock, ArrayList<BasicBlock>> pidoms = new HashMap<>();
 
         //  allBlocks记录有效的Block(即与bbEntry全联通的BasicBlock)
         ArrayList<BasicBlock> allBlocks = new ArrayList<>();
@@ -37,7 +40,6 @@ public class DomAnalysis{
                         BasicBlock jumpBb = brInst.getJumpBlock();
                         bb.setNxtBlock(jumpBb);
                         jumpBb.setPreBlock(bb);
-                        CFGEdge.add(new Pair<>(bb, jumpBb));
                     }
                     else{
                         BasicBlock left = brInst.getTrueBlock();
@@ -46,8 +48,6 @@ public class DomAnalysis{
                         bb.setNxtBlock(right);
                         left.setPreBlock(bb);
                         right.setPreBlock(bb);
-                        CFGEdge.add(new Pair<>(bb, left));
-                        CFGEdge.add(new Pair<>(bb, right));
                     }
                 }
             }
@@ -80,15 +80,20 @@ public class DomAnalysis{
             bb.removeSelf();
         }
 
+        //  数据结构初始化
         for (BasicBlock bb : allBlocks) {
             dom.put(bb, null);
+            pdom.put(bb, null);
             idoms.put(bb, new ArrayList<>());
+            pidoms.put(bb, new ArrayList<>());
             df.put(bb, new ArrayList<>());
+            rdf.put(bb, new ArrayList<>());
         }
 
+        //  正式开始计算
         dom.replace(function.getBbEntry(), new HashSet<>());
         dom.get(function.getBbEntry()).add(function.getBbEntry());
-        //  计算支配(dom)关系(某基本块被哪些基本块支配)
+        //  计算支配(dom)关系
         //  我们采取迭代的策略：某基本块的dom <- 某基本块所有前驱的dom的交集加上自己本身
         //  直到没有基本块的dom发生变化
         boolean done = false;
@@ -121,6 +126,46 @@ public class DomAnalysis{
                 }
             }
         }
+
+        //  计算后支配(pdom)关系
+        //  算法同上，只不过是反向CFG
+        for(BasicBlock bb : allBlocks){
+            if(bb.getNxtBlocks().size() == 0){
+                pdom.replace(bb, new HashSet<>());
+                pdom.get(bb).add(bb);
+            }
+        }
+        done = false;
+        while (!done){
+            done = true;
+            for(BasicBlock bb : allBlocks){
+                //  用temPreBbs记录前驱的交集
+                HashSet<BasicBlock> nxtBbsDom = null;
+                for(BasicBlock nxtBb : bb.getNxtBlocks()){
+                    if(pdom.get(nxtBb) == null){
+                        continue;
+                    }
+                    //  如果是第一次，给preBbsDom初始化为该前驱的dom
+                    if(nxtBbsDom == null){
+                        nxtBbsDom = new HashSet<>(pdom.get(nxtBb));
+                    }
+                    //  否则取交集
+                    else{
+                        nxtBbsDom.retainAll(pdom.get(nxtBb));
+                    }
+                }
+                if(nxtBbsDom == null){
+                    nxtBbsDom = new HashSet<>();
+                }
+
+                nxtBbsDom.add(bb);
+                if(!nxtBbsDom.equals(pdom.get(bb))){
+                    pdom.replace(bb, nxtBbsDom);
+                    done = false;
+                }
+            }
+        }
+
 
         //  计算直接支配(idom)关系
         //  直接支配关系我们直接按定义来计算
@@ -156,9 +201,43 @@ public class DomAnalysis{
             }
         }
 
+        for (BasicBlock bb : pdom.keySet()) {
+            HashSet<BasicBlock> tmpPDomSet = pdom.get(bb);
+            if (tmpPDomSet.size() == 1) {
+                pidom.put(bb, null);
+            }
+            for (BasicBlock mayPIDom : tmpPDomSet) {
+                //  严格支配bb
+                if (mayPIDom.equals(bb)) {
+                    continue;
+                }
+
+                boolean isPIDom = true;
+                for (BasicBlock tmpPDomBlock : tmpPDomSet) {
+                    //  tmpDomBlock严格支配bb的节点 && mayIDom严格支配tmpDomBlock
+                    //  的话说明它不直接支配bb
+                    if (!tmpPDomBlock.equals(bb) &&
+                            !tmpPDomBlock.equals(mayPIDom) &&
+                            pdom.get(tmpPDomBlock).contains(mayPIDom)) {
+                        isPIDom = false;
+                        break;
+                    }
+                }
+
+                if (isPIDom) {
+                    pidom.put(bb, mayPIDom);
+                    pidoms.get(mayPIDom).add(bb);
+                    break;
+                }
+            }
+        }
+
 
         function.setIdoms(idoms);
         function.setDom(dom);
+
+        function.setPIdoms(pidoms);
+        function.setPDom(pdom);
 
         //  建立支配树
         //  根据直接支配关系(idoms) dfs建立支配树
@@ -181,7 +260,20 @@ public class DomAnalysis{
             }
         }
 
-        return new DomAnalysisRes(df, idoms);
+        //  计算RDF
+        for(BasicBlock bb : allBlocks){
+            if (bb.getNxtBlocks().size() > 1) {
+                for (BasicBlock p : bb.getNxtBlocks()) {
+                    BasicBlock runner = p;
+                    while (!runner.equals(pidom.get(bb))) {
+                        rdf.get(runner).add(bb);
+                        runner = pidom.get(runner);
+                    }
+                }
+            }
+        }
+
+        return new DomAnalysisRes(df, idoms, rdf);
     }
 
     private static void buildDomTree(BasicBlock bb, int domLV, Function function){
@@ -193,11 +285,14 @@ public class DomAnalysis{
 
     public static class DomAnalysisRes{
         HashMap<BasicBlock, ArrayList<BasicBlock>> df;
+        HashMap<BasicBlock, ArrayList<BasicBlock>> rdf;
         HashMap<BasicBlock, ArrayList<BasicBlock>> idoms;
         public DomAnalysisRes(HashMap<BasicBlock, ArrayList<BasicBlock>> df,
-                              HashMap<BasicBlock, ArrayList<BasicBlock>> idoms){
+                              HashMap<BasicBlock, ArrayList<BasicBlock>> idoms,
+                              HashMap<BasicBlock, ArrayList<BasicBlock>> rdf){
             this.df = df;
             this.idoms = idoms;
+            this.rdf = rdf;
         }
 
         public HashMap<BasicBlock, ArrayList<BasicBlock>> getDomTree(){
@@ -207,6 +302,9 @@ public class DomAnalysis{
 
         public HashMap<BasicBlock, ArrayList<BasicBlock>> getDf(){
             return df;
+        }
+        public HashMap<BasicBlock, ArrayList<BasicBlock>> getRDf(){
+            return rdf;
         }
     }
 }

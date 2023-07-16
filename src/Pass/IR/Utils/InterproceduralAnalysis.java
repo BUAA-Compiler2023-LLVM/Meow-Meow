@@ -15,10 +15,16 @@ import Utils.DataStruct.IList;
 public class InterproceduralAnalysis{
 
     public static void run(IRModule module){
-        //  初始化默认所有函数无副作用
+        /*  初始化默认所有函数无副作用（即在不考虑其返回值的情况下，是否对程序结果有影响）
+        *   副作用主要包含两点：
+        * 1. 向全局变量/参数指针写入数据
+        * 2. 调用库函数/有副作用的函数
+        *
+        * */
+        //  TODO: useGV暂时用不到，先注释了
         for(Function function : module.getFunctions()){
-            function.setHasSideEffect(false);
-            function.setUseGV(false);
+            function.setMayHasSideEffect(false);
+//            function.setUseGV(false);
         }
 
         //  标记直接使用全局变量的函数
@@ -27,32 +33,29 @@ public class InterproceduralAnalysis{
                 BasicBlock bb = bbNode.getValue();
                 for(IList.INode<Instruction, BasicBlock> instNode : bb.getInsts()){
                     Instruction inst = instNode.getValue();
-                    if(inst instanceof LoadInst){
-                        Value pointer = ((LoadInst) inst).getPointer();
-                        if(pointer instanceof AllocInst && ((AllocInst) pointer).getAllocType().isIntegerTy()){
-                            continue;
-                        }
-
-                        Value array = AliasAnalysis.getArrRoot(pointer);
-                        if (AliasAnalysis.isGlobal(array)) {
-                            function.setUseGV(true);
-                            function.addLoadGV((GlobalVar) array);
-                        }
-                    }
-                    else if(inst instanceof StoreInst) {
+//                    if(inst instanceof LoadInst){
+//                        Value pointer = ((LoadInst) inst).getPointer();
+//                        if(pointer instanceof AllocInst && ((AllocInst) pointer).getAllocType().isIntegerTy()){
+//                            continue;
+//                        }
+//
+//                        Value array = AliasAnalysis.getArrRoot(pointer);
+//                        if (AliasAnalysis.isGlobal(array)) {
+//                            function.setUseGV(true);
+//                            function.addLoadGV((GlobalVar) array);
+//                        }
+//                    }
+                    if(inst instanceof StoreInst) {
                         Value pointer = ((StoreInst) inst).getPointer();
-                        if (pointer instanceof AllocInst && ((AllocInst) pointer).getAllocType().isIntegerTy()) {
-                            continue;
-                        }
                         Value array = AliasAnalysis.getArrRoot(pointer);
-                        if (AliasAnalysis.isGlobal(array) || AliasAnalysis.isParam(array)) {
-                            function.setHasSideEffect(true);
-                            function.addStoreGV((GlobalVar) array);
+                        if (!AliasAnalysis.isLocal(array)) {
+                            function.setMayHasSideEffect(true);
+//                            function.addStoreGV((GlobalVar) array);
                         }
                     }
                     else if(inst instanceof CallInst){
                         if(((CallInst) inst).getFunction().isLibFunction()){
-                            function.setHasSideEffect(true);
+                            function.setMayHasSideEffect(true);
                         }
                     }
                 }
@@ -61,20 +64,20 @@ public class InterproceduralAnalysis{
 
         // 递归标记间接使用全局变量的函数
         for(Function function : module.getFunctions()) {
-            if(function.isHasSideEffect()) {
+            if(function.isMayHasSideEffect()) {
                 markSideEffect(function);
             }
-            if (function.isUseGV()) {
-                markUseGV(function);
-            }
+//            if (function.isUseGV()) {
+//                markUseGV(function);
+//            }
         }
     }
 
     private static void markSideEffect(Function function) {
         for (Function caller : function.getCallerList()) {
-            caller.getStoreGVs().addAll(function.getStoreGVs());
-            if (!caller.isHasSideEffect()) {
-                caller.setHasSideEffect(true);
+//            caller.getStoreGVs().addAll(function.getStoreGVs());
+            if (!caller.isMayHasSideEffect()) {
+                caller.setMayHasSideEffect(true);
                 markSideEffect(caller);
             }
         }
