@@ -1,96 +1,57 @@
 add:
 b0:
-	addi $sp,	$sp,	-8
-	move vr3,	$a1
-	move vr1,	$a0
-	addi vr0,	$sp,	0
-	sw vr1,	0(vr0)
-	addi vr2,	$sp,	4
-	sw vr3,	0(vr2)
-	j	b1
+	addi	$sp,	$sp,	-4
+	move	vr1,	$a0
+	addi	vr0,	$sp,	0
+	  sw	vr1,	0(vr0)
+	   j	b1
 b1:
-	lw vr4,	0(vr0)
-	lw vr5,	0(vr2)
-	add vr6,	vr4,	vr5
-	move $a0,	vr6
-	ret
-zero:
-b0:
-	addi $sp,	$sp,	0
-	li $a0,	0
-	ret
-add10:
-b0:
-	addi $sp,	$sp,	-40
-	lw vr26,	44($sp)
-	lw vr24,	40($sp)
-	move vr22,	$a7
-	move vr20,	$a6
-	move vr18,	$a5
-	move vr16,	$a4
-	move vr14,	$a3
-	move vr12,	$a2
-	move vr10,	$a1
-	move vr8,	$a0
-	addi vr7,	$sp,	0
-	sw vr8,	0(vr7)
-	addi vr9,	$sp,	4
-	sw vr10,	0(vr9)
-	addi vr11,	$sp,	8
-	sw vr12,	0(vr11)
-	addi vr13,	$sp,	12
-	sw vr14,	0(vr13)
-	addi vr15,	$sp,	16
-	sw vr16,	0(vr15)
-	addi vr17,	$sp,	20
-	sw vr18,	0(vr17)
-	addi vr19,	$sp,	24
-	sw vr20,	0(vr19)
-	addi vr21,	$sp,	28
-	sw vr22,	0(vr21)
-	addi vr23,	$sp,	32
-	sw vr24,	0(vr23)
-	addi vr25,	$sp,	36
-	sw vr26,	0(vr25)
-	j	b1
-b1:
-	lw vr27,	0(vr7)
-	lw vr28,	0(vr25)
-	add vr29,	vr27,	vr28
-	move $a0,	vr29
-	ret
+	  lw	vr2,	0(vr0)
+	move	vr3,	vr2
+	  lw	vr4,	0(vr3)
+	  lw	vr5,	0(vr0)
+	move	vr6,	vr5
+	  lw	vr7,	0(vr6)
+	 add	vr8,	vr4,	vr7
+	move	$a0,	vr8
+	 ret
 main:
 b0:
-	addi $sp,	$sp,	-28
-	sw $ra,	24($sp)
-	addi vr30,	$sp,	8
-	li vr31,	1
-	sw vr31,	0(vr30)
-	addi vr32,	$sp,	12
-	call	zero
-	sw vr33,	0(vr32)
-	addi vr34,	$sp,	16
-	lw vr35,	0(vr30)
-	lw vr36,	0(vr32)
-	move $a0,	vr35
-	move $a1,	vr36
+	addi	$sp,	$sp,	-20
+	  sw	$ra,	16($sp)
+	addi	vr9,	$sp,	0
+	move	vr10,	vr9
+	  li	vr11,	4
+	  li	vr12,	0
+	 mul	vr13,	vr12,	vr11
+	 add	vr10,	vr10,	vr13
+	move	vr14,	vr9
+	  li	vr15,	4
+	  li	vr16,	0
+	 mul	vr17,	vr16,	vr15
+	 add	vr14,	vr14,	vr17
+	  li	vr18,	1
+	  sw	vr18,	0(vr14)
+	move	vr19,	vr9
+	  li	vr20,	4
+	  li	vr21,	1
+	 mul	vr22,	vr21,	vr20
+	 add	vr19,	vr19,	vr22
+	  li	vr23,	5
+	  sw	vr23,	0(vr19)
+	move	vr24,	vr9
+	  li	vr25,	4
+	  li	vr26,	2
+	 mul	vr27,	vr26,	vr25
+	 add	vr24,	vr24,	vr27
+	  li	vr28,	2
+	  sw	vr28,	0(vr24)
+	move	vr29,	vr9
+	  li	vr30,	4
+	  li	vr31,	0
+	 mul	vr32,	vr31,	vr30
+	 add	vr29,	vr29,	vr32
+	move	$a0,	vr29
 	call	add
-	sw vr37,	0(vr34)
-	addi vr38,	$sp,	20
-	li $a0,	0
-	li $a1,	1
-	li $a2,	2
-	li $a3,	3
-	li $a4,	4
-	li $a5,	5
-	li $a6,	6
-	li $a7,	7
-	sw 8,	0($sp)
-	sw 9,	4($sp)
-	call	add10
-	sw vr39,	0(vr38)
-	lw vr40,	0(vr34)
-	lw vr41,	0(vr38)
-	add vr42,	vr40,	vr41
-	move $a0,	vr42
-	ret
+	move	$a0,	vr33
+	 ret

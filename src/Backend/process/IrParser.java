@@ -8,6 +8,8 @@ import Backend.instruction.*;
 import Backend.operand.*;
 import Frontend.AST;
 import IR.IRModule;
+import IR.Type.ArrayType;
+import IR.Type.IntegerType;
 import IR.Type.PointerType;
 import IR.Type.Type;
 import IR.Value.*;
@@ -152,6 +154,45 @@ public class IrParser {
             parseBr((BrInst) irInst, irBlock, irFunction);
         else if(irInst instanceof CallInst)
             parseCall((CallInst) irInst, irBlock, irFunction);
+        else if(irInst instanceof GepInst)
+            parseGep((GepInst) irInst, irBlock, irFunction);
+    }
+
+    private void parseGep(GepInst inst, BasicBlock irBlock, Function irFunction) {
+        ObjFunction objFunction = fMap.get(irFunction);
+        ObjBlock objBlock = bMap.get(irBlock);
+
+        ArrayList<Value> values = inst.getUseValues();
+        ArrayList<Value> indexs = inst.getIndexs();
+
+        ObjOperand baseOperand = parseOperand(values.get(0), 0, irFunction, irBlock);
+        ObjOperand dst = parseOperand(inst, 0, irFunction, irBlock);
+
+        ObjMove objMove = new ObjMove(dst, baseOperand);
+        objBlock.addInstr(objMove);
+
+        Type baseType = ((PointerType) values.get(0).getType()).getEleType();
+        for(int i = 1; i < indexs.size(); i ++) {
+//            System.out.println(baseType);
+//            System.out.println(indexs.get(i));
+            Type pointeeType = ((ArrayType) baseType).getEleType();
+            int pointeeSize = 4;
+            if(pointeeType instanceof ArrayType)
+                pointeeSize = 4 * ((ArrayType) pointeeType).getTotalSize();
+            ObjOperand offset = parseOperand(new ConstInteger(pointeeSize, IntegerType.I32), 0, irFunction, irBlock);
+
+            Value index = indexs.get(i);
+            ObjOperand indexOperand = parseOperand(index, 0, irFunction, irBlock);
+            ObjOperand tmp = genTmpReg(irFunction);
+
+            ObjBinary objMul = ObjBinary.getMul(tmp, indexOperand, offset);
+            objBlock.addInstr(objMul);
+
+            ObjBinary objAdd = ObjBinary.getAdd(dst, dst, tmp);
+            objBlock.addInstr(objAdd);
+
+            baseType = pointeeType;
+        }
     }
 
     private void parseCall(CallInst inst, BasicBlock irBlock, Function irFunction) {
@@ -160,6 +201,10 @@ public class IrParser {
         // System.out.println(inst.getFunction().getName());
         if(inst.getFunction().getName() == "@putint")
             return ;
+        if(inst.getFunction().getName() == "@memset")
+            return ;
+
+
         ObjFunction tarFunction = fMap.get(inst.getFunction());
 
         ArrayList<Value> operands = inst.getOperands();
@@ -291,7 +336,7 @@ public class IrParser {
     private void parseBr(BrInst inst, BasicBlock irBlock, Function irFunction) {
         ObjBlock objBlock = bMap.get(irBlock);
 
-        if(inst.getJudVal() != null) {
+        if(! inst.isJump()) {
             Value irCondition = inst.getJudVal();
             BasicBlock irTrueBlock = inst.getTrueBlock();
             BasicBlock irFalseBlock = inst.getFalseBlock();
@@ -389,7 +434,11 @@ public class IrParser {
         Type pointeeType = ((PointerType) inst.getType()).getEleType();
         int off = objFunction.getArgsSize() + objFunction.getAllocaSize();
         ObjOperand offset = parseConstIntOperand(off, 12, irFunction, irBlock);
-        objFunction.addAllocaSize(4);
+
+        if(pointeeType.isArrayType())
+            objFunction.addAllocaSize(4 * ((ArrayType) pointeeType).getTotalSize());
+        else
+            objFunction.addAllocaSize(4);
 
         ObjOperand dst = parseOperand(inst, 0, irFunction, irBlock);
         ObjBinary objAdd = ObjBinary.getAdd(dst, ObjPhyReg.SP, offset);
