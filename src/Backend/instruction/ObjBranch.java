@@ -36,6 +36,6 @@ public class ObjBranch extends ObjInstr{
             else s = "bnez\t";
             return s + src + "\t" + target.getName();
         }
-        else return "j\t" + target.getName();
+        else return "   j\t" + target.getName();
     }
 }

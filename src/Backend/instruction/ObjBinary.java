@@ -115,12 +115,11 @@ public class ObjBinary extends ObjInstr {
 
     @Override
     public String toString() {
-        String s = type;
+        String s = " " + type;
         if (isSrc2Imm12())
             if(type.equals("add") || type.equals("xor") || type.equals("or") || type.equals("and"))
-                s += "i";
-        s += " ";
-        s += dst + ",\t" + src1 + ",\t" + src2;
+                s = type + "i";
+        s += "\t" + dst + ",\t" + src1 + ",\t" + src2;
         return s;
     }
 }

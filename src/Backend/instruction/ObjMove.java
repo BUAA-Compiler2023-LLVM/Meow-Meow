@@ -28,7 +28,7 @@ public class ObjMove extends ObjInstr{
     @Override
     public String toString() {
         if ((src instanceof ObjImm) || (src instanceof ObjImm12))
-            return "li " + dst + ",\t" + src;
-        return "move " + dst + ",\t" + src;
+            return "  li\t" + dst + ",\t" + src;
+        return "move\t" + dst + ",\t" + src;
     }
 }
