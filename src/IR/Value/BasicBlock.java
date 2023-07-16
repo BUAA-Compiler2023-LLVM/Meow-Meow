@@ -1,8 +1,11 @@
 package IR.Value;
 
 import IR.Type.VoidType;
+import IR.Value.Instructions.BrInst;
 import IR.Value.Instructions.Instruction;
+import IR.Value.Instructions.RetInst;
 import Utils.DataStruct.IList;
+import org.w3c.dom.Node;
 
 import java.util.ArrayList;
 
@@ -72,6 +75,10 @@ public class BasicBlock extends Value{
         }
     }
 
+    public Instruction getLastInst(){
+        return insts.getTailValue();
+    }
+
     public void setIdoms(ArrayList<BasicBlock> idoms){
         this.idoms = idoms;
     }
@@ -88,6 +95,10 @@ public class BasicBlock extends Value{
     }
     public void setPIdominator(BasicBlock pidominator){
         this.pidominator = pidominator;
+    }
+
+    public BasicBlock getPIdominator(){
+        return pidominator;
     }
 
     public void removeSelf(){

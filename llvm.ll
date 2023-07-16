@@ -15,18 +15,15 @@ declare i32 @parallel_start()
 declare void @parallel_end(i32)
 define i32 @main() {
 b0:
-	%0 = icmp slt i32 2, 1
-	%1 = icmp ne i1 %0, 0
-	br i1 %1, label %b1, label %b3
+	%0 = icmp ne i32 1, 0
+	br i1 %0, label %b1, label %b3
 b1:
-	%2 = add i32 2, 1
-	br label %b2
+	call void @putint(i32 1)
+	ret i32 1
 b2:
-	%3 = phi i32 [ %2, %b1 ],[ %4, %b3 ]
-	call void @putint(i32 %3)
-	ret i32 %3
+	ret i32 0
 b3:
-	%4 = add i32 2, 2
-	br label %b2
+	call void @putint(i32 1)
+	ret i32 1
 }
 

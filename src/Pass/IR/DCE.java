@@ -9,14 +9,12 @@ import IR.Value.Value;
 //import Pass.IR.Utils.AliasAnalysis;
 //import Pass.IR.Utils.InterproceduralAnalysis;
 import Pass.IR.Utils.AliasAnalysis;
+import Pass.IR.Utils.DomAnalysis;
 import Pass.IR.Utils.InterproceduralAnalysis;
 import Pass.Pass;
 import Utils.DataStruct.IList;
 
-import java.util.ArrayList;
-import java.util.HashSet;
-import java.util.LinkedList;
-import java.util.Queue;
+import java.util.*;
 
 /*  参考论文 https://yunmingzhang.files.wordpress.com/2013/12/dcereport-2.pdf
 *   在此基础上做了一些更改:
@@ -32,6 +30,7 @@ public class DCE implements Pass.IRPass {
     private Queue<Instruction> usefulInsts;
     private HashSet<Instruction> usefulInstSet;
     private HashSet<BasicBlock> usefulBbSet;
+    private HashMap<BasicBlock, ArrayList<BasicBlock>> rdf;
 
     @Override
     public void run(IRModule module) {
@@ -57,13 +56,16 @@ public class DCE implements Pass.IRPass {
 
     private void runDCE(Function function){
         ArrayList<Instruction> deletedInsts = new ArrayList<>();
+        rdf = DomAnalysis.run(function).getRDf();
         //  Initialize Phase
         for(IList.INode<BasicBlock, Function> bbNode : function.getBbs()){
             BasicBlock bb = bbNode.getValue();
             for(IList.INode<Instruction, BasicBlock> instNode : bb.getInsts()){
                 Instruction inst = instNode.getValue();
                 if(isUseful(inst)){
+                    usefulInstSet.add(inst);
                     usefulInsts.add(inst);
+                    usefulBbSet.add(inst.getParentbb());
                 }
             }
         }
@@ -71,13 +73,43 @@ public class DCE implements Pass.IRPass {
         while (!usefulInsts.isEmpty()){
             Instruction inst = usefulInsts.poll();
             for(Value value : inst.getOperands()){
-                if(value instanceof Instruction newInst){
+                if(value instanceof Instruction newInst &&
+                        !usefulInstSet.contains(newInst)){
                     usefulInstSet.add(newInst);
                     usefulInsts.add(newInst);
+                    usefulBbSet.add(newInst.getParentbb());
+                }
+            }
+            for(BasicBlock bb : rdf.get(inst.getParentbb())){
+                usefulInstSet.add(bb.getLastInst());
+                usefulInsts.add(bb.getLastInst());
+                usefulBbSet.add(bb);
+            }
+        }
+
+        // Sweep Phase
+        for(IList.INode<BasicBlock, Function> bbNode : function.getBbs()){
+            BasicBlock bb = bbNode.getValue();
+            for(IList.INode<Instruction, BasicBlock> instNode : bb.getInsts()){
+                Instruction inst = instNode.getValue();
+                if(!usefulInstSet.contains(inst)){
+                    if(inst instanceof BrInst brInst){
+                        if(!brInst.isJump()){
+                            BasicBlock nowBb = brInst.getParentbb();
+                            while (!usefulBbSet.contains(nowBb)){
+                                nowBb = nowBb.getPIdominator();
+                            }
+                            brInst.turnToJump(nowBb);
+                        }
+                    }
+                    else deletedInsts.add(inst);
                 }
             }
         }
 
+        for(Instruction inst : deletedInsts){
+            inst.removeSelf();
+        }
 
     }
 
