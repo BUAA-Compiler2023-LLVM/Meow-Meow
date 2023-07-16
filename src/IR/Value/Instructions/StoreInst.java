@@ -35,8 +35,8 @@ public class StoreInst extends Instruction{
     public String getInstString1(){
 
         String a1,a2;
-        if(value.reg!=null) a1=value.reg.toString();else a1= value.getName();
-        if(pointer.reg!=null) a2=pointer.reg.toString();else a2= pointer.getName();
+        if(getValue().reg!=null) a1=getValue().reg.toString();else a1= getValue().getName();
+        if(getPointer().reg!=null) a2=getPointer().reg.toString();else a2= getPointer().getName();
         return "store " + a1+ ", " +a2;
     }
 }
