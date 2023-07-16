@@ -1,5 +1,6 @@
 package Backend.operand;
 
+import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.HashSet;
 import java.util.Map;
@@ -7,6 +8,7 @@ import java.util.Map;
 public class ObjPhyReg extends ObjReg {
     private final static HashMap<Integer, String> indexToName = new HashMap<>();
     private final static HashMap<String, Integer> nameToIndex = new HashMap<>();
+    public final static ArrayList<ObjPhyReg> A = new ArrayList<>();
 
     static {
         indexToName.put(0, "zero");
@@ -33,10 +35,14 @@ public class ObjPhyReg extends ObjReg {
 
         for (Map.Entry<Integer, String> entry : indexToName.entrySet())
             nameToIndex.put(entry.getValue(), entry.getKey());
+
+        for (int i = 0; i < 8; i ++)
+            A.add(new ObjPhyReg("a" + String.valueOf(i)));
     }
     public final static ObjPhyReg ZERO = new ObjPhyReg("zero");
-    public final static ObjPhyReg A0 = new ObjPhyReg("a0");
+    // public final static ObjPhyReg A0 = new ObjPhyReg("a0");
     public final static ObjPhyReg SP = new ObjPhyReg("sp");
+    public final static ObjPhyReg RA = new ObjPhyReg("ra");
     private final int index;
     private final String name;
     private boolean isAllocated;

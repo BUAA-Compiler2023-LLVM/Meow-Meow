@@ -6,20 +6,20 @@ import IR.Value.BasicBlock;
 import IR.Value.Value;
 
 public class LoadInst extends Instruction{
-    Value pointer;
 
     public LoadInst(Value pointer, Type type, BasicBlock basicBlock) {
         super("%" + (++Value.valNumber), type, OP.Load, basicBlock);
         this.addOperand(pointer);
-        this.pointer = pointer;
     }
 
     public Value getPointer(){
-        return pointer;
+        return getOperand(0);
     }
 
     @Override
     public String getInstString(){
+        Value pointer = getPointer();
+
         try{
             Type type = ((PointerType) pointer.getType()).getEleType();
             return getName() + " = " + "load " + type + ", "
@@ -33,6 +33,7 @@ public class LoadInst extends Instruction{
     }
     @Override
     public String getInstString1(){
+        Value pointer = getPointer();
         Type type = ((PointerType) pointer.getType()).getEleType();
         String a1,a2;
         if(reg!=null) a1=reg.toString();else a1= getName();

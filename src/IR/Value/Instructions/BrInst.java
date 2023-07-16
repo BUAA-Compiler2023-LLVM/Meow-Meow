@@ -7,8 +7,7 @@ import IR.Value.Value;
 
 public class BrInst extends Instruction{
 
-    private final int type;
-    private Value judVal;
+    private int type;
     private BasicBlock TrueBlock;
     private BasicBlock FalseBlock;
     private BasicBlock JumpBlock;
@@ -21,14 +20,23 @@ public class BrInst extends Instruction{
 
     public BrInst(Value value, BasicBlock trueBlock, BasicBlock falseBlock, BasicBlock bb){
         super("", VoidType.voidType, OP.Br, bb);
+        addOperand(value);
         this.TrueBlock = trueBlock;
         this.FalseBlock = falseBlock;
-        this.judVal = value;
         this.type = 2;
     }
 
+    //  将br指令转换为jump指令
+    public void turnToJump(BasicBlock jumpBlock){
+        this.type = 1;
+        this.JumpBlock = jumpBlock;
+        this.TrueBlock = null;
+        this.FalseBlock = null;
+        this.removeUseFromOperands();
+    }
+
     public Value getJudVal(){
-        return judVal;
+        return getOperand(0);
     }
 
     public BasicBlock getTrueBlock(){
@@ -41,6 +49,10 @@ public class BrInst extends Instruction{
 
     public BasicBlock getJumpBlock(){
         return JumpBlock;
+    }
+
+    public boolean isJump(){
+        return type == 1;
     }
 
     @Override

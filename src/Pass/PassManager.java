@@ -2,6 +2,9 @@ package Pass;
 
 import Backend.component.ObjModule;
 import IR.IRModule;
+import Pass.IR.DCE;
+import Pass.IR.FuncInLine;
+import Pass.IR.Mem2Reg;
 import Pass.Pass.*;
 
 import java.util.ArrayList;
@@ -18,9 +21,12 @@ public class PassManager {
 
     private PassManager(){
         //  这里放入所有pass,控制pass的顺序
-//        irPasses.add(new DCE());
+        irPasses.add(new Mem2Reg());
+        irPasses.add(new DCE());
+
 
         //  然后根据需求开放pass
+        openedPasses.add("Mem2Reg");
 //        openedPasses.add("DCE");
     }
 

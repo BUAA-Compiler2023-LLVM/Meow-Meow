@@ -8,7 +8,7 @@ public class ConstFloat extends Const {
     public static ConstFloat const0 = new ConstFloat(0.0F);
 
     public ConstFloat(float value) {
-        super(String.valueOf(value), FloatType.F32);
+        super(String.format("0x%x", Double.doubleToRawLongBits(value)), FloatType.F32);
         this.value = value;
     }
 

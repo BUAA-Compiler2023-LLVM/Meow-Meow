@@ -46,6 +46,7 @@ public class IRBuildFactory {
             case "ftoi" -> OP.Ftoi;
             case "itof" -> OP.Itof;
             case "zext" -> OP.Zext;
+            case "bitcast" -> OP.BitCast;
             default -> null;
         };
     }
@@ -158,6 +159,7 @@ public class IRBuildFactory {
         Type type = switch (op) {
             case "ftoi", "zext" -> IntegerType.I32;
             case "itof" -> FloatType.F32;
+            case "bitcast" -> new PointerType(IntegerType.I32);
             default -> null;
         };
         ConversionInst conversionInst = new ConversionInst(value, type, str2op(op), bb);
@@ -178,8 +180,24 @@ public class IRBuildFactory {
                 right = turnType(right, IntegerType.I32, bb);
             }
             type = IntegerType.I32;
+
+            assert left != null;
+            leftType = left.getType();
+            assert right != null;
+            rightType = right.getType();
+
+            if(leftType == FloatType.F32 && rightType == IntegerType.I32){
+                right = turnType(right, FloatType.F32, bb);
+                type = FloatType.F32;
+            }
+            if(rightType == FloatType.F32 && leftType == IntegerType.I32){
+                left = turnType(left, FloatType.F32, bb);
+                type = FloatType.F32;
+            }
         }
         else type = leftType;
+
+        assert type != null;
         if(type.isFloatTy()){
             _op = _op + "f";
         }
@@ -205,11 +223,13 @@ public class IRBuildFactory {
     }
 
     public Argument buildArgument(String name, String typeStr, Function parentFunc){
-        Argument argument;
-        if (typeStr.equals("int")) argument = new Argument(name, IntegerType.I32, parentFunc);
-        else if (typeStr.equals("float")) argument = new Argument(name, FloatType.F32, parentFunc);
-        else if(typeStr.equals("int*")) argument = new Argument(name, new PointerType(IntegerType.I32), parentFunc);
-        else argument = new Argument(name, VoidType.voidType, parentFunc);
+        Argument argument = switch (typeStr) {
+            case "int" -> new Argument(name, IntegerType.I32, parentFunc);
+            case "float" -> new Argument(name, FloatType.F32, parentFunc);
+            case "int*" -> new Argument(name, new PointerType(IntegerType.I32), parentFunc);
+            case "float*" -> new Argument(name, new PointerType(FloatType.F32), parentFunc);
+            default -> new Argument(name, VoidType.voidType, parentFunc);
+        };
         parentFunc.addArg(argument);
         return argument;
     }
@@ -241,21 +261,27 @@ public class IRBuildFactory {
     public void buildBrInst(BasicBlock jumpBB, BasicBlock bb){
         BrInst brInst = new BrInst(jumpBB, bb);
         bb.addInst(brInst);
-        //  前驱后继关系
-        bb.getNxtBlocks().clear();
-        bb.setNxtBlock(jumpBB);
-        jumpBB.setPreBlock(bb);
+//        //  前驱后继关系
+//        bb.getNxtBlocks().clear();
+//        bb.setNxtBlock(jumpBB);
+//        jumpBB.setPreBlock(bb);
     }
 
     public void buildBrInst(Value judVal, BasicBlock trueBlock, BasicBlock falseBlock, BasicBlock bb){
         BrInst brInst = new BrInst(judVal, trueBlock, falseBlock, bb);
         bb.addInst(brInst);
-        //  前驱后继关系
-        bb.getNxtBlocks().clear();
-        bb.setNxtBlock(trueBlock);
-        bb.setNxtBlock(falseBlock);
-        trueBlock.setPreBlock(bb);
-        falseBlock.setPreBlock(bb);
+//        //  前驱后继关系
+//        bb.getNxtBlocks().clear();
+//        bb.setNxtBlock(trueBlock);
+//        bb.setNxtBlock(falseBlock);
+//        trueBlock.setPreBlock(bb);
+//        falseBlock.setPreBlock(bb);
+    }
+
+    public Phi buildPhi(BasicBlock bb, Type type, ArrayList<Value> values){
+        Phi phi = new Phi(type, bb, values);
+        bb.addInstToHead(phi);
+        return phi;
     }
 
     public BasicBlock buildBasicBlock(Function parentFunc){
@@ -268,6 +294,9 @@ public class IRBuildFactory {
         Function function;
         if(type.equals("int")){
             function = new Function(name, IntegerType.I32);
+        }
+        else if(type.equals("float")){
+            function = new Function(name, FloatType.F32);
         }
         else {
             function = new Function(name, VoidType.voidType);
@@ -302,6 +331,14 @@ public class IRBuildFactory {
     public void buildStoreInst(Value value, Value pointer, BasicBlock bb){
         Type valueTy = value.getType();
         PointerType pointerTy = (PointerType) pointer.getType();
+        Type eleTy = pointerTy.getEleType();
+        if(valueTy == IntegerType.I32 && eleTy == FloatType.F32){
+            value = f.buildConversionInst(value, "itof", bb);
+        }
+        else if(valueTy == FloatType.F32 && eleTy == IntegerType.I32){
+            value = f.buildConversionInst(value, "ftoi", bb);
+        }
+
         StoreInst storeInst = new StoreInst(value, pointer, bb);
         bb.addInst(storeInst);
     }

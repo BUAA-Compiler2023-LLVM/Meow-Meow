@@ -4,6 +4,7 @@ import IR.IRModule;
 import IR.Visitor;
 import Pass.PassManager;
 import Utils.IRDump;
+import Utils.RISC_Dump;
 
 import java.io.IOException;
 
@@ -14,12 +15,14 @@ public class Compiler {
         AST compAST = new Parser(tokenList).parseAST();
         IRModule irModule = new Visitor().visitAST(compAST);
 
+        PassManager passManager = PassManager.getInstance();
+        passManager.runIRPasses(irModule);
+
         IRDump.DumpModule(irModule);
 
-//        PassManager passManager = PassManager.getInstance();
-//        passManager.runIRPasses(irModule);
         Backend.Alloreg(irModule);
 //        Backend backend = new Backend(irModule);
 //        backend.print();
+//        RISC_Dump.DumpBackend(backend);
     }
 }

@@ -7,7 +7,6 @@ public class ObjBranch extends ObjInstr{
     private ObjOperand src = null;
     private boolean hasSrc = false, condType;
     private ObjBlock target;
-
     // j
     public ObjBranch(ObjBlock target) {
         this.target = target;
@@ -37,6 +36,6 @@ public class ObjBranch extends ObjInstr{
             else s = "bnez\t";
             return s + src + "\t" + target.getName();
         }
-        else return "j\t" + target.getName();
+        else return "   j\t" + target.getName();
     }
 }

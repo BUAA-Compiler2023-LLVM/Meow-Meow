@@ -5,12 +5,23 @@ import IR.Type.Type;
 import Utils.DataStruct.IList;
 
 import java.util.ArrayList;
+import java.util.HashMap;
+import java.util.HashSet;
 
 public class Function extends Value{
     private final IList<BasicBlock, Function> bbs;
     private final ArrayList<Argument> args;
-    private boolean hasSideEffect;
+    private HashMap<BasicBlock, ArrayList<BasicBlock>> idoms;
+    private HashMap<BasicBlock, ArrayList<BasicBlock>> pidoms;
+    private HashMap<BasicBlock, HashSet<BasicBlock>> dom;
+    private HashMap<BasicBlock, HashSet<BasicBlock>> pdom;
+    private boolean mayHasSideEffect;
     private boolean useGV;
+    private boolean canGVN = false;
+    private boolean isLibFunc = false;
+    private final HashSet<GlobalVar> loadGVs;
+    private final HashSet<GlobalVar> storeGVs;
+
     //  callerList记录调用这个function的其他函数
     private final ArrayList<Function> callerList;
     //  calleeList记录这个function调用的其他函数
@@ -25,6 +36,8 @@ public class Function extends Value{
         this.args = new ArrayList<>();
         this.callerList = new ArrayList<>();
         this.calleeList = new ArrayList<>();
+        this.loadGVs = new HashSet<>();
+        this.storeGVs = new HashSet<>();
     }
     public Function(String name, Type type, IList<BasicBlock, Function> bbs, ArrayList<Argument> args){
         super(name, type);
@@ -32,6 +45,42 @@ public class Function extends Value{
         this.args = args;
         this.callerList = new ArrayList<>();
         this.calleeList = new ArrayList<>();
+        this.loadGVs = new HashSet<>();
+        this.storeGVs = new HashSet<>();
+    }
+
+    public void setIdoms(HashMap<BasicBlock, ArrayList<BasicBlock>> idoms) {
+        this.idoms = idoms;
+        for(IList.INode<BasicBlock, Function> bbNode : bbs){
+            BasicBlock bb = bbNode.getValue();
+            bb.setIdoms(idoms.get(bb));
+            for(BasicBlock idomBb : idoms.get(bb)){
+                idomBb.setIdominator(bb);
+            }
+        }
+    }
+
+    public void setPIdoms(HashMap<BasicBlock, ArrayList<BasicBlock>> pidoms){
+        this.pidoms = pidoms;
+        for(IList.INode<BasicBlock, Function> bbNode : bbs){
+            BasicBlock bb = bbNode.getValue();
+            bb.setPIdoms(pidoms.get(bb));
+            for(BasicBlock pidomBb : pidoms.get(bb)){
+                pidomBb.setPIdominator(bb);
+            }
+        }
+    }
+
+    public HashMap<BasicBlock, ArrayList<BasicBlock>> getIdoms() {
+        return idoms;
+    }
+
+    public void setDom(HashMap<BasicBlock, HashSet<BasicBlock>> dom){
+        this.dom = dom;
+    }
+
+    public void setPDom(HashMap<BasicBlock, HashSet<BasicBlock>> pdom){
+        this.pdom = pdom;
     }
 
     public void addCaller(Function function){
@@ -49,8 +98,8 @@ public class Function extends Value{
         return calleeList;
     }
 
-    public void setHasSideEffect(boolean hasSideEffect){
-        this.hasSideEffect = hasSideEffect;
+    public void setMayHasSideEffect(boolean mayHasSideEffect){
+        this.mayHasSideEffect = mayHasSideEffect;
     }
 
     public void setUseGV(boolean useGV){
@@ -80,6 +129,34 @@ public class Function extends Value{
     }
 
     public boolean isLibFunction(){
-        return this.getName().equals("@getint") || this.getName().equals("@memset") || this.getName().equals("@printf");
+        return isLibFunc;
+    }
+
+    public void setAsLibFunction(){
+        this.isLibFunc = true;
+    }
+
+    public boolean isMayHasSideEffect(){
+        return mayHasSideEffect;
+    }
+
+    public boolean isUseGV(){
+        return useGV;
+    }
+
+    public void addLoadGV(GlobalVar gv){
+        loadGVs.add(gv);
+    }
+
+    public void addStoreGV(GlobalVar gv){
+        storeGVs.add(gv);
+    }
+
+    public HashSet<GlobalVar> getLoadGVs(){
+        return loadGVs;
+    }
+
+    public HashSet<GlobalVar> getStoreGVs(){
+        return storeGVs;
     }
 }

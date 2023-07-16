@@ -12,6 +12,9 @@ public class Backend {
         IrParser irParser = new IrParser(irModule);
         this.objModule = irParser.parseModule();
     }
+    public ObjModule getModle() {
+        return objModule;
+    }
     public void print() {
         this.objModule.print();
     }

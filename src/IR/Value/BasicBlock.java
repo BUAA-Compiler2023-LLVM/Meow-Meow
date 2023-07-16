@@ -1,8 +1,11 @@
 package IR.Value;
 
 import IR.Type.VoidType;
+import IR.Value.Instructions.BrInst;
 import IR.Value.Instructions.Instruction;
+import IR.Value.Instructions.RetInst;
 import Utils.DataStruct.IList;
+import org.w3c.dom.Node;
 import jdk.swing.interop.SwingInterOpUtils;
 
 import java.util.ArrayList;
@@ -18,6 +21,12 @@ public class BasicBlock extends Value{
     private final IList<Instruction, BasicBlock> insts;
     public static int blockNum = 0;
     private final IList.INode<BasicBlock, Function> node;
+    private ArrayList<BasicBlock> idoms;
+    private ArrayList<BasicBlock> pidoms;
+    private BasicBlock idominator;
+    private BasicBlock pidominator;
+    private int domLV;
+
     public final ArrayList<ArrayList<Value>> LocalInterfere = new ArrayList<>();
     public BasicBlock(){
         super("block" + ++blockNum, VoidType.voidType);
@@ -70,6 +79,42 @@ public class BasicBlock extends Value{
         if(!nxtBlocks.contains(bb)) {
             nxtBlocks.add(bb);
         }
+    }
+
+    public Instruction getLastInst(){
+        return insts.getTailValue();
+    }
+
+    public void setIdoms(ArrayList<BasicBlock> idoms){
+        this.idoms = idoms;
+    }
+    public void setPIdoms(ArrayList<BasicBlock> pidoms){
+        this.pidoms = pidoms;
+    }
+
+    public void setDomLV(int domLV){
+        this.domLV = domLV;
+    }
+
+    public void setIdominator(BasicBlock idominator){
+        this.idominator = idominator;
+    }
+    public void setPIdominator(BasicBlock pidominator){
+        this.pidominator = pidominator;
+    }
+
+    public BasicBlock getIdominator(){
+        return idominator;
+    }
+    public BasicBlock getPIdominator(){
+        return pidominator;
+    }
+    public ArrayList<BasicBlock> getIdoms(){
+        return idoms;
+    }
+
+    public ArrayList<BasicBlock> getPIdoms(){
+        return pidoms;
     }
 
     public void removeSelf(){

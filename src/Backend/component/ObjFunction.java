@@ -16,7 +16,7 @@ public class ObjFunction {
     private HashSet<ObjVirReg> usedVirRegs;
 
     private int allocaSize;
-    private int totalStackSize;
+    private int Rsize, argsSize;
 
     private TreeSet<Integer> calleeSavedRegIndexes = new TreeSet<>();
     private HashSet<ObjBlock> hasSerial = new HashSet<>();
@@ -29,6 +29,12 @@ public class ObjFunction {
         usedVirRegs = new HashSet<>();
 
         this.allocaSize = 0;
+        this.Rsize = 0;
+        this.argsSize = 0;
+    }
+
+    public IList<ObjBlock, ObjFunction> getObjBlocks() {
+        return objBlocks;
     }
 
     public String getName() {
@@ -48,11 +54,21 @@ public class ObjFunction {
     }
 
     public void addArgOffset(ObjImm objOffset) { argOffsets.add(objOffset); }
-    public int getTotalStackSize() { return totalStackSize; }
+    // public int getTotalStackSize() { return totalStackSize; }
     public void addAllocaSize(int size) {
         allocaSize += size;
     }
     public int getAllocaSize() { return allocaSize; }
+    public void setRsize() { Rsize = 4; }
+    public int getRsize() { return Rsize; }
+    public void setArgsSize(int size) {
+        if(size > argsSize)
+            argsSize = size;
+    }
+    public int getArgsSize() { return argsSize; }
+    public int getStackSize() {
+        return Rsize + argsSize + allocaSize;
+    }
 
     public void print() {
         System.out.println(name + ":");

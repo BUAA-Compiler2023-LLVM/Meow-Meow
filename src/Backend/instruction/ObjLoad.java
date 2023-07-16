@@ -46,6 +46,6 @@ public class ObjLoad extends ObjInstr {
 
     @Override
     public String toString() {
-        return "lw " + dst + ",\t" + offset + "(" + addr + ")";
+        return "  lw\t" + dst + ",\t" + offset + "(" + addr + ")";
     }
 }

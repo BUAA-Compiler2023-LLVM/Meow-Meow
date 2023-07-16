@@ -48,6 +48,6 @@ public class ObjStore extends ObjInstr {
 
     @Override
     public String toString() {
-        return "sw " + src + ",\t" + offset + "(" + addr + ")";
+        return "  sw\t" + src + ",\t" + offset + "(" + addr + ")";
     }
 }
