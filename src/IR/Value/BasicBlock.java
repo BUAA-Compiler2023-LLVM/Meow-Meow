@@ -97,8 +97,18 @@ public class BasicBlock extends Value{
         this.pidominator = pidominator;
     }
 
+    public BasicBlock getIdominator(){
+        return idominator;
+    }
     public BasicBlock getPIdominator(){
         return pidominator;
+    }
+    public ArrayList<BasicBlock> getIdoms(){
+        return idoms;
+    }
+
+    public ArrayList<BasicBlock> getPIdoms(){
+        return pidoms;
     }
 
     public void removeSelf(){

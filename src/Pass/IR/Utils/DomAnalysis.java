@@ -10,6 +10,7 @@ import Utils.DataStruct.Pair;
 import java.util.*;
 
 public class DomAnalysis{
+
     public static DomAnalysisRes run(Function function){
         HashMap<BasicBlock, ArrayList<BasicBlock>> df = new HashMap<>();
         HashMap<BasicBlock, ArrayList<BasicBlock>> rdf = new HashMap<>();
@@ -22,63 +23,15 @@ public class DomAnalysis{
         //  idoms记录每个Bb直接支配哪些块
         HashMap<BasicBlock, ArrayList<BasicBlock>> idoms = new HashMap<>();
         HashMap<BasicBlock, ArrayList<BasicBlock>> pidoms = new HashMap<>();
-
         //  allBlocks记录有效的Block(即与bbEntry全联通的BasicBlock)
         ArrayList<BasicBlock> allBlocks = new ArrayList<>();
-        HashSet<BasicBlock> allBlocksSet = new HashSet<>();
-        //  用队列q进行bfs计算allBlocks
-        Queue<BasicBlock> q = new LinkedList<>();
-        HashSet<BasicBlock> deletedBlock = new HashSet<>();
 
         //  先建立CFG图(Control Flow Graph)
-        for(IList.INode<BasicBlock, Function> bbNode : function.getBbs()){
-            BasicBlock bb = bbNode.getValue();
-            for(IList.INode<Instruction, BasicBlock> instNode : bb.getInsts()){
-                Instruction inst = instNode.getValue();
-                if(inst instanceof BrInst brInst){
-                    if(brInst.isJump()){
-                        BasicBlock jumpBb = brInst.getJumpBlock();
-                        bb.setNxtBlock(jumpBb);
-                        jumpBb.setPreBlock(bb);
-                    }
-                    else{
-                        BasicBlock left = brInst.getTrueBlock();
-                        BasicBlock right = brInst.getFalseBlock();
-                        bb.setNxtBlock(left);
-                        bb.setNxtBlock(right);
-                        left.setPreBlock(bb);
-                        right.setPreBlock(bb);
-                    }
-                }
-            }
-        }
+        initCFG(function);
 
         //  根据CFG图初始化数据结构
         //  先计算有效的所有block
-        q.add(function.getBbEntry());
-        allBlocks.add(function.getBbEntry());
-        allBlocksSet.add(function.getBbEntry());
-        while (!q.isEmpty()){
-            BasicBlock nowBb = q.poll();
-            for(BasicBlock nxtBb : nowBb.getNxtBlocks()){
-                if(!allBlocksSet.contains(nxtBb)){
-                    q.add(nxtBb);
-                    allBlocks.add(nxtBb);
-                    allBlocksSet.add(nxtBb);
-                }
-            }
-        }
-
-        //  顺便把没用的block删了
-        for (IList.INode<BasicBlock, Function> bbNode : function.getBbs()){
-            BasicBlock bb = bbNode.getValue();
-            if(!allBlocksSet.contains(bb)){
-                deletedBlock.add(bb);
-            }
-        }
-        for(BasicBlock bb : deletedBlock){
-            bb.removeSelf();
-        }
+        allBlocks = getAllBlocks(function);
 
         //  数据结构初始化
         for (BasicBlock bb : allBlocks) {
@@ -201,6 +154,7 @@ public class DomAnalysis{
             }
         }
 
+        //  计算pidom关系
         for (BasicBlock bb : pdom.keySet()) {
             HashSet<BasicBlock> tmpPDomSet = pdom.get(bb);
             if (tmpPDomSet.size() == 1) {
@@ -245,35 +199,154 @@ public class DomAnalysis{
         buildDomTree(bbEntry, 0, function);
 
         //  计算DF
-        //  计算支配边界的原理其实有点类似并查集
-        //  考虑到如果存在两个基本块为直接支配关系，那么可以当作它们为一个集合
-        //  这样已知向上找，直到不为直接支配关系，就找到了支配边界
-        for (BasicBlock bb : allBlocks) {
-            if (bb.getPreBlocks().size() > 1) {
-                for (BasicBlock p : bb.getPreBlocks()) {
-                    BasicBlock runner = p;
-                    while (!runner.equals(idom.get(bb))) {
-                        df.get(runner).add(bb);
-                        runner = idom.get(runner);
-                    }
-                }
-            }
-        }
+        ArrayList<BasicBlock> domPostOrder = getDomPostOrder(bbEntry);
+        df = getDF(domPostOrder);
 
         //  计算RDF
+        ArrayList<BasicBlock> postOrderEntry = new ArrayList<>();
         for(BasicBlock bb : allBlocks){
-            if (bb.getNxtBlocks().size() > 1) {
-                for (BasicBlock p : bb.getNxtBlocks()) {
-                    BasicBlock runner = p;
-                    while (!runner.equals(pidom.get(bb))) {
-                        rdf.get(runner).add(bb);
-                        runner = pidom.get(runner);
-                    }
+            if(bb.getNxtBlocks().size() == 0){
+                postOrderEntry.add(bb);
+            }
+        }
+        ArrayList<BasicBlock> pdomPostOrder = getPDomPostOrder(postOrderEntry);
+        rdf = getRDF(pdomPostOrder);
+
+        return new DomAnalysisRes(df, idoms, rdf);
+    }
+
+    private static ArrayList<BasicBlock> getAllBlocks(Function function){
+        Queue<BasicBlock> q = new LinkedList<>();
+        ArrayList<BasicBlock> allBlocks = new ArrayList<>();
+        HashSet<BasicBlock> allBlocksSet = new HashSet<>();
+        q.add(function.getBbEntry());
+        allBlocks.add(function.getBbEntry());
+        allBlocksSet.add(function.getBbEntry());
+        while (!q.isEmpty()){
+            BasicBlock nowBb = q.poll();
+            for(BasicBlock nxtBb : nowBb.getNxtBlocks()){
+                if(!allBlocksSet.contains(nxtBb)){
+                    q.add(nxtBb);
+                    allBlocks.add(nxtBb);
+                    allBlocksSet.add(nxtBb);
                 }
             }
         }
 
-        return new DomAnalysisRes(df, idoms, rdf);
+        //  顺便把没用的block删了
+        ArrayList<BasicBlock> deletedBlock = new ArrayList<>();
+        for (IList.INode<BasicBlock, Function> bbNode : function.getBbs()){
+            BasicBlock bb = bbNode.getValue();
+            if(!allBlocksSet.contains(bb)){
+                deletedBlock.add(bb);
+            }
+        }
+        for(BasicBlock bb : deletedBlock){
+            bb.removeSelf();
+        }
+        return allBlocks;
+    }
+
+    private static void initCFG(Function function){
+        for(IList.INode<BasicBlock, Function> bbNode : function.getBbs()){
+            BasicBlock bb = bbNode.getValue();
+            for(IList.INode<Instruction, BasicBlock> instNode : bb.getInsts()){
+                Instruction inst = instNode.getValue();
+                if(inst instanceof BrInst brInst){
+                    if(brInst.isJump()){
+                        BasicBlock jumpBb = brInst.getJumpBlock();
+                        bb.setNxtBlock(jumpBb);
+                        jumpBb.setPreBlock(bb);
+                    }
+                    else{
+                        BasicBlock left = brInst.getTrueBlock();
+                        BasicBlock right = brInst.getFalseBlock();
+                        bb.setNxtBlock(left);
+                        bb.setNxtBlock(right);
+                        left.setPreBlock(bb);
+                        right.setPreBlock(bb);
+                    }
+                }
+            }
+        }
+    }
+
+    private static HashMap<BasicBlock, ArrayList<BasicBlock>> getDF(ArrayList<BasicBlock> domPostOrder){
+        HashMap<BasicBlock, ArrayList<BasicBlock>> df = new HashMap<>();
+        for(BasicBlock X : domPostOrder){
+            df.put(X, new ArrayList<>());
+            //  DF_local(X)
+            for(BasicBlock Y : X.getNxtBlocks()){
+                if(Y.getIdominator() != X){
+                    df.get(X).add(Y);
+                }
+            }
+            //  DF_up(Z)
+            for(BasicBlock Z : X.getIdoms()){
+                for(BasicBlock Y : df.get(Z)){
+                    if(Y.getIdominator() != X){
+                        df.get(X).add(Y);
+                    }
+                }
+            }
+        }
+        return df;
+    }
+
+    private static HashMap<BasicBlock, ArrayList<BasicBlock>> getRDF(ArrayList<BasicBlock> pdomPostOrder){
+        HashMap<BasicBlock, ArrayList<BasicBlock>> rdf = new HashMap<>();
+        for(BasicBlock X : pdomPostOrder){
+            rdf.put(X, new ArrayList<>());
+            //  RDF_local(X)
+            for(BasicBlock Y : X.getPreBlocks()){
+                if(Y.getPIdominator() != X){
+                    rdf.get(X).add(Y);
+                }
+            }
+            //  RDF_up(Z)
+            for(BasicBlock Z : X.getPIdoms()){
+                for(BasicBlock Y : rdf.get(Z)){
+                    if(Y.getPIdominator() != X){
+                        rdf.get(X).add(Y);
+                    }
+                }
+            }
+        }
+        return rdf;
+    }
+
+    //  pdom支配树不止有一个起始点，因此用bfs
+    private static ArrayList<BasicBlock> getPDomPostOrder(ArrayList<BasicBlock> postOrderEntry){
+        ArrayList<BasicBlock> postOrder = new ArrayList<>();
+        Queue<BasicBlock> queue = new LinkedList<>();
+        HashSet<BasicBlock> bbSet = new HashSet<>();
+        for(BasicBlock bb : postOrderEntry){
+            queue.add(bb);
+            bbSet.add(bb);
+        }
+
+        while (!queue.isEmpty()){
+            BasicBlock nowBb = queue.poll();
+            postOrder.add(nowBb);
+            for(BasicBlock sonBb : nowBb.getPIdoms()){
+                if(!bbSet.contains(sonBb)){
+                    queue.add(sonBb);
+                    bbSet.add(sonBb);
+                }
+            }
+        }
+
+        Collections.reverse(postOrder);
+        return postOrder;
+    }
+
+    private static ArrayList<BasicBlock> getDomPostOrder(BasicBlock bb){
+        ArrayList<BasicBlock> postOrder = new ArrayList<>();
+        for(BasicBlock sonBb : bb.getIdoms()){
+            postOrder.addAll(getDomPostOrder(sonBb));
+        }
+        postOrder.add(bb);
+        return postOrder;
     }
 
     private static void buildDomTree(BasicBlock bb, int domLV, Function function){

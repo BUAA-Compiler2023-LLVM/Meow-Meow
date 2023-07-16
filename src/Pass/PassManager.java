@@ -27,7 +27,7 @@ public class PassManager {
 
         //  然后根据需求开放pass
         openedPasses.add("Mem2Reg");
-        openedPasses.add("DCE");
+//        openedPasses.add("DCE");
     }
 
 
