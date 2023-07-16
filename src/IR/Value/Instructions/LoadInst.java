@@ -20,8 +20,24 @@ public class LoadInst extends Instruction{
 
     @Override
     public String getInstString(){
+        try{
+            Type type = ((PointerType) pointer.getType()).getEleType();
+            return getName() + " = " + "load " + type + ", "
+                    + pointer.getType() + " " + pointer.getName();
+        }
+       catch (Exception e )
+       {
+           return getName() + " = " + "load " + ", "
+                   + pointer.getType() + " " + pointer.getName();
+       }
+    }
+    @Override
+    public String getInstString1(){
         Type type = ((PointerType) pointer.getType()).getEleType();
-        return getName() + " = " + "load " + type + ", "
-                + pointer.getType() + " " + pointer.getName();
+        String a1,a2;
+        if(reg!=null) a1=reg.toString();else a1= getName();
+        if(pointer.reg!=null) a2=pointer.reg.toString();else a2= pointer.getName();
+        return a1 + " = " + "load " + type + ", "
+                + pointer.getType() + " " +a2;
     }
 }

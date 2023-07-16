@@ -16,4 +16,11 @@ public class AllocInst extends Instruction{
         Type EleType = ((PointerType) getType()).getEleType();
         return getName() + " = " + "alloca " + EleType.toString();
     }
+    @Override
+    public String getInstString1(){
+        Type EleType = ((PointerType) getType()).getEleType();
+        if(reg!=null)
+        return reg.toString() + " = " + "alloca " + EleType.toString();
+         return getName() + " = " + "alloca " + EleType.toString();
+    }
 }

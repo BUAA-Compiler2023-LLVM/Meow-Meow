@@ -46,4 +46,26 @@ public class CallInst extends Instruction{
         sb.append(")");
         return sb.toString();
     }
+    @Override
+    public String getInstString1(){
+        StringBuilder sb = new StringBuilder();
+        if(!this.getType().isVoidTy()){
+            if(reg!=null)
+            sb.append(reg.toString()).append(" = ");
+            else sb.append(getName()).append(" = ");
+        }
+        sb.append("call ").append(getFunction().getType()).append(' ').append(getFunction().getName()).append("(");
+        ArrayList<Value> operands = getOperands();
+        for(int i = 0; i < operands.size(); i++){
+            Value value = operands.get(i);
+            if(value.reg!=null)
+            sb.append(value.getType()).append(" ").append(value.reg.toString());
+            else sb.append(value.getType()).append(" ").append(value.getName());
+            if(i != operands.size() - 1){
+                sb.append(", ");
+            }
+        }
+        sb.append(")");
+        return sb.toString();
+    }
 }

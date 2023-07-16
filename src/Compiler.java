@@ -18,7 +18,7 @@ public class Compiler {
 
 //        PassManager passManager = PassManager.getInstance();
 //        passManager.runIRPasses(irModule);
-
+        Backend.Alloreg(irModule);
 //        Backend backend = new Backend(irModule);
 //        backend.print();
     }

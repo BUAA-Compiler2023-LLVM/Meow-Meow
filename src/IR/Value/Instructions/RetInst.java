@@ -45,7 +45,26 @@ public class RetInst extends Instruction {
         else sb.append(value.getName());
         return sb.toString();
     }
+    @Override
+    public String getInstString1(){
+        StringBuilder sb = new StringBuilder();
+        sb.append("ret ");
 
+        Value value = getValue();
+        if(value.getType().isIntegerTy()) sb.append("i32 ");
+        else if(value.getType().isFloatTy()) sb.append("float i32 ");
+
+        if(value instanceof ConstInteger constInt) {
+            sb.append(constInt.getValue());
+        }
+        else if(value instanceof ConstFloat constFloat){
+            sb.append(constFloat.getValue());
+        }
+
+        else if (value.reg!=null)sb.append(value.reg.toString());
+        else sb.append(value.getName());
+        return sb.toString();
+    }
     @Override
     public boolean hasName(){
         return false;

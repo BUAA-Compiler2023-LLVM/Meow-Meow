@@ -49,7 +49,9 @@ public abstract class Instruction extends User {
     public String getInstString(){
         return "";
     }
-
+    public String getInstString1(){
+        return "";
+    }
     //  将inst插入在this的前面
     public void insertBefore(Instruction inst){
         node.insertBefore(inst.getNode());

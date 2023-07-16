@@ -3,6 +3,7 @@ package IR.Value;
 import IR.Type.VoidType;
 import IR.Value.Instructions.Instruction;
 import Utils.DataStruct.IList;
+import jdk.swing.interop.SwingInterOpUtils;
 
 import java.util.ArrayList;
 
@@ -10,10 +11,14 @@ public class BasicBlock extends Value{
     private Function parentFunc;
     private final ArrayList<BasicBlock> preBlocks;
     private final ArrayList<BasicBlock> nxtBlocks;
+    public final ArrayList<Value> liveIns=new ArrayList<>();
+    public final ArrayList<Value> liveOuts=new ArrayList<>();
+    public final ArrayList<Value> Use=new ArrayList<>();
+    public final ArrayList<Value> Def=new ArrayList<>();
     private final IList<Instruction, BasicBlock> insts;
     public static int blockNum = 0;
     private final IList.INode<BasicBlock, Function> node;
-
+    public final ArrayList<ArrayList<Value>> LocalInterfere = new ArrayList<>();
     public BasicBlock(){
         super("block" + ++blockNum, VoidType.voidType);
         this.insts = new IList<>(this);
@@ -81,7 +86,33 @@ public class BasicBlock extends Value{
     public Function getParentFunc() {
         return node.getParent().getValue();
     }
-
+    public void printBbDetail()
+    {
+        System.out.println("===========");
+        System.out.println("\t"+this.getName());
+//        System.out.println("PREV:   "+this.getPreBlocks());
+//        System.out.println("NEXT:   "+this.getNxtBlocks());
+        for( IList.INode<Instruction, BasicBlock> inst : this.getInsts())
+        {
+            for(Value v : inst.getValue().getOperands())
+            {
+                if(v.spill)
+                {
+                    System.out.println(v.reg+ "= lw somewhere");
+                }
+            }
+            System.out.println(inst.getValue().getInstString1());
+            if(inst.getValue().spill==Boolean.TRUE)
+            {
+                System.out.println("sw "+inst.getValue().reg+" somewhere");
+            }
+        }
+        System.out.println("DEF:    "+Def);
+        System.out.println("USE:    "+Use);
+        System.out.println("IN:    "+liveIns);
+        System.out.println("OUT:    "+liveOuts);
+        System.out.println("===========");
+    }
 
     @Override
     public String toString(){

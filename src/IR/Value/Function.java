@@ -15,6 +15,8 @@ public class Function extends Value{
     private final ArrayList<Function> callerList;
     //  calleeList记录这个function调用的其他函数
     private final ArrayList<Function> calleeList;
+    private BasicBlock Entry;
+    private BasicBlock Exit;
 
     //  Function的Type就是它返回值的type
     public Function(String name, Type type){
@@ -67,6 +69,14 @@ public class Function extends Value{
 
     public BasicBlock getBbEntry() {
         return bbs.getHeadValue();
+    }
+
+    public void setBbExit(BasicBlock b) {
+        this.Exit=b;
+    }
+
+    public BasicBlock getBbExit() {
+        return this.Exit;
     }
 
     public boolean isLibFunction(){

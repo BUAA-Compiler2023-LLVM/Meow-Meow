@@ -37,4 +37,24 @@ public class BinaryInst extends Instruction {
                 getLeftVal().getName() + ", " +
                 getRightVal().getName();
     }
+    @Override
+    public String getInstString1(){
+        String type_str;
+        Type valueTy = getLeftVal().getType();
+        if(valueTy == IntegerType.I32){
+            type_str = "i32";
+        }
+        else if(valueTy == IntegerType.I1){
+            type_str = "i1";
+        }
+        else type_str = "float";
+        String a1,a2,a3;
+        if(reg!=null) a1=reg.toString();else a1=getName();
+        if(getLeftVal().reg!=null) a2=getLeftVal().reg.toString();else a2=getLeftVal().getName();
+        if(getRightVal().reg!=null) a3=getRightVal().reg.toString();else a3=getRightVal().getName();
+        return a1 + " = " +
+                getOp() + " " + type_str + " " +
+                a2+ ", " +
+                a3;
+    }
 }

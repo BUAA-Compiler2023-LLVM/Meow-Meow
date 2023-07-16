@@ -621,12 +621,17 @@ public class Visitor {
                 else{
                     if(inst instanceof RetInst || inst instanceof BrInst){
                         isTerminal = true;
+                        if(inst instanceof RetInst)
+                        {
+                            CurFunction.setBbExit(CurBasicBlock);
+                        }
                     }
                 }
             }
 
             // 如果没有ret语句，构建一个ret void
             if(!isTerminal){
+                CurFunction.setBbExit(CurBasicBlock);
                 if(CurFunction.getType().isVoidTy()){
                     f.buildRetInst(CurBasicBlock);
                 }

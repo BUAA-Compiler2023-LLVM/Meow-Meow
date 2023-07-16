@@ -64,4 +64,22 @@ public class BrInst extends Instruction{
         }
         return sb.toString();
     }
+    @Override
+    public String getInstString1(){
+        StringBuilder sb = new StringBuilder();
+        if(type == 2) {
+            sb.append("br ");
+            if(getJudVal().reg!=null)
+            sb.append(getJudVal().reg.toString()).append(", ");
+            else sb.append(getJudVal()).append(", ");
+            sb.append("label %").append(getTrueBlock().getName()).append(", ");
+            sb.append("label %").append(getFalseBlock().getName());
+        }
+        //  直接跳转
+        else {
+            sb.append("br label ");
+            sb.append(getJumpBlock());
+        }
+        return sb.toString();
+    }
 }

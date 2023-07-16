@@ -1,5 +1,6 @@
 package IR.Value;
 
+import Backend.Registers;
 import IR.Type.Type;
 import IR.Use;
 
@@ -11,8 +12,10 @@ public class Value {
     private ArrayList<Use> useList;
     //  valNumber用于给value命名
     public static int valNumber = -1;
-
+    public Registers reg=null;
+    public int store=-1;
     public Value(){}
+    public Boolean spill=Boolean.FALSE;
 
     public Value(String name, Type type){
         this.name = name;

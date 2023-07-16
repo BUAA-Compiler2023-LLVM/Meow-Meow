@@ -45,4 +45,26 @@ public class GepInst extends Instruction{
         }
         return sb.toString();
     }
+    @Override
+    public String getInstString1(){
+        StringBuilder sb = new StringBuilder();
+        if(reg!=null)
+        sb.append(reg.toString()).append(" = getelementptr ");
+        else
+            sb.append(getName()).append(" = getelementptr ");
+        Value target = getTarget();
+        PointerType pointerType = (PointerType) target.getType();
+        sb.append(pointerType.getEleType()).append(", ");
+        sb.append(pointerType).append(" ");
+        if(target.reg!=null)
+        sb.append(target.reg.toString());
+else sb.append(target.getName());
+        ArrayList<Value> indexs = getIndexs();
+        for(Value index : indexs){
+            if(index.reg!=null)
+            sb.append(", i32 ").append(index.reg.toString());
+            else sb.append(", i32 ").append(index.getName());
+        }
+        return sb.toString();
+    }
 }
