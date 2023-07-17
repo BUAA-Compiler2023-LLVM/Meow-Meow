@@ -9,6 +9,9 @@ import Utils.DataStruct.Pair;
 
 import java.util.*;
 
+import static Pass.IR.Utils.UtilFunc.initCFG;
+
+
 public class DomAnalysis{
 
     public static DomAnalysisRes run(Function function){
@@ -24,7 +27,8 @@ public class DomAnalysis{
         HashMap<BasicBlock, ArrayList<BasicBlock>> idoms = new HashMap<>();
         HashMap<BasicBlock, ArrayList<BasicBlock>> pidoms = new HashMap<>();
         //  allBlocks记录有效的Block(即与bbEntry全联通的BasicBlock)
-        ArrayList<BasicBlock> allBlocks = new ArrayList<>();
+        ArrayList<BasicBlock> allBlocks;
+        ArrayList<BasicBlock> endBlocks;
 
         //  先建立CFG图(Control Flow Graph)
         initCFG(function);
@@ -32,21 +36,24 @@ public class DomAnalysis{
         //  根据CFG图初始化数据结构
         //  先计算有效的所有block
         allBlocks = getAllBlocks(function);
+        endBlocks = getEndBlocks(function);
 
         //  数据结构初始化
         for (BasicBlock bb : allBlocks) {
-            dom.put(bb, null);
-            pdom.put(bb, null);
             idoms.put(bb, new ArrayList<>());
             pidoms.put(bb, new ArrayList<>());
             df.put(bb, new ArrayList<>());
             rdf.put(bb, new ArrayList<>());
+
+            dom.put(bb, null);
+            pdom.put(bb, null);
         }
 
         //  正式开始计算
         dom.replace(function.getBbEntry(), new HashSet<>());
         dom.get(function.getBbEntry()).add(function.getBbEntry());
         //  计算支配(dom)关系
+        //  按逆后序的迭代顺序
         //  我们采取迭代的策略：某基本块的dom <- 某基本块所有前驱的dom的交集加上自己本身
         //  直到没有基本块的dom发生变化
         boolean done = false;
@@ -82,16 +89,17 @@ public class DomAnalysis{
 
         //  计算后支配(pdom)关系
         //  算法同上，只不过是反向CFG
-        for(BasicBlock bb : allBlocks){
-            if(bb.getNxtBlocks().size() == 0){
-                pdom.replace(bb, new HashSet<>());
-                pdom.get(bb).add(bb);
-            }
+
+        for(BasicBlock bb : endBlocks){
+            pdom.replace(bb, new HashSet<>());
+            pdom.get(bb).add(bb);
         }
         done = false;
+
+        ArrayList<BasicBlock> RPOBlocks = getRPOForRCFG(endBlocks);
         while (!done){
             done = true;
-            for(BasicBlock bb : allBlocks){
+            for(BasicBlock bb : RPOBlocks){
                 //  用temPreBbs记录前驱的交集
                 HashSet<BasicBlock> nxtBbsDom = null;
                 for(BasicBlock nxtBb : bb.getNxtBlocks()){
@@ -112,6 +120,7 @@ public class DomAnalysis{
                 }
 
                 nxtBbsDom.add(bb);
+                HashSet<BasicBlock> s = pdom.get(bb);
                 if(!nxtBbsDom.equals(pdom.get(bb))){
                     pdom.replace(bb, nxtBbsDom);
                     done = false;
@@ -203,16 +212,34 @@ public class DomAnalysis{
         df = getDF(domPostOrder);
 
         //  计算RDF
-        ArrayList<BasicBlock> postOrderEntry = new ArrayList<>();
-        for(BasicBlock bb : allBlocks){
-            if(bb.getNxtBlocks().size() == 0){
-                postOrderEntry.add(bb);
-            }
-        }
-        ArrayList<BasicBlock> pdomPostOrder = getPDomPostOrder(postOrderEntry);
+        ArrayList<BasicBlock> pdomPostOrder = getPDomPostOrder(endBlocks);
         rdf = getRDF(pdomPostOrder);
 
         return new DomAnalysisRes(df, idoms, rdf);
+    }
+
+    //  理论上应该返回Reverse Post-Order，但是要写递归
+    //  貌似bfs的preOrder也能用，先不改了
+    private static ArrayList<BasicBlock> getRPOForRCFG(ArrayList<BasicBlock> endBlocks){
+        Queue<BasicBlock> queue = new LinkedList<>();
+        HashSet<BasicBlock> bbSet = new HashSet<>();
+        ArrayList<BasicBlock> rAllBlocks = new ArrayList<>();
+        for(BasicBlock bb : endBlocks){
+            queue.add(bb);
+            bbSet.add(bb);
+        }
+
+        while (!queue.isEmpty()){
+            BasicBlock nowBb = queue.poll();
+            rAllBlocks.add(nowBb);
+            for(BasicBlock preBb : nowBb.getPreBlocks()){
+                if(!bbSet.contains(preBb)){
+                    bbSet.add(preBb);
+                    queue.add(preBb);
+                }
+            }
+        }
+        return rAllBlocks;
     }
 
     private static ArrayList<BasicBlock> getAllBlocks(Function function){
@@ -247,29 +274,6 @@ public class DomAnalysis{
         return allBlocks;
     }
 
-    private static void initCFG(Function function){
-        for(IList.INode<BasicBlock, Function> bbNode : function.getBbs()){
-            BasicBlock bb = bbNode.getValue();
-            for(IList.INode<Instruction, BasicBlock> instNode : bb.getInsts()){
-                Instruction inst = instNode.getValue();
-                if(inst instanceof BrInst brInst){
-                    if(brInst.isJump()){
-                        BasicBlock jumpBb = brInst.getJumpBlock();
-                        bb.setNxtBlock(jumpBb);
-                        jumpBb.setPreBlock(bb);
-                    }
-                    else{
-                        BasicBlock left = brInst.getTrueBlock();
-                        BasicBlock right = brInst.getFalseBlock();
-                        bb.setNxtBlock(left);
-                        bb.setNxtBlock(right);
-                        left.setPreBlock(bb);
-                        right.setPreBlock(bb);
-                    }
-                }
-            }
-        }
-    }
 
     private static HashMap<BasicBlock, ArrayList<BasicBlock>> getDF(ArrayList<BasicBlock> domPostOrder){
         HashMap<BasicBlock, ArrayList<BasicBlock>> df = new HashMap<>();
@@ -313,6 +317,17 @@ public class DomAnalysis{
             }
         }
         return rdf;
+    }
+
+    private static ArrayList<BasicBlock> getEndBlocks(Function function){
+        ArrayList<BasicBlock> endBlocks = new ArrayList<>();
+        for(IList.INode<BasicBlock, Function> bbNode : function.getBbs()){
+            BasicBlock bb = bbNode.getValue();
+            if(bb.getNxtBlocks().size() == 0){
+                endBlocks.add(bb);
+            }
+        }
+        return endBlocks;
     }
 
     //  pdom支配树不止有一个起始点，因此用bfs

@@ -80,10 +80,16 @@ public class DCE implements Pass.IRPass {
                     usefulBbSet.add(newInst.getParentbb());
                 }
             }
-            for(BasicBlock bb : rdf.get(inst.getParentbb())){
-                usefulInstSet.add(bb.getLastInst());
-                usefulInsts.add(bb.getLastInst());
-                usefulBbSet.add(bb);
+
+            if(rdf.get(inst.getParentbb()) != null) {
+                for (BasicBlock bb : rdf.get(inst.getParentbb())) {
+                    Instruction lastInst = bb.getLastInst();
+                    if (!usefulInstSet.contains(lastInst)) {
+                        usefulInstSet.add(lastInst);
+                        usefulInsts.add(lastInst);
+                        usefulBbSet.add(bb);
+                    }
+                }
             }
         }
 
@@ -96,7 +102,7 @@ public class DCE implements Pass.IRPass {
                     if(inst instanceof BrInst brInst){
                         if(!brInst.isJump()){
                             BasicBlock nowBb = brInst.getParentbb();
-                            while (!usefulBbSet.contains(nowBb)){
+                            while (!usefulBbSet.contains(nowBb) && nowBb.getPIdominator() != null){
                                 nowBb = nowBb.getPIdominator();
                             }
                             brInst.turnToJump(nowBb);

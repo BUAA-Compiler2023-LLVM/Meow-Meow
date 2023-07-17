@@ -51,16 +51,16 @@ public class BrInst extends Instruction{
         return JumpBlock;
     }
 
-    public void setJumpBlock(BasicBlock jumpBlock) {
-        JumpBlock = jumpBlock;
+    public void setJumpBlock(BasicBlock jumpBlock){
+        this.JumpBlock = jumpBlock;
     }
 
-    public void setTrueBlock(BasicBlock trueBlock) {
-        TrueBlock = trueBlock;
+    public void setTrueBlock(BasicBlock trueBlock){
+        this.TrueBlock = trueBlock;
     }
 
-    public void setFalseBlock(BasicBlock falseBlock) {
-        FalseBlock = falseBlock;
+    public void setFalseBlock(BasicBlock falseBlock){
+        this.FalseBlock = falseBlock;
     }
 
     public boolean isJump(){

@@ -2,13 +2,9 @@ package Pass;
 
 import Backend.component.ObjModule;
 import IR.IRModule;
-import Pass.IR.DCE;
-import Pass.IR.FuncInLine;
-import Pass.IR.Mem2Reg;
-import Pass.IR.RemovePhi;
+import Pass.IR.*;
 import Pass.Pass.*;
 
-import java.io.IOException;
 import java.util.ArrayList;
 import java.util.HashSet;
 
@@ -23,6 +19,8 @@ public class PassManager {
 
     private PassManager(){
         //  这里放入所有pass,控制pass的顺序
+        irPasses.add(new GlobalValueLocalize());
+        irPasses.add(new MergeBB());
         irPasses.add(new Mem2Reg());
         irPasses.add(new DCE());
         irPasses.add(new RemovePhi());
@@ -36,7 +34,7 @@ public class PassManager {
     }
 
 
-    public void runIRPasses(IRModule irModule) throws IOException {
+    public void runIRPasses(IRModule irModule)  {
         for(IRPass irPass : irPasses){
             if(openedPasses.contains(irPass.getName())){
                 irPass.run(irModule);
@@ -51,7 +49,6 @@ public class PassManager {
             }
         }
     }
-
 
     public void addOpenPass(String pass){
         openedPasses.add(pass);

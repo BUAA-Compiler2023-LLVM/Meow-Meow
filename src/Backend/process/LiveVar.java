@@ -46,10 +46,7 @@ public class LiveVar {
 							}
 
 						}
-
 					}
-
-
 				}
 			}
 		}
@@ -98,7 +95,7 @@ public class LiveVar {
 
 	private void DSFGetBBInOut() {
 		for (Function func : module.getFunctions()) {
-			//¶ÔÃ¿¸öbb·ÖÎöinout£¬±£´æÐèÒª·ÖÅä¸øÈ«¾Ö¼Ä´æÆ÷µÄ¿ç»ù±¾¿é»îÔ¾±äÁ¿µ½Vars1
+			//ï¿½ï¿½Ã¿ï¿½ï¿½bbï¿½ï¿½ï¿½ï¿½inoutï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½Òªï¿½ï¿½ï¿½ï¿½ï¿½È«ï¿½Ö¼Ä´ï¿½ï¿½ï¿½ï¿½Ä¿ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½Ô¾ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½Vars1
 			BasicBlock tail = func.getBbExit();
 //			System.out.println("EXIT:\t" + tail.getName());
 			int changed = 1;
@@ -122,7 +119,7 @@ public class LiveVar {
 	private void GetInstInOut() {
 		for (Function func : module.getFunctions()) {
 			for (IList.INode<BasicBlock, Function> bb : func.getBbs()) {
-				//½øÐÐÖ¸Áî¼¶µÄinout·ÖÎö£¬±£´æÐèÒª·ÖÅä¸ø¾Ö²¿¼Ä´æÆ÷µÄ»ù±¾¿éÄÚ»îÔ¾±äÁ¿µ½Vars2
+				//ï¿½ï¿½ï¿½ï¿½Ö¸ï¿½î¼¶ï¿½ï¿½inoutï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½Òªï¿½ï¿½ï¿½ï¿½ï¿½ï¿½Ö²ï¿½ï¿½Ä´ï¿½ï¿½ï¿½ï¿½Ä»ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½Ú»ï¿½Ô¾ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½Vars2
 				IList.INode<Instruction, BasicBlock> tmpinst = bb.getValue().getInsts().getTail();
 				ArrayList<Value> tmpout = bb.getValue().liveOuts;
 
@@ -284,13 +281,13 @@ public class LiveVar {
 				}
 			}
 		}
-		//Ê£ÏÂµÄÈ«ÊÇ¶È>=kµÄÁË
+		//Ê£ï¿½Âµï¿½È«ï¿½Ç¶ï¿½>=kï¿½ï¿½ï¿½ï¿½
 		if (spill.size() < Vars1.size()) {
-			//»¹ÓÐ¶È>=kµÄ½Úµã£¬µÃ´ÓÖÐ¸ù¾ÝÒç³öÓÅÏÈ¼¶Òç³öÒ»¸ö£¬´Ë´¦¼ò»¯ÎªËæ±ãÒç³öÒ»¸ö
+			//ï¿½ï¿½ï¿½Ð¶ï¿½>=kï¿½Ä½Úµã£¬ï¿½Ã´ï¿½ï¿½Ð¸ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½È¼ï¿½ï¿½ï¿½ï¿½Ò»ï¿½ï¿½ï¿½ï¿½ï¿½Ë´ï¿½ï¿½ï¿½Îªï¿½ï¿½ï¿½ï¿½ï¿½ï¿½Ò»ï¿½ï¿½
 			Value WillSpill = null;
 			for (int ii = 0; ii < Gsize; ii++) {
 				if (degrees[ii] >= RegLimit) {
-					//¾Í¾ö¶¨Òç³öËü
+					//ï¿½Í¾ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½
 					WillSpill = Vars1.get(ii);
 					WillSpill.spill = true;
 					System.out.println("SPILL: " + WillSpill.getName());
@@ -298,7 +295,7 @@ public class LiveVar {
 					break;
 				}
 			}
-			//¶Ôwillsplit¼ÓºÃÁËload storeÖ¸Áî£¬ÖØÐÂ½øÐÐ»îÔ¾±äÁ¿·ÖÎö
+			//ï¿½ï¿½willsplitï¿½Óºï¿½ï¿½ï¿½load storeÖ¸ï¿½î£¬ï¿½ï¿½ï¿½Â½ï¿½ï¿½Ð»ï¿½Ô¾ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½
 //			for (Function func : module.getFunctions()) {
 //
 //				for (IList.INode<BasicBlock, Function> bb : func.getBbs()) {
@@ -330,14 +327,14 @@ public class LiveVar {
 			return -1;
 		} else {
 //
-			//²»ÓÃspill£¬¿ÉÒÔÖ±½Ó·ÖÅä¼Ä´æÆ÷
+			//ï¿½ï¿½ï¿½ï¿½spillï¿½ï¿½ï¿½ï¿½ï¿½ï¿½Ö±ï¿½Ó·ï¿½ï¿½ï¿½Ä´ï¿½ï¿½ï¿½
 
-			int[] AvailableRegs = new int[RegLimit];//-1´ú±íÕâ¸öÑÕÉ«±»¸ô±ÚÕ¼ÁË
-			int[] TempAllo = new int[Gsize];//ÏÖÔÚÊÇÕ¦·ÖÅäµÄ
+			int[] AvailableRegs = new int[RegLimit];//-1ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½É«ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½Õ¼ï¿½ï¿½
+			int[] TempAllo = new int[Gsize];//ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½Õ¦ï¿½ï¿½ï¿½ï¿½ï¿½
 			Arrays.fill(AvailableRegs, 0);
 			Arrays.fill(TempAllo, -1);
 			while (!spill.empty()) {
-				Arrays.fill(AvailableRegs, 0);//¶ÔÏÖÔÚpopµÄÕâ¸öÀ´Ëµ£¬ÓÐÄÄÐ©ÊÇÄÜÓÃµÄ
+				Arrays.fill(AvailableRegs, 0);//ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½popï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½Ëµï¿½ï¿½ï¿½ï¿½ï¿½ï¿½Ð©ï¿½ï¿½ï¿½ï¿½ï¿½Ãµï¿½
 				int index = spill.pop();
 
 				for (int ii = 0; ii < Gsize; ii++) {
@@ -402,21 +399,21 @@ public class LiveVar {
 				}
 			}
 		}
-		//Ê£ÏÂµÄÈ«ÊÇ¶È>=kµÄÁË
+		//Ê£ï¿½Âµï¿½È«ï¿½Ç¶ï¿½>=kï¿½ï¿½ï¿½ï¿½
 		if (spill.size() < LocalIG.length) {
 			System.out.println("MUST SPILL");
-			//»¹ÓÐ¶È>=kµÄ½Úµã£¬µÃ´ÓÖÐ¸ù¾ÝÒç³öÓÅÏÈ¼¶Òç³öÒ»¸ö£¬´Ë´¦¼ò»¯ÎªËæ±ãÒç³öÒ»¸ö
+			//ï¿½ï¿½ï¿½Ð¶ï¿½>=kï¿½Ä½Úµã£¬ï¿½Ã´ï¿½ï¿½Ð¸ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½È¼ï¿½ï¿½ï¿½ï¿½Ò»ï¿½ï¿½ï¿½ï¿½ï¿½Ë´ï¿½ï¿½ï¿½Îªï¿½ï¿½ï¿½ï¿½ï¿½ï¿½Ò»ï¿½ï¿½
 			Value WillSpill = null;
 			for (int ii = 0; ii < Gsize; ii++) {
 				if (degree[ii] >= RegLimit) {
-					//¾Í¾ö¶¨Òç³öËü
+					//ï¿½Í¾ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½
 					WillSpill = vars.get(ii);
 					WillSpill.spill = Boolean.TRUE;
 					break;
 				}
 			}
-			//¶Ôwillsplit¼ÓºÃÁËload storeÖ¸Áî£¬ÖØÐÂ½øÐÐ»îÔ¾±äÁ¿·ÖÎö
-			//ºóÀ´·¢ÏÖ²»Ó¦¸Ã¼Ó ¼ÓÁË»áÆÆ»µSSA
+			//ï¿½ï¿½willsplitï¿½Óºï¿½ï¿½ï¿½load storeÖ¸ï¿½î£¬ï¿½ï¿½ï¿½Â½ï¿½ï¿½Ð»ï¿½Ô¾ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½
+			//ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½Ö²ï¿½Ó¦ï¿½Ã¼ï¿½ ï¿½ï¿½ï¿½Ë»ï¿½ï¿½Æ»ï¿½SSA
 
 //			for (IList.INode<Instruction, BasicBlock> inst : b.getInsts()) {
 //				if (inst.getValue().hasName() && inst.getValue().equals(WillSpill)) {
@@ -431,8 +428,8 @@ public class LiveVar {
 //			}
 			return -1;
 		} else {
-			//²»ÓÃspill£¬¿ÉÒÔÖ±½Ó·ÖÅä¼Ä´æÆ÷
-			int[] AvailableRegs = new int[RegLimit];//-1´ú±íÕâ¸öÑÕÉ«±»¸ô±ÚÕ¼ÁË
+			//ï¿½ï¿½ï¿½ï¿½spillï¿½ï¿½ï¿½ï¿½ï¿½ï¿½Ö±ï¿½Ó·ï¿½ï¿½ï¿½Ä´ï¿½ï¿½ï¿½
+			int[] AvailableRegs = new int[RegLimit];//-1ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½É«ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½Õ¼ï¿½ï¿½
 			int[] TempAllo = new int[Gsize];
 			Arrays.fill(TempAllo, -1);
 			while (!spill.empty()) {
@@ -461,17 +458,17 @@ public class LiveVar {
 
 	public static void Analysis(IRModule i) {
 		LiveVar pass = new LiveVar(i);
-		pass.GetDefUse();//¶ÔÕû¸ömodule·ÖÎödefuse
+		pass.GetDefUse();//ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½moduleï¿½ï¿½ï¿½ï¿½defuse
 
-		pass.DSFGetBBInOut();//¶ÔÃ¿¸öbb·ÖÎöinout£¬±£´æÐèÒª·ÖÅä¸øÈ«¾Ö¼Ä´æÆ÷µÄ¿ç»ù±¾¿é»îÔ¾±äÁ¿µ½Vars1
+		pass.DSFGetBBInOut();//ï¿½ï¿½Ã¿ï¿½ï¿½bbï¿½ï¿½ï¿½ï¿½inoutï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½Òªï¿½ï¿½ï¿½ï¿½ï¿½È«ï¿½Ö¼Ä´ï¿½ï¿½ï¿½ï¿½Ä¿ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½Ô¾ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½Vars1
 
 
-		pass.GetInstInOut();//½øÐÐÖ¸Áî¼¶µÄinout·ÖÎö£¬±£´æÐèÒª·ÖÅä¸ø¾Ö²¿¼Ä´æÆ÷µÄ»ù±¾¿éÄÚ»îÔ¾±äÁ¿µ½Vars2
+		pass.GetInstInOut();//ï¿½ï¿½ï¿½ï¿½Ö¸ï¿½î¼¶ï¿½ï¿½inoutï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½Òªï¿½ï¿½ï¿½ï¿½ï¿½ï¿½Ö²ï¿½ï¿½Ä´ï¿½ï¿½ï¿½ï¿½Ä»ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½Ú»ï¿½Ô¾ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½Vars2
 
-		//µÚÒ»´Î¹¹Ôì¸ÉÉæÍ¼
-		pass.BuildGlobalIG();//Vars1ÀïÃæµÄ±äÁ¿·ÖÅäÈ«¾Ö¼Ä´æÆ÷£¬¸ÉÉæÍ¼ÔÚGIG
+		//ï¿½ï¿½Ò»ï¿½Î¹ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½Í¼
+		pass.BuildGlobalIG();//Vars1ï¿½ï¿½ï¿½ï¿½Ä±ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½È«ï¿½Ö¼Ä´ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½Í¼ï¿½ï¿½GIG
 		int meow = 0;
-		while (pass.AllocaSReg() != 0)//Èç¹û»áÓÐspillµ¼ÖÂ·ÖÅä²»³É¹¦£¬»áÐÞ¸Ämodule£¬ÔÙÊÔÊÔ
+		while (pass.AllocaSReg() != 0)//ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½spillï¿½ï¿½ï¿½Â·ï¿½ï¿½ä²»ï¿½É¹ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½Þ¸ï¿½moduleï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½
 		{
 //			for (Function func : pass.module.getFunctions()) {
 //				for (IList.INode<BasicBlock, Function> bb : func.getBbs()) {
@@ -488,7 +485,7 @@ public class LiveVar {
 		}
 		for (Function func : pass.module.getFunctions()) {
 			for (IList.INode<BasicBlock, Function> bb : func.getBbs()) {
-				while (pass.AllocaTReg(bb.getValue()) != 0)//Èç¹û»áÓÐspillµ¼ÖÂ·ÖÅä²»³É¹¦£¬»áÐÞ¸Ämodule£¬ÔÙÊÔÊÔ
+				while (pass.AllocaTReg(bb.getValue()) != 0)//ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½spillï¿½ï¿½ï¿½Â·ï¿½ï¿½ä²»ï¿½É¹ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½Þ¸ï¿½moduleï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½
 				{
 
 					pass.GetDefUse();

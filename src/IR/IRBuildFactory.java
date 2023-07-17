@@ -261,7 +261,7 @@ public class IRBuildFactory {
     public void buildBrInst(BasicBlock jumpBB, BasicBlock bb){
         BrInst brInst = new BrInst(jumpBB, bb);
         bb.addInst(brInst);
-//        //  前驱后继关系
+        //  前驱后继关系
 //        bb.getNxtBlocks().clear();
 //        bb.setNxtBlock(jumpBB);
 //        jumpBB.setPreBlock(bb);
@@ -270,7 +270,7 @@ public class IRBuildFactory {
     public void buildBrInst(Value judVal, BasicBlock trueBlock, BasicBlock falseBlock, BasicBlock bb){
         BrInst brInst = new BrInst(judVal, trueBlock, falseBlock, bb);
         bb.addInst(brInst);
-//        //  前驱后继关系
+        //  前驱后继关系
 //        bb.getNxtBlocks().clear();
 //        bb.setNxtBlock(trueBlock);
 //        bb.setNxtBlock(falseBlock);

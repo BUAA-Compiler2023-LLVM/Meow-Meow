@@ -12,6 +12,6 @@ public class FuncInLine implements Pass.IRPass {
 
     @Override
     public void run(IRModule module) {
-
+        // TODO
     }
 }
