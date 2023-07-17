@@ -5,8 +5,10 @@ import IR.IRModule;
 import Pass.IR.DCE;
 import Pass.IR.FuncInLine;
 import Pass.IR.Mem2Reg;
+import Pass.IR.RemovePhi;
 import Pass.Pass.*;
 
+import java.io.IOException;
 import java.util.ArrayList;
 import java.util.HashSet;
 
@@ -23,15 +25,18 @@ public class PassManager {
         //  这里放入所有pass,控制pass的顺序
         irPasses.add(new Mem2Reg());
         irPasses.add(new DCE());
+        irPasses.add(new RemovePhi());
 
 
         //  然后根据需求开放pass
         openedPasses.add("Mem2Reg");
+        //开放removephi以后已经不是ssa形式了，所以不能跑
+//        openedPasses.add("RemovePhi");
 //        openedPasses.add("DCE");
     }
 
 
-    public void runIRPasses(IRModule irModule){
+    public void runIRPasses(IRModule irModule) throws IOException {
         for(IRPass irPass : irPasses){
             if(openedPasses.contains(irPass.getName())){
                 irPass.run(irModule);

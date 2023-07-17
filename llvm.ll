@@ -13,36 +13,43 @@ declare void @putch(i32)
 declare float @getfloat()
 declare i32 @parallel_start()
 declare void @parallel_end(i32)
-define i32 @add(i32* %0) {
-b0:
-	%1 = alloca i32*
-	store i32* %0, i32** %1
-	br label %b1
-b1:
-	%2 = load i32*, i32** %1
-	%3 = getelementptr i32, i32* %2, i32 0
-	%4 = load i32, i32* %3
-	%5 = load i32*, i32** %1
-	%6 = getelementptr i32, i32* %5, i32 2
-	%7 = load i32, i32* %6
-	%8 = add i32 %4, %7
-	ret i32 %8
-}
-
 define i32 @main() {
 b0:
-	%0 = alloca [4 x i32]
-	%1 = getelementptr [4 x i32], [4 x i32]* %0, i32 0, i32 0
-	call void @memset(i32* %1, i32 0, i32 16)
-	%2 = getelementptr [4 x i32], [4 x i32]* %0, i32 0, i32 0
-	store i32 1, i32* %2
-	%3 = getelementptr [4 x i32], [4 x i32]* %0, i32 0, i32 1
-	store i32 5, i32* %3
-	%4 = getelementptr [4 x i32], [4 x i32]* %0, i32 0, i32 2
-	store i32 2, i32* %4
-	%5 = getelementptr [4 x i32], [4 x i32]* %0, i32 0, i32 0
-	%6 = call i32 @add(i32* %5)
-	call void @putint(i32 %6)
-	ret i32 %6
+	%0 = icmp eq i32 1, 99
+	%1 = icmp ne i1 %0, 0
+	br i1 %1, label %b2, label %b1
+b1:
+	move 13 --> %71
+	move 12 --> %72
+	move 11 --> %73
+	move 10 --> %74
+	move 9 --> %75
+	move 8 --> %76
+	move 7 --> %77
+	move 6 --> %78
+	move 5 --> %79
+	move 4 --> %80
+	move 3 --> %81
+	move 2 --> %82
+	move 1 --> %83
+	br label %b3
+b2:
+	move 14 --> %71
+	move 13 --> %72
+	move 12 --> %73
+	move 11 --> %74
+	move 10 --> %75
+	move 9 --> %76
+	move 8 --> %77
+	move 7 --> %78
+	move 6 --> %79
+	move 5 --> %80
+	move 4 --> %81
+	move 3 --> %82
+	move 2 --> %83
+	br label %b3
+b3:
+	call void @putint(i32 %81)
+	ret i32 %81
 }
 

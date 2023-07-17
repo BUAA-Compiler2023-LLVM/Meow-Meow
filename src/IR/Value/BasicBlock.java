@@ -26,6 +26,7 @@ public class BasicBlock extends Value{
     private BasicBlock idominator;
     private BasicBlock pidominator;
     private int domLV;
+    public boolean meow=false;
 
     public final ArrayList<ArrayList<Value>> LocalInterfere = new ArrayList<>();
     public BasicBlock(){

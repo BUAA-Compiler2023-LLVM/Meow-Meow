@@ -48,6 +48,7 @@ public enum OP {
     Ret,
     //not op
     Not,
+    Move,
     BitCast;
 
     public boolean isCmpOP(){
@@ -88,6 +89,7 @@ public enum OP {
             case "Itof" -> "sitofp";
             case "Zext" -> "zext";
             case "BitCast" -> "bitcast";
+            case "Move" -> "move";
             default -> null;
         };
     }

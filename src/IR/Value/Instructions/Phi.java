@@ -44,4 +44,24 @@ public class Phi extends Instruction {
         }
         return sb.toString();
     }
+    @Override
+    public String getInstString1() {
+        ArrayList<Value> useValues = getUseValues();
+        StringBuilder sb = new StringBuilder();
+        sb.append(reg).append(" = phi ");
+        sb.append(getType()).append(" ");
+        for (int i = 0; i < useValues.size(); i++) {
+            Value useValue = useValues.get(i);
+            if (i != 0) {
+                sb.append(",");
+            }
+
+            sb.append("[ ");
+            if(useValue.reg!=null)
+            sb.append(useValue.reg).append(", ");
+            else sb.append(useValue.getName()).append(", ");
+            sb.append("%").append(getParentbb().getPreBlocks().get(i).getName()).append(" ]");
+        }
+        return sb.toString();
+    }
 }
