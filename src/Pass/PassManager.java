@@ -47,7 +47,6 @@ public class PassManager {
         }
     }
 
-
     public void addOpenPass(String pass){
         openedPasses.add(pass);
     }
