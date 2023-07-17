@@ -81,6 +81,10 @@ public class BasicBlock extends Value{
         }
     }
 
+    public Instruction getFirstInst(){
+        return insts.getHeadValue();
+    }
+
     public Instruction getLastInst(){
         return insts.getTailValue();
     }
@@ -126,6 +130,25 @@ public class BasicBlock extends Value{
             nxtBb.getPreBlocks().remove(this);
         }
         node.removeFromList();
+    }
+
+    public void turnBrBlock(BasicBlock oldBlock, BasicBlock newBlock){
+        if(insts.getTailValue() instanceof BrInst brInst){
+            if(brInst.isJump()){
+                brInst.setJumpBlock(newBlock);
+            }
+            else {
+                if(brInst.getTrueBlock().equals(oldBlock)){
+                    brInst.setTrueBlock(newBlock);
+                }
+                if(brInst.getFalseBlock().equals(oldBlock)){
+                    brInst.setFalseBlock(newBlock);
+                }
+            }
+        }
+
+        nxtBlocks.remove(oldBlock);
+        nxtBlocks.add(newBlock);
     }
 
     public Function getParentFunc() {

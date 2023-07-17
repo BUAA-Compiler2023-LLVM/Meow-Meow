@@ -9,6 +9,9 @@ import Utils.DataStruct.Pair;
 
 import java.util.*;
 
+import static Pass.IR.Utils.UtilFunc.initCFG;
+
+
 public class DomAnalysis{
 
     public static DomAnalysisRes run(Function function){
@@ -24,8 +27,8 @@ public class DomAnalysis{
         HashMap<BasicBlock, ArrayList<BasicBlock>> idoms = new HashMap<>();
         HashMap<BasicBlock, ArrayList<BasicBlock>> pidoms = new HashMap<>();
         //  allBlocks记录有效的Block(即与bbEntry全联通的BasicBlock)
-        ArrayList<BasicBlock> allBlocks = new ArrayList<>();
-        ArrayList<BasicBlock> endBlocks = new ArrayList<>();
+        ArrayList<BasicBlock> allBlocks;
+        ArrayList<BasicBlock> endBlocks;
 
         //  先建立CFG图(Control Flow Graph)
         initCFG(function);
@@ -271,29 +274,6 @@ public class DomAnalysis{
         return allBlocks;
     }
 
-    private static void initCFG(Function function){
-        for(IList.INode<BasicBlock, Function> bbNode : function.getBbs()){
-            BasicBlock bb = bbNode.getValue();
-            for(IList.INode<Instruction, BasicBlock> instNode : bb.getInsts()){
-                Instruction inst = instNode.getValue();
-                if(inst instanceof BrInst brInst){
-                    if(brInst.isJump()){
-                        BasicBlock jumpBb = brInst.getJumpBlock();
-                        bb.setNxtBlock(jumpBb);
-                        jumpBb.setPreBlock(bb);
-                    }
-                    else{
-                        BasicBlock left = brInst.getTrueBlock();
-                        BasicBlock right = brInst.getFalseBlock();
-                        bb.setNxtBlock(left);
-                        bb.setNxtBlock(right);
-                        left.setPreBlock(bb);
-                        right.setPreBlock(bb);
-                    }
-                }
-            }
-        }
-    }
 
     private static HashMap<BasicBlock, ArrayList<BasicBlock>> getDF(ArrayList<BasicBlock> domPostOrder){
         HashMap<BasicBlock, ArrayList<BasicBlock>> df = new HashMap<>();
