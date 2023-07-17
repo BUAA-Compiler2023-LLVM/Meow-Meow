@@ -4,6 +4,8 @@ import IR.Type.ArrayType;
 import IR.Type.IntegerType;
 import IR.Type.PointerType;
 import IR.Type.Type;
+import IR.Use;
+import IR.Value.Instructions.LoadInst;
 
 import java.awt.*;
 import java.util.ArrayList;
@@ -28,6 +30,8 @@ public class GlobalVar extends Value{
         super(name, type);
         this.values = values;
     }
+
+
 
 
     public Value getValue() {

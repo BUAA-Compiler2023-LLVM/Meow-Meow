@@ -500,7 +500,7 @@ public class Visitor {
         else{
             if(isGlobal){
                 if(init instanceof AST.Exp expAST){
-                    visitExpAST(expAST, false);
+                    visitExpAST(expAST, true);
                     CurValue = f.buildGlobalVar(ident, CurValue.getType(), CurValue);
                 }
                 else if(init == null){
