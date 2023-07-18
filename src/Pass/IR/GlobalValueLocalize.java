@@ -89,16 +89,16 @@ public class GlobalValueLocalize implements Pass.IRPass {
             BasicBlock bb = function.getBbEntry();
             if(type.isIntegerTy()){
                 int initVal = ((ConstInteger) globalVar.getValue()).getValue();
-                AllocInst allocInst = new AllocInst(new PointerType(type), bb);
-                StoreInst storeInst = new StoreInst(new ConstInteger(initVal, IntegerType.I32), allocInst, bb);
+                AllocInst allocInst = new AllocInst(new PointerType(type));
+                StoreInst storeInst = new StoreInst(new ConstInteger(initVal, IntegerType.I32), allocInst);
                 bb.addInstToHead(storeInst);
                 bb.addInstToHead(allocInst);
                 globalVar.replaceUsedWith(allocInst);
             }
             else if(type.isFloatTy()){
                 float initVal = ((ConstFloat) globalVar.getValue()).getValue();
-                AllocInst allocInst = new AllocInst(new PointerType(type), bb);
-                StoreInst storeInst = new StoreInst(new ConstFloat(initVal), allocInst, bb);
+                AllocInst allocInst = new AllocInst(new PointerType(type));
+                StoreInst storeInst = new StoreInst(new ConstFloat(initVal), allocInst);
                 bb.addInstToHead(storeInst);
                 bb.addInstToHead(allocInst);
                 globalVar.replaceUsedWith(allocInst);

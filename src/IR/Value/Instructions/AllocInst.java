@@ -5,12 +5,10 @@ import IR.Type.Type;
 import IR.Value.BasicBlock;
 import IR.Value.Value;
 
-import java.awt.*;
-
 public class AllocInst extends Instruction{
 
-    public AllocInst(Type type, BasicBlock basicBlock) {
-        super("%" + (++Value.valNumber), type, OP.Alloca, basicBlock);
+    public AllocInst(Type type) {
+        super("%" + (++Value.valNumber), type, OP.Alloca);
     }
 
     public Type getAllocType(){

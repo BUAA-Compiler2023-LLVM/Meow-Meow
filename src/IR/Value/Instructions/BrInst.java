@@ -1,6 +1,5 @@
 package IR.Value.Instructions;
 
-import IR.Type.Type;
 import IR.Type.VoidType;
 import IR.Value.BasicBlock;
 import IR.Value.Value;
@@ -12,14 +11,14 @@ public class BrInst extends Instruction{
     private BasicBlock FalseBlock;
     private BasicBlock JumpBlock;
 
-    public BrInst(BasicBlock jumpBb, BasicBlock bb) {
-        super("", VoidType.voidType, OP.Br, bb);
+    public BrInst(BasicBlock jumpBb) {
+        super("", VoidType.voidType, OP.Br);
         this.JumpBlock = jumpBb;
         this.type = 1;
     }
 
-    public BrInst(Value value, BasicBlock trueBlock, BasicBlock falseBlock, BasicBlock bb){
-        super("", VoidType.voidType, OP.Br, bb);
+    public BrInst(Value value, BasicBlock trueBlock, BasicBlock falseBlock){
+        super("", VoidType.voidType, OP.Br);
         addOperand(value);
         this.TrueBlock = trueBlock;
         this.FalseBlock = falseBlock;

@@ -7,8 +7,8 @@ import IR.Value.Value;
 
 public class LoadInst extends Instruction{
 
-    public LoadInst(Value pointer, Type type, BasicBlock basicBlock) {
-        super("%" + (++Value.valNumber), type, OP.Load, basicBlock);
+    public LoadInst(Value pointer, Type type) {
+        super("%" + (++Value.valNumber), type, OP.Load);
         this.addOperand(pointer);
     }
 

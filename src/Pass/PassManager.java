@@ -23,6 +23,7 @@ public class PassManager {
         irPasses.add(new MergeBB());
         irPasses.add(new Mem2Reg());
         irPasses.add(new DCE());
+        irPasses.add(new FuncInLine());
 
 
         //  然后根据需求开放pass
@@ -30,6 +31,7 @@ public class PassManager {
         openedPasses.add("MergeBB");
         openedPasses.add("Mem2Reg");
         openedPasses.add("DCE");
+        openedPasses.add("FuncInLine");
     }
 
 

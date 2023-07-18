@@ -1,14 +1,13 @@
 package IR.Value.Instructions;
 
-import IR.Type.IntegerType;
 import IR.Type.Type;
 import IR.Value.BasicBlock;
 import IR.Value.Value;
 
 public class ConversionInst extends Instruction{
 
-    public ConversionInst(Value value, Type type, OP op, BasicBlock basicBlock) {
-        super("%" + (++Value.valNumber), type, op, basicBlock);
+    public ConversionInst(Value value, Type type, OP op) {
+        super("%" + (++Value.valNumber), type, op);
         addOperand(value);
     }
 

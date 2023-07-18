@@ -1,15 +1,13 @@
 package IR.Value.Instructions;
 
-import IR.Type.PointerType;
-import IR.Type.Type;
 import IR.Type.VoidType;
 import IR.Value.BasicBlock;
 import IR.Value.Value;
 
 public class StoreInst extends Instruction{
 
-    public StoreInst(Value value, Value pointer,BasicBlock basicBlock) {
-        super("", VoidType.voidType, OP.Store, basicBlock);
+    public StoreInst(Value value, Value pointer) {
+        super("", VoidType.voidType, OP.Store);
         this.addOperand(value);
         this.addOperand(pointer);
     }

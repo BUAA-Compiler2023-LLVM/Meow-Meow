@@ -9,13 +9,13 @@ import IR.Value.Value;
 public class RetInst extends Instruction {
 
     //  对于inst来说，它的type是自己本身的type，因此这里没有用retValue的type
-    public RetInst(BasicBlock block, Value value){
-        super("", VoidType.voidType, OP.Ret, block);
+    public RetInst(Value value){
+        super("", VoidType.voidType, OP.Ret);
         this.addOperand(value);
     }
 
-    public RetInst(BasicBlock block){
-        super("", VoidType.voidType, OP.Ret, block);
+    public RetInst(){
+        super("", VoidType.voidType, OP.Ret);
     }
 
     public boolean isVoid(){

@@ -6,7 +6,6 @@ import IR.Type.Type;
 import IR.Value.*;
 import IR.Value.Instructions.*;
 import Pass.Pass;
-import Driver.Config;
 import Utils.DataStruct.IList;
 
 import java.util.ArrayList;
@@ -51,6 +50,20 @@ public class FuncInLine implements Pass.IRPass {
             tobeProcessed.clear();
         }
         buildCallRelation(module);
+        removeUseLessFunction(module);
+    }
+
+    private void removeUseLessFunction(IRModule module){
+        ArrayList<Function> deleteFuncs = new ArrayList<>();
+        for(Function function : module.getFunctions()){
+            if(function.getCallerList().size() == 0 && !function.getName().equals("@main")){
+                deleteFuncs.add(function);
+            }
+        }
+
+        for(Function deleteFunc : deleteFuncs){
+            module.getFunctions().remove(deleteFunc);
+        }
     }
 
     //  inlineFunction
@@ -111,10 +124,8 @@ public class FuncInLine implements Pass.IRPass {
             inst.removeFromBb();
             insertBlock.addInst(inst);
         }
-        oriBlock.setTerminal(false);
 
         //  3. 删除callInst指令并修正函数调用关系
-
         callInst.removeSelf();
         oriFunction.getCalleeList().remove(calledFunction);
         calledFunction.getCallerList().remove(oriFunction);
@@ -128,7 +139,6 @@ public class FuncInLine implements Pass.IRPass {
             //  但是这里的情况是insertBlock复制了oriBlock里的br指令
             //  并没有进行新的构建，因此需要手动设置一下nxtBlock和preBlock
             insertBlock.setNxtBlock(bb);
-            insertBlock.setTerminal(true);
             for(int i = 0; i < bb.getPreBlocks().size(); i++){
                 BasicBlock preBb = bb.getPreBlocks().get(i);
                 if(preBb == oriBlock){
@@ -140,10 +150,7 @@ public class FuncInLine implements Pass.IRPass {
 
         // 将调用函数的形式参数换为为传入参数
         ArrayList<Argument> formalParameters = tmpInlineFunction.getArgs();
-        ArrayList<Value> actualParameters = new ArrayList<>();
-        for (int i = 1; i < callInst.getOperands().size(); i++) {
-            actualParameters.add(callInst.getOperands().get(i));
-        }
+        ArrayList<Value> actualParameters = new ArrayList<>(callInst.getOperands());
 
         for (int i = 0; i < formalParameters.size(); i++) {
             Value formalParam = formalParameters.get(i);
@@ -217,7 +224,7 @@ public class FuncInLine implements Pass.IRPass {
             else {
                 //  填写phi指令并修改ret指令为br指令
                 //  这些含ret的基本块通过br汇总到insertBlock
-                Phi phi = new Phi(retType, insertBlock, new ArrayList<>());
+                Phi phi = new Phi(retType, new ArrayList<>());
                 callInst.replaceUsedWith(phi);
                 for (Instruction retInst : rets) {
                     if(((RetInst) retInst).isVoid()){
@@ -243,7 +250,7 @@ public class FuncInLine implements Pass.IRPass {
             bb.insertBefore(insertBlock);
         }
         for (Instruction call : calls) {
-            Function calledFunc = ((CallInst) call).getCallFunc();
+            Function calledFunc = ((CallInst) call).getFunction();
             if(calledFunc.isLibFunction()){
                 continue;
             }
@@ -251,7 +258,7 @@ public class FuncInLine implements Pass.IRPass {
             oriFunction.addCallee(calledFunc);
         }
 
-        module.removeFunc(tmpInlineFunction);
+        module.getFunctions().remove(tmpInlineFunction);
     }
 
     private boolean isInlinable(Function function){

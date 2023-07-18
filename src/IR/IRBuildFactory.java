@@ -1,11 +1,8 @@
 package IR;
 
-import Frontend.AST;
 import IR.Type.*;
 import IR.Value.*;
 import IR.Value.Instructions.*;
-
-import java.awt.*;
 import java.util.ArrayList;
 
 public class IRBuildFactory {
@@ -15,40 +12,6 @@ public class IRBuildFactory {
 
     public static IRBuildFactory getInstance(){
         return f;
-    }
-
-
-    private OP str2op(String str){
-        return switch (str){
-            case "+" -> OP.Add;
-            case "+f" -> OP.Fadd;
-            case "-" -> OP.Sub;
-            case "-f" -> OP.Fsub;
-            case "*" -> OP.Mul;
-            case "*f" -> OP.Fmul;
-            case "/" -> OP.Div;
-            case "/f" -> OP.Fdiv;
-            case "<=" -> OP.Le;
-            case "<=f" -> OP.FLe;
-            case "<" -> OP.Lt;
-            case "<f" -> OP.FLt;
-            case ">=" -> OP.Ge;
-            case ">=f" -> OP.FGe;
-            case ">" -> OP.Gt;
-            case ">f" -> OP.FGt;
-            case "==" -> OP.Eq;
-            case "==f" -> OP.FEq;
-            case "!=" -> OP.Ne;
-            case "!=f" -> OP.FNe;
-            case "&&" -> OP.And;
-            case "||" -> OP.Or;
-            case "%" -> OP.Mod;
-            case "ftoi" -> OP.Ftoi;
-            case "itof" -> OP.Itof;
-            case "zext" -> OP.Zext;
-            case "bitcast" -> OP.BitCast;
-            default -> null;
-        };
     }
 
     private int calculate(int a, int b, String op){
@@ -110,7 +73,7 @@ public class IRBuildFactory {
             type = ((ArrayType) type).getEleType();
         }
 
-        GepInst gepInst = new GepInst(target, indexs, new PointerType(type), bb);
+        GepInst gepInst = new GepInst(target, indexs, new PointerType(type));
         bb.addInst(gepInst);
         return gepInst;
     }
@@ -124,18 +87,8 @@ public class IRBuildFactory {
         return new Function(name, type);
     }
 
-    public AllocInst getAllocInst(Type type, BasicBlock bb){
-        return new AllocInst(type, bb);
-    }
-
     public Argument getArgument(String name, Type type, Function parentFunc){
         return new Argument(name, type, parentFunc);
-    }
-
-    public BasicBlock buildBlockAfter(Function function, BasicBlock bb){
-        BasicBlock newBb = new BasicBlock(function);
-        newBb.insertAfter(bb);
-        return newBb;
     }
 
     private void buildCallRelation(Function caller, Function callee){
@@ -151,13 +104,13 @@ public class IRBuildFactory {
     private Value turnType(Value value, Type targetTy, BasicBlock bb){
         Type type = value.getType();
         if(type == IntegerType.I1 && targetTy == IntegerType.I32){
-            return buildConversionInst(value, "zext", bb);
+            return buildConversionInst(value, OP.Zext, bb);
         }
         else if(type == IntegerType.I32 && targetTy == FloatType.F32){
-            return buildConversionInst(value, "itof", bb);
+            return buildConversionInst(value, OP.Itof, bb);
         }
         else if(type == FloatType.F32 && targetTy == IntegerType.I32){
-            return buildConversionInst(value, "ftoi", bb);
+            return buildConversionInst(value, OP.Ftoi, bb);
         }
         return null;
     }
@@ -173,19 +126,24 @@ public class IRBuildFactory {
         return new GlobalVar("@" + name, new PointerType(type), value);
     }
 
-    public ConversionInst buildConversionInst(Value value, String op, BasicBlock bb){
-        Type type = switch (op) {
-            case "ftoi", "zext" -> IntegerType.I32;
-            case "itof" -> FloatType.F32;
-            case "bitcast" -> new PointerType(IntegerType.I32);
-            default -> null;
-        };
-        ConversionInst conversionInst = new ConversionInst(value, type, str2op(op), bb);
+    public ConversionInst buildConversionInst(Value value, OP op, BasicBlock bb){
+        Type type = null;
+        if(op == OP.Ftoi || op == OP.Zext){
+            type = IntegerType.I32;
+        }
+        else if(op == OP.Itof){
+            type = FloatType.F32;
+        }
+        else if(op == OP.BitCast){
+            type = new PointerType(IntegerType.I32);
+        }
+
+        ConversionInst conversionInst = new ConversionInst(value, type, op);
         bb.addInst(conversionInst);
         return conversionInst;
     }
 
-    public BinaryInst buildBinaryInst(Value left, Value right, String _op, BasicBlock bb){
+    public BinaryInst buildBinaryInst(Value left, Value right, OP op, BasicBlock bb){
         Type type;
         Type leftType = left.getType();
         Type rightType = right.getType();
@@ -217,23 +175,22 @@ public class IRBuildFactory {
 
         assert type != null;
         if(type.isFloatTy()){
-            _op = _op + "f";
+            op = OP.turnToFloat(op);
         }
 
-        OP op = str2op(_op);
         BinaryInst binaryInst;
         if(op.isCmpOP()){
-            binaryInst = new CmpInst(op, left, right, bb);
+            binaryInst = new CmpInst(op, left, right);
         }
         else {
-            binaryInst = new BinaryInst(op, left, right, type, bb);
+            binaryInst = new BinaryInst(op, left, right, type);
         }
         bb.addInst(binaryInst);
         return binaryInst;
     }
 
     public CallInst buildCallInst(Function callFunc, ArrayList<Value> values, BasicBlock bb){
-        CallInst callInst = new CallInst(callFunc, values, bb);
+        CallInst callInst = new CallInst(callFunc, values);
         bb.addInst(callInst);
 
         buildCallRelation(bb.getParentFunc(), callFunc);
@@ -263,31 +220,34 @@ public class IRBuildFactory {
         return argument;
     }
 
-    public void buildRetInst(BasicBlock bb){
+    public RetInst buildRetInst(BasicBlock bb){
         Value voidValue = new Value("void", VoidType.voidType);
-        RetInst retInst = new RetInst(bb, voidValue);
-        bb.addInst(retInst);
-    }
-
-    public RetInst buildRetInst(Value value, BasicBlock bb){
-        assert value != null;
-        RetInst retInst = new RetInst(bb, value);
+        RetInst retInst = new RetInst(voidValue);
         bb.addInst(retInst);
         return retInst;
     }
 
-    public void buildBrInst(BasicBlock jumpBB, BasicBlock bb){
-        BrInst brInst = new BrInst(jumpBB, bb);
+    public RetInst buildRetInst(Value value, BasicBlock bb){
+        assert value != null;
+        RetInst retInst = new RetInst(value);
+        bb.addInst(retInst);
+        return retInst;
+    }
+
+    public BrInst buildBrInst(BasicBlock jumpBB, BasicBlock bb){
+        BrInst brInst = new BrInst(jumpBB);
         bb.addInst(brInst);
+        return brInst;
         //  前驱后继关系
 //        bb.getNxtBlocks().clear();
 //        bb.setNxtBlock(jumpBB);
 //        jumpBB.setPreBlock(bb);
     }
 
-    public void buildBrInst(Value judVal, BasicBlock trueBlock, BasicBlock falseBlock, BasicBlock bb){
-        BrInst brInst = new BrInst(judVal, trueBlock, falseBlock, bb);
+    public BrInst buildBrInst(Value judVal, BasicBlock trueBlock, BasicBlock falseBlock, BasicBlock bb){
+        BrInst brInst = new BrInst(judVal, trueBlock, falseBlock);
         bb.addInst(brInst);
+        return brInst;
         //  前驱后继关系
 //        bb.getNxtBlocks().clear();
 //        bb.setNxtBlock(trueBlock);
@@ -297,7 +257,7 @@ public class IRBuildFactory {
     }
 
     public Phi buildPhi(BasicBlock bb, Type type, ArrayList<Value> values){
-        Phi phi = new Phi(type, bb, values);
+        Phi phi = new Phi(type, values);
         bb.addInstToHead(phi);
         return phi;
     }
@@ -341,7 +301,7 @@ public class IRBuildFactory {
 
     public AllocInst buildAllocInst(Type type, BasicBlock bb){
         Type pointerTy = new PointerType(type);
-        AllocInst allocInst = new AllocInst(pointerTy, bb);
+        AllocInst allocInst = new AllocInst(pointerTy);
         bb.addInst(allocInst);
         return allocInst;
     }
@@ -351,20 +311,20 @@ public class IRBuildFactory {
         PointerType pointerTy = (PointerType) pointer.getType();
         Type eleTy = pointerTy.getEleType();
         if(valueTy == IntegerType.I32 && eleTy == FloatType.F32){
-            value = f.buildConversionInst(value, "itof", bb);
+            value = f.buildConversionInst(value, OP.Itof, bb);
         }
         else if(valueTy == FloatType.F32 && eleTy == IntegerType.I32){
-            value = f.buildConversionInst(value, "ftoi", bb);
+            value = f.buildConversionInst(value, OP.Ftoi, bb);
         }
 
-        StoreInst storeInst = new StoreInst(value, pointer, bb);
+        StoreInst storeInst = new StoreInst(value, pointer);
         bb.addInst(storeInst);
         return storeInst;
     }
 
     public LoadInst buildLoadInst(Value pointer, BasicBlock bb){
         Type type = ((PointerType) pointer.getType()).getEleType();
-        LoadInst loadInst = new LoadInst(pointer, type, bb);
+        LoadInst loadInst = new LoadInst(pointer, type);
         bb.addInst(loadInst);
         return loadInst;
     }

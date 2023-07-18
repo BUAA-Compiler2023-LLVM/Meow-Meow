@@ -3,13 +3,8 @@ package IR;
 import Frontend.AST;
 import IR.Type.*;
 import IR.Value.*;
-import IR.Value.Instructions.AllocInst;
-import IR.Value.Instructions.BrInst;
-import IR.Value.Instructions.Instruction;
-import IR.Value.Instructions.RetInst;
+import IR.Value.Instructions.*;
 import Utils.DataStruct.IList;
-
-import java.awt.*;
 import java.util.ArrayList;
 import java.util.HashMap;
 
@@ -96,7 +91,6 @@ public class Visitor {
     private void visitLValAST(AST.LVal lValAST, boolean isFetch){
         String ident = lValAST.getIdent();
         CurValue = find(ident);
-        boolean isParam = false;
 
         assert CurValue != null;
         /*
@@ -180,10 +174,10 @@ public class Visitor {
                 Type argType = arguments.get(i).getType();
                 Type CurType = value.getType();
                 if(CurType == IntegerType.I32 && argType == FloatType.F32){
-                    values.set(i, f.buildConversionInst(value, "itof", CurBasicBlock));
+                    values.set(i, f.buildConversionInst(value, OP.Itof, CurBasicBlock));
                 }
                 else if(CurType == FloatType.F32 && argType == IntegerType.I32){
-                    values.set(i, f.buildConversionInst(value, "ftoi", CurBasicBlock));
+                    values.set(i, f.buildConversionInst(value, OP.Ftoi, CurBasicBlock));
                 }
             }
 
@@ -201,7 +195,7 @@ public class Visitor {
                 count++;
             } else if (unaryOP.equals("!")) {
                 count = 0;
-                CurValue = f.buildBinaryInst(CurValue, ConstInteger.const0_1, "==", CurBasicBlock);
+                CurValue = f.buildBinaryInst(CurValue, ConstInteger.const0_1, OP.Eq, CurBasicBlock);
             }
         }
         if (count % 2 == 1) {
@@ -212,7 +206,7 @@ public class Visitor {
                 CurValue = f.buildNumber(-constFloat.getValue());
             }
             else {
-                CurValue = f.buildBinaryInst(ConstInteger.const0_32, CurValue, "-", CurBasicBlock);
+                CurValue = f.buildBinaryInst(ConstInteger.const0_32, CurValue, OP.Sub, CurBasicBlock);
             }
         }
     }
@@ -230,7 +224,7 @@ public class Visitor {
                 CurValue = f.buildCalculateNumber(left, right, ops.get(i));
             }
             else {
-                CurValue = f.buildBinaryInst(TmpValue, CurValue, ops.get(i), CurBasicBlock);
+                CurValue = f.buildBinaryInst(TmpValue, CurValue, OP.str2op(ops.get(i)), CurBasicBlock);
             }
         }
     }
@@ -262,10 +256,10 @@ public class Visitor {
             visitExpAST(nowExp, false);
 
             if(CurValue.getType() == IntegerType.I32){
-                CurValue = f.buildBinaryInst(CurValue, ConstInteger.const0_32, "!=", CurBasicBlock);
+                CurValue = f.buildBinaryInst(CurValue, ConstInteger.const0_32, OP.Ne, CurBasicBlock);
             }
             else{
-                CurValue = f.buildBinaryInst(CurValue, ConstInteger.const0_1, "!=", CurBasicBlock);
+                CurValue = f.buildBinaryInst(CurValue, ConstInteger.const0_1, OP.Ne, CurBasicBlock);
             }
             f.buildBrInst(CurValue, NxtLAndBlock, FalseBlock, CurBasicBlock);
 
@@ -314,10 +308,10 @@ public class Visitor {
                 Type CurType = CurValue.getType();
                 Type CurFuncType = CurFunction.getType();
                 if(CurType == IntegerType.I32 && CurFuncType == FloatType.F32){
-                    CurValue = f.buildConversionInst(CurValue, "itof", CurBasicBlock);
+                    CurValue = f.buildConversionInst(CurValue, OP.Itof, CurBasicBlock);
                 }
                 else if(CurFuncType == IntegerType.I32 && CurType == FloatType.F32){
-                    CurValue = f.buildConversionInst(CurValue, "ftoi", CurBasicBlock);
+                    CurValue = f.buildConversionInst(CurValue, OP.Ftoi, CurBasicBlock);
                 }
 
                 CurValue = f.buildRetInst(CurValue, CurBasicBlock);
@@ -559,7 +553,7 @@ public class Visitor {
             }
             CurValue = f.buildGepInst(baseValue, indexs, CurBasicBlock);
             if(type.isFloatTy()){
-                CurValue = f.buildConversionInst(CurValue, "bitcast", CurBasicBlock);
+                CurValue = f.buildConversionInst(CurValue, OP.BitCast, CurBasicBlock);
             }
 
             ArrayList<Value> memValues = new ArrayList<>();

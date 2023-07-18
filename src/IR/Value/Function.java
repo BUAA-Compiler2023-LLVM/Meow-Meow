@@ -1,6 +1,7 @@
 package IR.Value;
 
 import IR.IRBuildFactory;
+import IR.Type.IntegerType;
 import IR.Type.Type;
 import IR.Value.Instructions.Instruction;
 import IR.Value.Instructions.Phi;
@@ -163,8 +164,12 @@ public class Function extends Value{
                 Value value = phi.getOperand(i);
                 Value copyValue;
                 if(value instanceof ConstInteger){
-                    int val = ((ConstInteger) value).getVal();
-                    copyValue = new ConstInteger(val);
+                    int val = ((ConstInteger) value).getValue();
+                    copyValue = new ConstInteger(val, IntegerType.I32);
+                }
+                else if(value instanceof ConstFloat){
+                    float val = ((ConstFloat) value).getValue();
+                    copyValue = new ConstFloat(val);
                 }
                 else copyValue = replaceMap.get(value);
                 copyPhi.replaceOperand(index, copyValue);

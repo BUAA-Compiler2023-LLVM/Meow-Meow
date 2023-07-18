@@ -1,6 +1,5 @@
 package IR.Value.Instructions;
 
-import IR.Type.ArrayType;
 import IR.Type.PointerType;
 import IR.Type.Type;
 import IR.Value.BasicBlock;
@@ -9,8 +8,8 @@ import IR.Value.Value;
 import java.util.ArrayList;
 
 public class GepInst extends Instruction{
-    public GepInst(Value target, ArrayList<Value> indexs, Type type, BasicBlock basicBlock) {
-        super("%" + (++Value.valNumber), type, OP.GEP, basicBlock);
+    public GepInst(Value target, ArrayList<Value> indexs, Type type) {
+        super("%" + (++Value.valNumber), type, OP.GEP);
         this.addOperand(target);
         for(Value index : indexs){
             this.addOperand(index);

@@ -1,7 +1,6 @@
 package IR.Value.Instructions;
 
 import IR.IRBuildFactory;
-import IR.Type.PointerType;
 import IR.Type.Type;
 import IR.Value.*;
 import Utils.DataStruct.IList;
@@ -11,15 +10,13 @@ import java.util.Collections;
 import java.util.HashMap;
 
 public abstract class Instruction extends User {
-    private final BasicBlock parentbb;
     private OP op;
 
     private final IList.INode<Instruction, BasicBlock> node;
 
-    public Instruction(String name, Type type, OP op, BasicBlock basicBlock) {
+    public Instruction(String name, Type type, OP op) {
         super(name, type);
         this.op = op;
-        this.parentbb = basicBlock;
         this.node = new IList.INode<>(this);
     }
 
@@ -76,30 +73,28 @@ public abstract class Instruction extends User {
         //  这里只要先建个phi占位即可
         else if(this.getOp() == OP.Phi){
             int length = this.getOperands().size();
-            ArrayList<Value> copyValues = new ArrayList<>(Collections.nCopies(length, ConstInteger.constZero));
+            ArrayList<Value> copyValues = new ArrayList<>(Collections.nCopies(length, ConstInteger.const0_32));
             copyInst = f.buildPhi(fatherBb, this.getType(), copyValues);
         }
-        else if(this.isTerminatorInst()){
-            if(this instanceof BrInst brInst){
-                if(!brInst.isJump()){
-                    Value judVal = findValue(replaceMap, brInst.getJudVal());
-                    BasicBlock left = (BasicBlock) findValue(replaceMap, brInst.getLabelLeft());
-                    BasicBlock right = (BasicBlock) findValue(replaceMap, brInst.getLabelRight());
-                    copyInst = f.buildBrInst(judVal, left, right, fatherBb);
-                }
-                else{
-                    BasicBlock jumpBb = (BasicBlock) findValue(replaceMap, brInst.getLabelJump());
-                    copyInst = f.buildBrInst(jumpBb, fatherBb);
-                }
+        else if(this instanceof BrInst brInst){
+            if(!brInst.isJump()){
+                Value judVal = findValue(replaceMap, brInst.getJudVal());
+                BasicBlock left = (BasicBlock) findValue(replaceMap, brInst.getTrueBlock());
+                BasicBlock right = (BasicBlock) findValue(replaceMap, brInst.getFalseBlock());
+                copyInst = f.buildBrInst(judVal, left, right, fatherBb);
             }
-            else if(this instanceof RetInst retInst){
-                if (!retInst.isVoid()) {
-                    Value retVal = findValue(replaceMap, retInst.getValue());
-                    copyInst = f.buildRetInst(fatherBb, retVal);
-                }
-                else {
-                    copyInst = f.buildRetInst(fatherBb);
-                }
+            else{
+                BasicBlock jumpBb = (BasicBlock) findValue(replaceMap, brInst.getJumpBlock());
+                copyInst = f.buildBrInst(jumpBb, fatherBb);
+            }
+        }
+        else if(this instanceof RetInst retInst){
+            if (!retInst.isVoid()) {
+                Value retVal = findValue(replaceMap, retInst.getValue());
+                copyInst = f.buildRetInst(retVal, fatherBb);
+            }
+            else {
+                copyInst = f.buildRetInst(fatherBb);
             }
         }
         else if(this instanceof CallInst callInst){
@@ -108,29 +103,17 @@ public abstract class Instruction extends User {
                 args.add(findValue(replaceMap, getOperands().get(i)));
             }
 
-            copyInst = f.buildCallInst(fatherBb, callInst.getCallFunc(), args);
-            if(callInst.getCallFunc().getName().equals("@printf")){
-                ((CallInst)copyInst).setFStrVal(((CallInst) this).getfStrVal());
-            }
+            copyInst = f.buildCallInst(callInst.getFunction(), args, fatherBb);
         }
-        else if(this instanceof BinaryInst || this instanceof CmpInst){
-            OP op1 = this.getOp();
-            Value left;
-            Value right;
-            if(this instanceof BinaryInst){
-                left = findValue(replaceMap, ((BinaryInst) this).getLeftVal());
-                right = findValue(replaceMap, ((BinaryInst) this).getRightVal());
-                copyInst = f.buildBinaryInst(op1, left, right, fatherBb);
-            }
-            else{
-                left = findValue(replaceMap, ((CmpInst) this).getLeftVal());
-                right = findValue(replaceMap, ((CmpInst) this).getRightVal());
-                copyInst = f.buildCmpInst(left, right, op, fatherBb);
-            }
+        else if(this instanceof BinaryInst){
+            OP op = this.getOp();
+            Value left = findValue(replaceMap, ((BinaryInst) this).getLeftVal());
+            Value right = findValue(replaceMap, ((BinaryInst) this).getRightVal());
+            copyInst = f.buildBinaryInst(left, right, op, fatherBb);
         }
-        else if(this instanceof ConversionInst){
-            Value src = findValue(replaceMap, ((ConversionInst) this).getValue());
-            copyInst = f.buildConversionInst(OP.Zext, src, fatherBb);
+        else if(this instanceof ConversionInst conversionInst){
+            Value src = findValue(replaceMap, conversionInst.getValue());
+            copyInst = f.buildConversionInst(src, conversionInst.getOp(), fatherBb);
         }
         return copyInst;
     }
@@ -172,6 +155,11 @@ public abstract class Instruction extends User {
 
     public void removeSelf(){
         removeUseFromOperands();
+        node.removeFromList();
+    }
+
+    //  与removeSelf的区别在于这个并不会删除def-use关系
+    public void removeFromBb(){
         node.removeFromList();
     }
 }

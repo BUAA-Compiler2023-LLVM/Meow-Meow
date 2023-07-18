@@ -37,17 +37,13 @@ public enum OP {
     Store,
     GEP, //get element ptr
     Phi,
-    MemPhi,
-    LoadDep,
-    //vector op
-    InsertEle,
-    ExtractEle,
     //terminator op
     Br,
     Call,
     Ret,
     //not op
     Not,
+    Move,
     BitCast;
 
     public boolean isCmpOP(){
@@ -55,6 +51,55 @@ public enum OP {
         return switch (name) {
             case "Ne", "FNe", "Eq", "FEq", "Lt", "Le", "FLt", "Gt", "FLe", "FGt", "Ge", "FGe" -> true;
             default -> false;
+        };
+    }
+
+    public static OP turnToFloat(OP op){
+        return switch (op){
+            case Add, Fadd -> OP.Fadd;
+            case Sub, Fsub -> OP.Fsub;
+            case Mul, Fmul -> OP.Fmul;
+            case Div, Fdiv -> OP.Fdiv;
+            case Lt, FLt -> OP.FLt;
+            case Le, FLe -> OP.FLe;
+            case Ge, FGe -> OP.FGe;
+            case Gt, FGt -> OP.FGt;
+            case Eq, FEq -> OP.FEq;
+            case Ne, FNe -> OP.FNe;
+            default -> op;
+        };
+    }
+
+    public static OP str2op(String str){
+        return switch (str){
+            case "+" -> OP.Add;
+            case "+f" -> OP.Fadd;
+            case "-" -> OP.Sub;
+            case "-f" -> OP.Fsub;
+            case "*" -> OP.Mul;
+            case "*f" -> OP.Fmul;
+            case "/" -> OP.Div;
+            case "/f" -> OP.Fdiv;
+            case "<=" -> OP.Le;
+            case "<=f" -> OP.FLe;
+            case "<" -> OP.Lt;
+            case "<f" -> OP.FLt;
+            case ">=" -> OP.Ge;
+            case ">=f" -> OP.FGe;
+            case ">" -> OP.Gt;
+            case ">f" -> OP.FGt;
+            case "==" -> OP.Eq;
+            case "==f" -> OP.FEq;
+            case "!=" -> OP.Ne;
+            case "!=f" -> OP.FNe;
+            case "&&" -> OP.And;
+            case "||" -> OP.Or;
+            case "%" -> OP.Mod;
+            case "ftoi" -> OP.Ftoi;
+            case "itof" -> OP.Itof;
+            case "zext" -> OP.Zext;
+            case "bitcast" -> OP.BitCast;
+            default -> null;
         };
     }
 
@@ -88,6 +133,7 @@ public enum OP {
             case "Itof" -> "sitofp";
             case "Zext" -> "zext";
             case "BitCast" -> "bitcast";
+            case "Move" -> "move";
             default -> null;
         };
     }

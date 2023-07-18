@@ -9,8 +9,8 @@ import java.util.ArrayList;
 
 public class Phi extends Instruction {
 
-    public Phi(Type type, BasicBlock basicBlock, ArrayList<Value> values) {
-        super("%" + (++Value.valNumber), type, OP.Phi, basicBlock);
+    public Phi(Type type, ArrayList<Value> values) {
+        super("%" + (++Value.valNumber), type, OP.Phi);
         for(Value value : values){
             addOperand(value);
         }
@@ -40,6 +40,26 @@ public class Phi extends Instruction {
             }
             sb.append("[ ");
             sb.append(useValue.getName()).append(", ");
+            sb.append("%").append(getParentbb().getPreBlocks().get(i).getName()).append(" ]");
+        }
+        return sb.toString();
+    }
+    @Override
+    public String getInstString1() {
+        ArrayList<Value> useValues = getUseValues();
+        StringBuilder sb = new StringBuilder();
+        sb.append(reg).append(" = phi ");
+        sb.append(getType()).append(" ");
+        for (int i = 0; i < useValues.size(); i++) {
+            Value useValue = useValues.get(i);
+            if (i != 0) {
+                sb.append(",");
+            }
+
+            sb.append("[ ");
+            if(useValue.reg!=null)
+            sb.append(useValue.reg).append(", ");
+            else sb.append(useValue.getName()).append(", ");
             sb.append("%").append(getParentbb().getPreBlocks().get(i).getName()).append(" ]");
         }
         return sb.toString();

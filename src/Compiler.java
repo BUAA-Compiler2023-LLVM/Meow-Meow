@@ -15,14 +15,16 @@ public class Compiler {
         AST compAST = new Parser(tokenList).parseAST();
         IRModule irModule = new Visitor().visitAST(compAST);
 
+        IRDump.DumpModule(irModule,"llvm_no_opt.ll");
+
         PassManager passManager = PassManager.getInstance();
         passManager.runIRPasses(irModule);
 
-        IRDump.DumpModule(irModule);
+        IRDump.DumpModule(irModule,"llvm.ll");
 
 //        Backend.Alloreg(irModule);
-        Backend backend = new Backend(irModule);
+//        Backend backend = new Backend(irModule);
 //        backend.print();
-        RISC_Dump.DumpBackend(backend);
+//        RISC_Dump.DumpBackend(backend);
     }
 }

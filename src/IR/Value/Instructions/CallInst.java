@@ -10,8 +10,8 @@ public class CallInst extends Instruction{
     private boolean hasName = false;
     private Function function;
 
-    public CallInst(Function function, ArrayList<Value> values, BasicBlock bb) {
-        super("", function.getType(), OP.Call, bb);
+    public CallInst(Function function, ArrayList<Value> values) {
+        super("", function.getType(), OP.Call);
         this.hasName = !function.getType().isVoidTy();
         this.function = function;
         for (Value value : values) {
