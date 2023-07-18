@@ -1,9 +1,5 @@
-
-int cnt = 0;
-void add_edge(int from, int To){
-	cnt = cnt + 1;
-}
 int main(){
-
-	return 0;
+    int a = 3;
+    int b = 1;
+    return 2;
 }

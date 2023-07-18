@@ -22,14 +22,14 @@ public class PassManager {
         irPasses.add(new GlobalValueLocalize());
         irPasses.add(new MergeBB());
         irPasses.add(new Mem2Reg());
-//        irPasses.add(new DCE());
+        irPasses.add(new DCE());
 
 
         //  然后根据需求开放pass
         openedPasses.add("GlobalValueLocalize");
         openedPasses.add("MergeBB");
         openedPasses.add("Mem2Reg");
-//        openedPasses.add("DCE");
+        openedPasses.add("DCE");
     }
 
 
