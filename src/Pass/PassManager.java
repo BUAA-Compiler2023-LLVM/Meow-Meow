@@ -29,7 +29,7 @@ public class PassManager {
         //  然后根据需求开放pass
         openedPasses.add("Mem2Reg");
         //开放removephi以后已经不是ssa形式了，所以不能跑
-//        openedPasses.add("RemovePhi");
+        openedPasses.add("RemovePhi");
 //        openedPasses.add("DCE");
     }
 

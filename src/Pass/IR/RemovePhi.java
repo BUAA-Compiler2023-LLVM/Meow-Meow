@@ -27,13 +27,14 @@ public class RemovePhi implements Pass.IRPass {
 				BasicBlock curbb = b.getValue();
 				for (IList.INode<Instruction, BasicBlock> i : curbb.getInsts()) {
 					if (i.getValue() instanceof Phi) {
-						Value new1 = new Value("%" + (++Value.valNumber), IntegerType.I32);
-						i.getValue().setName(new1.getName());
+						//如果遍历到了phi %x=phi [%x1,%b1], [%x2,%b2]
+						//就转化为前继基本块后面的%x=%x1,%x=%x2，然后删除这个phi
+						Value new1 = new Value(i.getValue().getName(), IntegerType.I32);
 						for (int ii = 0; ii < i.getValue().getOperands().size(); ii++) {
-							Value val = i.getValue().getOperands().get(ii);
-							BasicBlock src = curbb.getPreBlocks().get(ii);
-							if (src.getNxtBlocks().size() > 1) {
-								BasicBlock tmp= null;
+							Value val = i.getValue().getOperands().get(ii);//%x1
+							BasicBlock src = curbb.getPreBlocks().get(ii);//%b1
+							if (src.getNxtBlocks().size() > 1) {//如果b1 有多个后继
+								BasicBlock tmp= null;//找一下是否在removephi过程中已经在curbb和b1中间添加过基本块
 								for (BasicBlock bb : src.getNxtBlocks())
 								{
 									if(curbb.getPreBlocks().contains(bb) && bb.meow)
@@ -41,7 +42,7 @@ public class RemovePhi implements Pass.IRPass {
 										tmp=bb;
 									}
 								}
-								if(tmp!=null)
+								if(tmp!=null)//虽然b1有多个后继但是不需要新建基本快
 								{
 									Move mv=new Move(val, new1, src);
 									mv.getNode().insertBefore(tmp.getLastInst().getNode());
@@ -71,8 +72,7 @@ public class RemovePhi implements Pass.IRPass {
 									{
 										last.setTrueBlock(new2);
 									}
-
-
+									//把b1末尾的br语句的目的地改成新建的基本块
 								}
 
 							} else {

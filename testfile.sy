@@ -1,9 +1,12 @@
 
-int cnt = 0;
-void add_edge(int from, int To){
-	cnt = cnt + 1;
-}
 int main(){
 
-	return 0;
+	int a1=1;int a2=2;int a3=3;int a4=4;
+	if(a1==99)
+	{
+	a1=a2;
+	a2=a3;
+	a3=a1;
+	}
+	return a3;
 }

@@ -11,14 +11,14 @@ import java.io.IOException;
 import java.util.ArrayList;
 
 public class IRDump {
-    private static final BufferedWriter out;
-    static {
-        try {
-            out = new BufferedWriter(new FileWriter(Config.iroutFile));
-        } catch (IOException e) {
-            throw new RuntimeException(e);
-        }
-    }
+    private static  BufferedWriter out;
+//    static {
+//        try {
+//            out = new BufferedWriter(new FileWriter(Config.iroutFile));
+//        } catch (IOException e) {
+//            throw new RuntimeException(e);
+//        }
+//    }
 
     private static void DumpGlobalVar(GlobalVar globalVar) throws IOException {
         out.write(globalVar.toInstString());
@@ -111,6 +111,10 @@ public class IRDump {
     }
 
     public static void DumpModule(IRModule irModule) throws IOException {
+        DumpModule(irModule,Config.iroutFile);
+    }
+    public static void DumpModule(IRModule irModule,String filename) throws IOException {
+        out = new BufferedWriter(new FileWriter(filename));
         DumpLib();
         ArrayList<GlobalVar> globalVars = irModule.getGlobalVars();
         for(GlobalVar globalVar : globalVars){

@@ -15,10 +15,12 @@ public class Compiler {
         AST compAST = new Parser(tokenList).parseAST();
         IRModule irModule = new Visitor().visitAST(compAST);
 
+        IRDump.DumpModule(irModule,"without_optimization.ll");
+
         PassManager passManager = PassManager.getInstance();
         passManager.runIRPasses(irModule);
 
-        IRDump.DumpModule(irModule);
+        IRDump.DumpModule(irModule,"with_optimization.ll");
 
 //        Backend.Alloreg(irModule);
 //        Backend backend = new Backend(irModule);
