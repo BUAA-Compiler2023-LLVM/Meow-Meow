@@ -32,150 +32,67 @@ public class DCE implements Pass.IRPass {
     private HashSet<BasicBlock> usefulBbSet;
     private HashMap<BasicBlock, ArrayList<BasicBlock>> rdf;
 
+    private final HashSet<Instruction> usefulInstrClosure = new HashSet<>();
     @Override
     public void run(IRModule module) {
-        ArrayList<Function> uselessFuncs = new ArrayList<>();
+        ArrayList<Function> functions = module.getFunctions();
         InterproceduralAnalysis.run(module);
-        for(Function function : module.getFunctions()){
-            usefulInsts = new LinkedList<>();
-            usefulInstSet = new HashSet<>();
-            usefulBbSet = new HashSet<>();
-            if(function.getCallerList().isEmpty() && !function.getName().equals("@main")){
-                uselessFuncs.add(function);
-            }
-            else if(!function.isLibFunction()) {
-                runDCE(function);
-            }
-        }
-
-
-        for(Function uselessFunc : uselessFuncs){
-            module.getFunctions().remove(uselessFunc);
+        for (Function function : functions){
+            runDCE(function);
         }
     }
 
     private void runDCE(Function function){
-        ArrayList<Instruction> deletedInsts = new ArrayList<>();
-        rdf = DomAnalysis.run(function).getRDf();
-        //  Initialize Phase
+        usefulInstrClosure.clear();
+        ArrayList<Instruction> deleteInsts = new ArrayList<>();
         for(IList.INode<BasicBlock, Function> bbNode : function.getBbs()){
             BasicBlock bb = bbNode.getValue();
-            for(IList.INode<Instruction, BasicBlock> instNode : bb.getInsts()){
+            for (IList.INode<Instruction, BasicBlock> instNode : bb.getInsts()) {
                 Instruction inst = instNode.getValue();
-                if(isUseful(inst)){
-                    usefulInstSet.add(inst);
-                    usefulInsts.add(inst);
-                    usefulBbSet.add(inst.getParentbb());
-                }
-            }
-        }
-        //  Mark Phase
-        while (!usefulInsts.isEmpty()){
-            Instruction inst = usefulInsts.poll();
-            for(Value value : inst.getOperands()){
-                if(value instanceof Instruction newInst &&
-                        !usefulInstSet.contains(newInst)){
-                    usefulInstSet.add(newInst);
-                    usefulInsts.add(newInst);
-                    usefulBbSet.add(newInst.getParentbb());
-                }
-            }
-
-            if(rdf.get(inst.getParentbb()) != null) {
-                for (BasicBlock bb : rdf.get(inst.getParentbb())) {
-                    Instruction lastInst = bb.getLastInst();
-                    if (!usefulInstSet.contains(lastInst)) {
-                        usefulInstSet.add(lastInst);
-                        usefulInsts.add(lastInst);
-                        usefulBbSet.add(bb);
-                    }
+                if (isUseful(inst)) {
+                    findUsefulClosure(inst);
                 }
             }
         }
 
-        // Sweep Phase
-        for(IList.INode<BasicBlock, Function> bbNode : function.getBbs()){
+
+        // 删除不在闭包内的指令
+        for (IList.INode<BasicBlock, Function> bbNode : function.getBbs()) {
             BasicBlock bb = bbNode.getValue();
-            for(IList.INode<Instruction, BasicBlock> instNode : bb.getInsts()){
+            for (IList.INode<Instruction, BasicBlock> instNode : bb.getInsts()) {
                 Instruction inst = instNode.getValue();
-                if(!usefulInstSet.contains(inst)){
-                    if(inst instanceof BrInst brInst){
-                        if(!brInst.isJump()){
-                            BasicBlock nowBb = brInst.getParentbb();
-                            while (!usefulBbSet.contains(nowBb) && nowBb.getPIdominator() != null){
-                                nowBb = nowBb.getPIdominator();
-                            }
-                            brInst.turnToJump(nowBb);
-                        }
-                    }
-                    else deletedInsts.add(inst);
+                if (!usefulInstrClosure.contains(inst)) {
+                    deleteInsts.add(inst);
                 }
             }
         }
 
-        for(Instruction inst : deletedInsts){
-            inst.removeSelf();
-        }
-
-    }
-
-    /*
-    * 判断一个指令是否为usefulInst：
-    * 1. Terminator: Ret
-    * 2. MayHasSideEffect: Store, Call
-    *
-    * */
-    private boolean isUseful(Instruction inst){
-        OP op = inst.getOp();
-        if(op == OP.Call){
-            Function function = ((CallInst) inst).getFunction();
-            if(function.isLibFunction()) return true;
-            else return function.isMayHasSideEffect();
-        }
-        return op == OP.Ret || op == OP.Store;
-    }
-
-    //  removeUselessStore删除一系列store相同指针构成的指令集中前面无用的store
-    //  只保留最后一个store指令
-    //  遇到load, call等则停止搜索store
-    private void removeUselessStore(Function function){
-        ArrayList<Instruction> deletedInsts = new ArrayList<>();
-        for(IList.INode<BasicBlock, Function> bbNode : function.getBbs()){
-            BasicBlock bb = bbNode.getValue();
-
-            IList<Instruction, BasicBlock> insts = bb.getInsts();
-            IList.INode<Instruction, BasicBlock> curNode = insts.getHead();
-            while (curNode != null){
-                Instruction curInst = curNode.getValue();
-                if(curInst instanceof StoreInst curStoreInst){
-                    Value pointer = AliasAnalysis.getArrRoot(curStoreInst);
-                    IList.INode<Instruction, BasicBlock> nxtNode = curNode.getNext();
-                    while (nxtNode != null){
-                        Instruction nxtInst = nxtNode.getValue();
-                        if(nxtInst instanceof StoreInst nxtStoreInst){
-                            if(curStoreInst.getPointer() == nxtStoreInst.getPointer()){
-                                deletedInsts.add(curStoreInst);
-                                break;
-                            }
-                        }
-                        else if(nxtInst instanceof LoadInst loadInst){
-                            Value nxtPointer = AliasAnalysis.getArrRoot(loadInst.getPointer());
-                            //  TODO 完成别名分析相关接口
-                            break;
-                        }
-                        else if(nxtInst instanceof CallInst){
-                            //  TODO 完成别名分析相关接口
-                            break;
-                        }
-                        nxtNode = nxtNode.getNext();
-                    }
-                }
-                curNode = curNode.getNext();
-            }
-        }
-        for(Instruction deleteInst : deletedInsts){
+        for(Instruction deleteInst : deleteInsts){
             deleteInst.removeSelf();
         }
+    }
+
+    private void findUsefulClosure(Instruction inst){
+        if (!usefulInstrClosure.contains(inst)) {
+            // 记录所有用到的指令
+            usefulInstrClosure.add(inst);
+            for (Value operand : inst.getUseValues()) {
+                if (operand instanceof Instruction) {
+                    findUsefulClosure((Instruction) operand);
+                }
+            }
+        }
+    }
+
+    private boolean isUseful(Instruction inst)
+    {
+        if(inst instanceof CallInst callInst){
+            Function function = callInst.getFunction();
+            return function.isLibFunction() || function.isMayHasSideEffect();
+        }
+        return inst instanceof BrInst ||
+                inst instanceof RetInst ||
+                inst instanceof StoreInst;
     }
 }
 

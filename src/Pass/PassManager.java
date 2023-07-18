@@ -27,14 +27,16 @@ public class PassManager {
 
 
         //  然后根据需求开放pass
+        openedPasses.add("GlobalValueLocalize");
+        openedPasses.add("MergeBB");
         openedPasses.add("Mem2Reg");
         //开放removephi以后已经不是ssa形式了，所以不能跑
-        openedPasses.add("RemovePhi");
-//        openedPasses.add("DCE");
+        //openedPasses.add("RemovePhi");
+        openedPasses.add("DCE");
     }
 
 
-    public void runIRPasses(IRModule irModule)  {
+    public void runIRPasses(IRModule irModule){
         for(IRPass irPass : irPasses){
             if(openedPasses.contains(irPass.getName())){
                 irPass.run(irModule);
