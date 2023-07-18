@@ -15,7 +15,8 @@ declare i32 @parallel_start()
 declare void @parallel_end(i32)
 define i32 @main() {
 b0:
-	call void @putint(i32 2)
-	ret i32 2
+	%0 = sub i32 2, 10
+	call void @putint(i32 %0)
+	ret i32 %0
 }
 

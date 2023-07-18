@@ -120,6 +120,24 @@ public class IRBuildFactory {
         return buildAllocInst(arrayType, bb);
     }
 
+    public Function getFunction(String name, Type type){
+        return new Function(name, type);
+    }
+
+    public AllocInst getAllocInst(Type type, BasicBlock bb){
+        return new AllocInst(type, bb);
+    }
+
+    public Argument getArgument(String name, Type type, Function parentFunc){
+        return new Argument(name, type, parentFunc);
+    }
+
+    public BasicBlock buildBlockAfter(Function function, BasicBlock bb){
+        BasicBlock newBb = new BasicBlock(function);
+        newBb.insertAfter(bb);
+        return newBb;
+    }
+
     private void buildCallRelation(Function caller, Function callee){
         if(callee.isLibFunction()) return;
         if(!callee.getCallerList().contains(caller)) {
@@ -328,7 +346,7 @@ public class IRBuildFactory {
         return allocInst;
     }
 
-    public void buildStoreInst(Value value, Value pointer, BasicBlock bb){
+    public StoreInst buildStoreInst(Value value, Value pointer, BasicBlock bb){
         Type valueTy = value.getType();
         PointerType pointerTy = (PointerType) pointer.getType();
         Type eleTy = pointerTy.getEleType();
@@ -341,6 +359,7 @@ public class IRBuildFactory {
 
         StoreInst storeInst = new StoreInst(value, pointer, bb);
         bb.addInst(storeInst);
+        return storeInst;
     }
 
     public LoadInst buildLoadInst(Value pointer, BasicBlock bb){

@@ -9,6 +9,7 @@ import org.w3c.dom.Node;
 import jdk.swing.interop.SwingInterOpUtils;
 
 import java.util.ArrayList;
+import java.util.HashMap;
 
 public class BasicBlock extends Value{
     private Function parentFunc;
@@ -185,6 +186,14 @@ public class BasicBlock extends Value{
     @Override
     public String toString(){
         return this.getName();
+    }
+
+    public void copyAllFrom(BasicBlock source, HashMap<Value, Value> replaceMap) {
+        for (IList.INode<Instruction, BasicBlock> instNode : source.getInsts()) {
+            Instruction inst = instNode.getValue();
+            Instruction copyInst = inst.copySelf(replaceMap);
+            replaceMap.put(inst, copyInst);
+        }
     }
 
     public void insertBefore(BasicBlock bb){

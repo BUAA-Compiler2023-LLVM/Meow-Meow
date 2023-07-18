@@ -21,8 +21,8 @@ public class Compiler {
         IRDump.DumpModule(irModule);
 
 //        Backend.Alloreg(irModule);
-//        Backend backend = new Backend(irModule);
+        Backend backend = new Backend(irModule);
 //        backend.print();
-//        RISC_Dump.DumpBackend(backend);
+        RISC_Dump.DumpBackend(backend);
     }
 }

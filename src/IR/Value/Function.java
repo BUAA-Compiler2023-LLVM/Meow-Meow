@@ -2,13 +2,17 @@ package IR.Value;
 
 import IR.IRBuildFactory;
 import IR.Type.Type;
+import IR.Value.Instructions.Instruction;
+import IR.Value.Instructions.Phi;
 import Utils.DataStruct.IList;
 
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.HashSet;
+import java.util.Stack;
 
 public class Function extends Value{
+    private IRBuildFactory f = IRBuildFactory.getInstance();
     private final IList<BasicBlock, Function> bbs;
     private final ArrayList<Argument> args;
     private HashMap<BasicBlock, ArrayList<BasicBlock>> idoms;
@@ -84,10 +88,14 @@ public class Function extends Value{
     }
 
     public void addCaller(Function function){
-        this.callerList.add(function);
+        if(!callerList.contains(function)) {
+            this.callerList.add(function);
+        }
     }
     public void addCallee(Function function){
-        this.calleeList.add(function);
+        if(calleeList.contains(function)) {
+            this.calleeList.add(function);
+        }
     }
 
     public ArrayList<Function> getCallerList(){
@@ -96,6 +104,72 @@ public class Function extends Value{
 
     public ArrayList<Function> getCalleeList(){
         return calleeList;
+    }
+
+    public void copyAll(Function srcFunction, ArrayList<GlobalVar> globalVars){
+        HashMap<Value, Value> replaceMap = new HashMap<>();
+        HashSet<BasicBlock> visitedMap = new HashSet<>();
+        ArrayList<Argument> srcArgs = srcFunction.getArgs();
+        //  初始化数据结构
+        for (Argument arg : srcArgs) {
+            Argument copyArg;
+            Type type = arg.getType();
+            copyArg = f.getArgument(arg.getName(), type, this);
+            this.addArg(copyArg);
+            replaceMap.put(arg, copyArg);
+        }
+        for (Value globalVar : globalVars) {
+            replaceMap.put(globalVar, globalVar);
+        }
+        for (IList.INode<BasicBlock, Function> bbNode : srcFunction.getBbs()) {
+            BasicBlock newBlock = IRBuildFactory.getInstance().buildBasicBlock(this);
+            replaceMap.put(bbNode.getValue(), newBlock);
+        }
+
+        Stack<BasicBlock> dfsStack = new Stack<>();
+        dfsStack.push(srcFunction.getBbEntry());
+        while (!dfsStack.isEmpty()) {
+            BasicBlock loopBlock = dfsStack.pop();
+            ((BasicBlock) replaceMap.get(loopBlock)).copyAllFrom(loopBlock, replaceMap);
+            if (!loopBlock.getNxtBlocks().isEmpty()) {
+                for (BasicBlock basicBlock : new HashSet<>(loopBlock.getNxtBlocks())) {
+                    if (!visitedMap.contains(basicBlock)) {
+                        visitedMap.add(basicBlock);
+                        dfsStack.push(basicBlock);
+                    }
+                }
+            }
+        }
+
+        ArrayList<Phi> phiArrayList = new ArrayList<>();
+        for (IList.INode<BasicBlock, Function> bbNode : srcFunction.getBbs()) {
+            BasicBlock bb = bbNode.getValue();
+            for (IList.INode<Instruction, BasicBlock> instNode : bb.getInsts()) {
+                Instruction inst = instNode.getValue();
+                if (inst instanceof Phi) {
+                    phiArrayList.add((Phi) inst);
+                }
+            }
+        }
+
+        //  修改phi指令中的前驱基本块
+        for (Phi phi : phiArrayList) {
+            for (int i = 0; i < phi.getOperands().size(); i++) {
+                BasicBlock preBB = phi.getParentbb().getPreBlocks().get(i);
+                BasicBlock nowBB = (BasicBlock) replaceMap.get(preBB);
+                Phi copyPhi = (Phi) replaceMap.get(phi);
+                int index = copyPhi.getParentbb().getPreBlocks().indexOf(nowBB);
+
+                Value value = phi.getOperand(i);
+                Value copyValue;
+                if(value instanceof ConstInteger){
+                    int val = ((ConstInteger) value).getVal();
+                    copyValue = new ConstInteger(val);
+                }
+                else copyValue = replaceMap.get(value);
+                copyPhi.replaceOperand(index, copyValue);
+            }
+        }
     }
 
     public void setMayHasSideEffect(boolean mayHasSideEffect){
