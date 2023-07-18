@@ -76,24 +76,23 @@ public class RemovePhi implements Pass.IRPass {
 								}
 
 							} else {
-
 								Move mv=new Move(val, new1, src);
-
 								mv.getNode().insertBefore(src.getLastInst().getNode());
-
-
 							}
 						}
 
 					}
 				}
+				ArrayList<Instruction> toboRemoved=new ArrayList<>();
 				//删除所有phi
 				for (IList.INode<Instruction, BasicBlock> i : curbb.getInsts())
-					if (i.getPrev()!=null && i.getPrev().getValue() instanceof Phi)//因为不能删除自己，所以打赌phi不会是最后一句
+					if ( i.getValue() instanceof Phi)
 					{
-						i.getPrev().removeFromList();
+						toboRemoved.add(i.getValue());
 					}
-
+				for(Instruction deleteInst : toboRemoved){
+					deleteInst.removeSelf();
+				}
 			}
 		}
 
