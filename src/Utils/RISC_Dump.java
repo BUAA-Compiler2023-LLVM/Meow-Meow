@@ -5,8 +5,6 @@ import Backend.component.ObjBlock;
 import Backend.component.ObjFunction;
 import Backend.component.ObjModule;
 import Backend.instruction.ObjInstr;
-import IR.Value.BasicBlock;
-import IR.Value.Function;
 import Utils.DataStruct.IList;
 
 import java.io.BufferedWriter;
@@ -49,7 +47,7 @@ public class RISC_Dump {
     }
 
     public static void DumpBackend(Backend backend) throws IOException{
-        DumpObjModle(backend.getModle());
+        DumpObjModle(backend.getModule());
         out.close();
     }
 }

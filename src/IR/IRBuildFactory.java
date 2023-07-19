@@ -78,6 +78,15 @@ public class IRBuildFactory {
         return gepInst;
     }
 
+    public GepInst getGepInst(Value target, ArrayList<Value> indexs){
+        Type type = ((PointerType) target.getType()).getEleType();
+        for(int i = 0; i < indexs.size() - 1; i++){
+            type = ((ArrayType) type).getEleType();
+        }
+
+        return new GepInst(target, indexs, new PointerType(type));
+    }
+
     public Value buildArray(Type eleType, ArrayList<Integer> indexs, BasicBlock bb){
         ArrayType arrayType = getArrayType(indexs, eleType);
         return buildAllocInst(arrayType, bb);
@@ -89,6 +98,24 @@ public class IRBuildFactory {
 
     public Argument getArgument(String name, Type type, Function parentFunc){
         return new Argument(name, type, parentFunc);
+    }
+
+    public BasicBlock getBasicBlock(Function parentFunc){
+        return new BasicBlock(parentFunc);
+    }
+
+    public Instruction getAllocInst(Type type){
+        Type pointerTy = new PointerType(type);
+        return new AllocInst(pointerTy);
+    }
+
+    public LoadInst getLoadInst(Value pointer){
+        Type type = ((PointerType) pointer.getType()).getEleType();
+        return new LoadInst(pointer, type);
+    }
+
+    public StoreInst getStoreInst(Value value, Value pointer){
+        return new StoreInst(value, pointer);
     }
 
     private void buildCallRelation(Function caller, Function callee){
@@ -141,6 +168,32 @@ public class IRBuildFactory {
         ConversionInst conversionInst = new ConversionInst(value, type, op);
         bb.addInst(conversionInst);
         return conversionInst;
+    }
+
+    public ConversionInst getConversionInst(Value value, OP op){
+        Type type = null;
+        if(op == OP.Ftoi || op == OP.Zext){
+            type = IntegerType.I32;
+        }
+        else if(op == OP.Itof){
+            type = FloatType.F32;
+        }
+        else if(op == OP.BitCast){
+            type = new PointerType(IntegerType.I32);
+        }
+
+        return new ConversionInst(value, type, op);
+    }
+
+    public BinaryInst getBinaryInst(Value left, Value right, OP op, Type type){
+        BinaryInst binaryInst;
+        if(op.isCmpOP()){
+            binaryInst = new CmpInst(op, left, right);
+        }
+        else {
+            binaryInst = new BinaryInst(op, left, right, type);
+        }
+        return binaryInst;
     }
 
     public BinaryInst buildBinaryInst(Value left, Value right, OP op, BasicBlock bb){
@@ -197,6 +250,10 @@ public class IRBuildFactory {
         return callInst;
     }
 
+    public CallInst getCallInst(Function callFunc, ArrayList<Value> values){
+        return new CallInst(callFunc, values);
+    }
+
     public Argument buildArgument(String name, String typeStr, Function parentFunc){
         Argument argument = switch (typeStr) {
             case "int" -> new Argument(name, IntegerType.I32, parentFunc);
@@ -234,6 +291,14 @@ public class IRBuildFactory {
         return retInst;
     }
 
+    public RetInst getRetInst(Value value){
+        return new RetInst(value);
+    }
+
+    public RetInst getRetInst(){
+        return new RetInst();
+    }
+
     public BrInst buildBrInst(BasicBlock jumpBB, BasicBlock bb){
         BrInst brInst = new BrInst(jumpBB);
         bb.addInst(brInst);
@@ -242,6 +307,10 @@ public class IRBuildFactory {
 //        bb.getNxtBlocks().clear();
 //        bb.setNxtBlock(jumpBB);
 //        jumpBB.setPreBlock(bb);
+    }
+
+    public BrInst getBrInst(BasicBlock jumpBB){
+        return new BrInst(jumpBB);
     }
 
     public BrInst buildBrInst(Value judVal, BasicBlock trueBlock, BasicBlock falseBlock, BasicBlock bb){
@@ -256,10 +325,18 @@ public class IRBuildFactory {
 //        falseBlock.setPreBlock(bb);
     }
 
+    public BrInst getBrInst(Value judVal, BasicBlock trueBlock, BasicBlock falseBlock){
+        return new BrInst(judVal, trueBlock, falseBlock);
+    }
+
     public Phi buildPhi(BasicBlock bb, Type type, ArrayList<Value> values){
         Phi phi = new Phi(type, values);
         bb.addInstToHead(phi);
         return phi;
+    }
+
+    public Phi getPhi(Type type, ArrayList<Value> values){
+        return new Phi(type, values);
     }
 
     public BasicBlock buildBasicBlock(Function parentFunc){

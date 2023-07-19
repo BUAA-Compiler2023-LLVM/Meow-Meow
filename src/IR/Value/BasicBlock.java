@@ -188,14 +188,6 @@ public class BasicBlock extends Value{
         return this.getName();
     }
 
-    public void copyAllFrom(BasicBlock source, HashMap<Value, Value> replaceMap) {
-        for (IList.INode<Instruction, BasicBlock> instNode : source.getInsts()) {
-            Instruction inst = instNode.getValue();
-            Instruction copyInst = inst.copySelf(replaceMap);
-            replaceMap.put(inst, copyInst);
-        }
-    }
-
     public void insertBefore(BasicBlock bb){
         node.insertBefore(bb.getNode());
     }
