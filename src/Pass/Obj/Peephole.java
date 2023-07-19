@@ -18,24 +18,20 @@ public class Peephole implements Pass.ObjPass{
 
     @Override
     public void run(ObjModule objModule){
-        ArrayList<ObjFunction> functions=objModule.getFunctions();
-        for(int i=0;i<functions.size();i++){
-            ObjFunction function=functions.get(i);
-            IList<ObjBlock,ObjFunction> blocks=function.getObjBlocks();
+        ArrayList<ObjFunction> functions = objModule.getFunctions();
+        for(ObjFunction function : functions){
+            IList<ObjBlock,ObjFunction> blocks = function.getObjBlocks();
             for(IList.INode<ObjBlock,ObjFunction> instBlock : blocks){
-                ObjBlock block=instBlock.getValue();
-                IList<ObjInstr,ObjBlock> instructions=block.getInstrs();
-                zero(instructions);
-
-
+                ObjBlock block = instBlock.getValue();
+                zero(block);
             }
-
         }
     }
     // add t0, t1, 0 => mov t0, t1
-    private void zero(IList<ObjInstr,ObjBlock> instructions){
-        for(IList.INode<ObjInstr,ObjBlock> instNode : instructions){
+    private void zero(ObjBlock objBlock){
+        for(IList.INode<ObjInstr, ObjBlock> instNode : objBlock.getInstrs()){
             ObjInstr nowInstr=instNode.getValue();
+            //  TODO: zero
         }
     }
 }
