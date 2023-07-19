@@ -12,6 +12,7 @@ import Utils.DataStruct.IList;
 import java.util.*;
 
 import static Pass.IR.Utils.UtilFunc.buildCallRelation;
+import static Pass.IR.Utils.UtilFunc.initCFG;
 
 public class FuncInLine implements Pass.IRPass {
 
@@ -147,6 +148,9 @@ public class FuncInLine implements Pass.IRPass {
             }
         }
         f.buildBrInst(tmpBbEntry, oriBlock);
+        oriBlock.setNxtBlock(tmpBbEntry);
+        tmpBbEntry.setPreBlock(oriBlock);
+
 
         // 将调用函数的形式参数换为为传入参数
         ArrayList<Argument> formalParameters = tmpInlineFunction.getArgs();
@@ -217,9 +221,10 @@ public class FuncInLine implements Pass.IRPass {
                 Instruction retInst = rets.get(0);
                 callInst.replaceUsedWith(retInst.getOperand(0));
                 BasicBlock nowBb = retInst.getParentbb();
-                //  先remove retInst，这样nowBb的isTerminal就会变为false
                 retInst.removeSelf();
                 f.buildBrInst(insertBlock, nowBb);
+                nowBb.setNxtBlock(insertBlock);
+                insertBlock.setPreBlock(nowBb);
             }
             else {
                 //  填写phi指令并修改ret指令为br指令
@@ -234,6 +239,8 @@ public class FuncInLine implements Pass.IRPass {
                     BasicBlock nowBb = retInst.getParentbb();
                     retInst.removeSelf();
                     f.buildBrInst(insertBlock, nowBb);
+                    nowBb.setNxtBlock(insertBlock);
+                    insertBlock.setPreBlock(nowBb);
                 }
                 phi.insertToHead(insertBlock);
             }
@@ -243,6 +250,8 @@ public class FuncInLine implements Pass.IRPass {
                 BasicBlock nowBb = retInst.getParentbb();
                 retInst.removeFromBb();
                 f.buildBrInst(insertBlock, nowBb);
+                nowBb.setNxtBlock(insertBlock);
+                insertBlock.setPreBlock(nowBb);
             }
         }
 
@@ -285,13 +294,18 @@ public class FuncInLine implements Pass.IRPass {
             replaceMap.put(globalVar, globalVar);
         }
 
+        for (IList.INode<BasicBlock, Function> bbNode : srcFunction.getBbs()) {
+            BasicBlock newBlock = f.buildBasicBlock(copyFunc);
+            replaceMap.put(bbNode.getValue(), newBlock);
+        }
+
         Stack<BasicBlock> dfsStack = new Stack<>();
         dfsStack.push(srcFunction.getBbEntry());
         while (!dfsStack.isEmpty()) {
             BasicBlock loopBlock = dfsStack.pop();
-            BasicBlock newBlock = copyBlock(loopBlock, copyFunc, replaceMap);
-            replaceMap.put(loopBlock, newBlock);
-            if (!loopBlock.getNxtBlocks().isEmpty()) {
+            BasicBlock newBlock = ((BasicBlock) replaceMap.get(loopBlock));
+            copyBlockToBlock(loopBlock, newBlock, replaceMap);
+            if(!loopBlock.getNxtBlocks().isEmpty()) {
                 for (BasicBlock basicBlock : new HashSet<>(loopBlock.getNxtBlocks())) {
                     if (!visitedMap.contains(basicBlock)) {
                         visitedMap.add(basicBlock);
@@ -300,6 +314,9 @@ public class FuncInLine implements Pass.IRPass {
                 }
             }
         }
+
+        //  这些block间的前驱后继关系需要建立一下
+        initCFG(copyFunc);
 
         ArrayList<Phi> phiArrayList = new ArrayList<>();
         for (IList.INode<BasicBlock, Function> bbNode : srcFunction.getBbs()) {
@@ -338,18 +355,16 @@ public class FuncInLine implements Pass.IRPass {
         return copyFunc;
     }
 
-    private BasicBlock copyBlock(BasicBlock srcBlock, Function parentFunc, HashMap<Value, Value> replaceMap){
-        BasicBlock copyBlock = f.getBasicBlock(parentFunc);
+    private void copyBlockToBlock(BasicBlock srcBlock, BasicBlock dstBlock, HashMap<Value, Value> replaceMap){
         for (IList.INode<Instruction, BasicBlock> instNode : srcBlock.getInsts()) {
             Instruction inst = instNode.getValue();
-            Instruction copyInst = copyInstruction(inst, copyBlock, replaceMap);
-            copyBlock.addInst(copyInst);
+            Instruction copyInst = copyInstruction(inst, replaceMap);
+            dstBlock.addInst(copyInst);
             replaceMap.put(inst, copyInst);
         }
-        return copyBlock;
     }
 
-    private Instruction copyInstruction(Instruction inst, BasicBlock parentBb, HashMap<Value, Value> replaceMap){
+    private Instruction copyInstruction(Instruction inst, HashMap<Value, Value> replaceMap){
         Instruction copyInst = null;
         if(inst instanceof AllocInst allocInst){
             copyInst = f.getAllocInst(allocInst.getAllocType());
