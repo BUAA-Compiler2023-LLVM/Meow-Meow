@@ -4,6 +4,7 @@ import Backend.component.ObjModule;
 import IR.IRModule;
 import Pass.IR.*;
 import Pass.Pass.*;
+import Utils.IRDump;
 
 import java.util.ArrayList;
 import java.util.HashSet;
@@ -24,6 +25,7 @@ public class PassManager {
         irPasses.add(new Mem2Reg());
         irPasses.add(new DCE());
         irPasses.add(new FuncInLine());
+        irPasses.add(new RemovePhi());
 
 
         //  然后根据需求开放pass
@@ -31,6 +33,7 @@ public class PassManager {
         openedPasses.add("MergeBB");
         openedPasses.add("Mem2Reg");
         openedPasses.add("DCE");
+
 //        openedPasses.add("FuncInLine");
     }
 

@@ -10,7 +10,7 @@ import java.util.ArrayList;
 public class ObjInstr {
 
     private IList.INode<ObjInstr, ObjBlock> node;
-    private ArrayList<ObjReg> regDef, regUse;
+    public ArrayList<ObjReg> regDef, regUse;
     public ObjInstr() {
         this.node = new IList.INode<>(this);
         regDef = new ArrayList<>();

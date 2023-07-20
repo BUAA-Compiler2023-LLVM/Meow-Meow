@@ -28,13 +28,14 @@ public class IrParser {
     private HashMap<Function, ObjFunction> fMap;
     private HashMap<BasicBlock, ObjBlock> bMap;
     private HashMap<Value, ObjOperand> operandMap;
-
+    public HashMap< ObjOperand,Value> operandMap1;
     public IrParser(IRModule irModule) {
         this.irModule = irModule;
         objModule = new ObjModule();
         fMap = new HashMap<>();
         bMap = new HashMap<>();
         operandMap = new HashMap<>();
+        operandMap1 = new HashMap<>();
     }
 
     public ObjModule parseModule() {
@@ -156,8 +157,16 @@ public class IrParser {
             parseCall((CallInst) irInst, irBlock, irFunction);
         else if(irInst instanceof GepInst)
             parseGep((GepInst) irInst, irBlock, irFunction);
+        else if(irInst instanceof Move)
+            parseMove((Move) irInst, irBlock, irFunction);
     }
-
+    private void parseMove(Move inst, BasicBlock irBlock, Function irFunction) {
+        ObjBlock objBlock = bMap.get(irBlock);
+        ObjOperand src=parseOperand(inst.getOperand( 0), 12,irFunction, irBlock);
+        ObjOperand dst = parseOperand(inst, 0, irFunction, irBlock);
+        ObjMove objMove = new ObjMove(dst, src);
+        objBlock.addInstr(objMove);
+    }
     private void parseGep(GepInst inst, BasicBlock irBlock, Function irFunction) {
         ObjFunction objFunction = fMap.get(irFunction);
         ObjBlock objBlock = bMap.get(irBlock);
@@ -469,6 +478,7 @@ public class IrParser {
         ObjVirReg dstReg = new ObjVirReg();
         objFunction.addUsedVirReg(dstReg);
         operandMap.put(irValue, dstReg);
+        operandMap1.put( dstReg,irValue);
         return dstReg;
     }
 

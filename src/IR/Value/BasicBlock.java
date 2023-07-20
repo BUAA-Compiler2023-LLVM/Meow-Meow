@@ -12,6 +12,7 @@ import java.util.ArrayList;
 import java.util.HashMap;
 
 public class BasicBlock extends Value{
+    public boolean meow=false;
     private Function parentFunc;
     private final ArrayList<BasicBlock> preBlocks;
     private final ArrayList<BasicBlock> nxtBlocks;

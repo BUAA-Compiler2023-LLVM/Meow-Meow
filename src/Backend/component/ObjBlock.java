@@ -1,8 +1,12 @@
 package Backend.component;
 
 import Backend.instruction.ObjInstr;
+import Backend.operand.ObjReg;
 import IR.Value.Function;
+import IR.Value.Value;
 import Utils.DataStruct.IList;
+
+import java.util.ArrayList;
 
 public class ObjBlock {
 
@@ -11,6 +15,11 @@ public class ObjBlock {
     private IList.INode<ObjBlock, ObjFunction> node;
     private IList<ObjInstr, ObjBlock> instrs;
     private ObjBlock trueBlock = null, falseBlock = null;
+    public final ArrayList<ObjReg> liveIns=new ArrayList<>();
+    public final ArrayList<ObjReg> liveOuts=new ArrayList<>();
+    public final ArrayList<ObjReg> Use=new ArrayList<>();
+    public final ArrayList<ObjReg> Def=new ArrayList<>();
+    public final ArrayList<ArrayList<ObjReg>> LocalInterfere = new ArrayList<>();
     public ObjBlock(String name) {
         this.name = name;
         this.node = new IList.INode<>(this);

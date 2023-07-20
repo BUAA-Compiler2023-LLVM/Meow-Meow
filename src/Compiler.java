@@ -1,7 +1,9 @@
 import Backend.Backend;
+import Backend.process.RegAllo;
 import Frontend.*;
 import IR.IRModule;
 import IR.Visitor;
+import Pass.IR.RemovePhi;
 import Pass.PassManager;
 import Utils.IRDump;
 import Utils.RISC_Dump;
@@ -20,11 +22,17 @@ public class Compiler {
         PassManager passManager = PassManager.getInstance();
         passManager.runIRPasses(irModule);
 
-        IRDump.DumpModule(irModule,"llvm.ll");
+        IRDump.DumpModule(irModule,"not_removed_phi.ll");
 
-//        Backend.Alloreg(irModule);
-//        Backend backend = new Backend(irModule);
+        RemovePhi rmp=new RemovePhi();
+        rmp.run(irModule);
+
+        IRDump.DumpModule(irModule,"removed_phi.ll");
+
+        Backend backend = new Backend(irModule);
+        backend.print();
+
 //        backend.print();
-//        RISC_Dump.DumpBackend(backend);
+        RISC_Dump.DumpBackend(backend);
     }
 }

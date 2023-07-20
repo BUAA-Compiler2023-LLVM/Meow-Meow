@@ -3,6 +3,7 @@ package Utils;
 import IR.IRModule;
 import IR.Value.*;
 import IR.Value.Instructions.Instruction;
+import IR.Value.Instructions.Move;
 import Utils.DataStruct.IList;
 
 import java.io.BufferedWriter;
@@ -85,9 +86,26 @@ public class IRDump {
             IList<Instruction, BasicBlock> instructions = basicBlock.getInsts();
             for (IList.INode<Instruction, BasicBlock> instNode : instructions) {
                 Instruction inst = instNode.getValue();
-                if (inst.hasName()) {
-                    inst.setName("%" + nowNum++);
+                if(inst instanceof Move)
+                {
+                    if (inst.hasName() ) {
+                        //如果是一个需要名字的move指令
+                        //需要名字的情况：没有pair，有pair但是之前出现的pair有过名字
+                        inst.setName("%" + nowNum++);
+                        if(((Move)inst).pair!=null)
+                        {
+                            ((Move)inst).pair.setName("%" +( nowNum-1));
+                            ((Move)inst).pair.hasname=false;
+                        }
+                    }
+                }else
+                {
+                    if (inst.hasName() ) {
+                        inst.setName("%" + nowNum++);
+                    }
                 }
+
+
             }
         }
     }
