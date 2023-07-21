@@ -68,6 +68,18 @@ public class IrParser {
                 objFunction.addBlocks(objBlock);
             }
         }
+
+        for(Function f : irModule.getFunctions())
+            for(IList.INode<BasicBlock, Function> b : f.getBbs()) {
+                BasicBlock irBlock = b.getValue();
+                ObjBlock objBlock = bMap.get(irBlock);
+                ArrayList<BasicBlock> preBlocks = irBlock.getPreBlocks();
+                for(BasicBlock preB : preBlocks)
+                    objBlock.addPreBlock(bMap.get(preB));
+                ArrayList<BasicBlock> nxtBlocks = irBlock.getNxtBlocks();
+                for(BasicBlock nxtB : nxtBlocks)
+                    objBlock.addNxtBlock(bMap.get(nxtB));
+            }
     }
     private void parseFunctions() {
         iMap();

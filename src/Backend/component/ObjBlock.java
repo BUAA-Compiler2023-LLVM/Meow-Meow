@@ -20,12 +20,30 @@ public class ObjBlock {
     public final ArrayList<ObjReg> Use=new ArrayList<>();
     public final ArrayList<ObjReg> Def=new ArrayList<>();
     public final ArrayList<ArrayList<ObjReg>> LocalInterfere = new ArrayList<>();
+
+    private ArrayList<ObjBlock> preBlocks, nxtBlocks;
     public ObjBlock(String name) {
         this.name = name;
         this.node = new IList.INode<>(this);
         this.instrs = new IList<>(this);
         trueBlock = null;
         falseBlock = null;
+
+        preBlocks = new ArrayList<>();
+        nxtBlocks = new ArrayList<>();
+    }
+
+    public void addPreBlock(ObjBlock objBlock) {
+        preBlocks.add(objBlock);
+    }
+    public void addNxtBlock(ObjBlock objBlock) {
+        nxtBlocks.add(objBlock);
+    }
+    public ArrayList<ObjBlock> getPreBlocks() {
+        return preBlocks;
+    }
+    public ArrayList<ObjBlock> getNxtBlocks() {
+        return nxtBlocks;
     }
 
     public ObjBlock getTrueBlock() {
