@@ -499,6 +499,23 @@ public class IrParser {
             }
             return objOperand;
         }
+        if((irValue instanceof Move) && (((Move) irValue).pair != null) && operandMap.containsKey(((Move) irValue).pair) ) {
+            Value ir = ((Move) irValue).pair;
+            ObjOperand objOperand = operandMap.get(ir);
+            if(((objOperand instanceof ObjImm) && canImm < 32)
+                    || ((objOperand instanceof ObjImm12) && canImm < 12)) {
+
+                if(((ObjImm) objOperand).getImmediate() == 0)
+                    return ZERO;
+                else {
+                    ObjOperand tmp = genTmpReg(irFunction);
+                    ObjMove objMove = new ObjMove(tmp, objOperand);
+                    bMap.get(irBlock).addInstr(objMove);
+                    return tmp;
+                }
+            }
+            return objOperand;
+        }
         if(irValue instanceof ConstInteger)
             return parseConstIntOperand(((ConstInteger) irValue).getValue(), canImm, irFunction, irBlock);
 

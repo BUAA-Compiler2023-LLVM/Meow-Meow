@@ -30,9 +30,6 @@ public class Compiler {
         IRDump.DumpModule(irModule,"removed_phi.ll");
 
         Backend backend = new Backend(irModule);
-        backend.print();
-
-//        backend.print();
         RISC_Dump.DumpBackend(backend);
     }
 }
