@@ -89,6 +89,7 @@ public class IrParser {
     }
     private void parseFunction(Function f) {
         ObjFunction objF = fMap.get(f);
+
         for(IList.INode<BasicBlock, Function> b : f.getBbs()) {
             BasicBlock irBlock = b.getValue();
             for(IList.INode<Instruction, BasicBlock> inst : irBlock.getInsts()) {
@@ -106,7 +107,8 @@ public class IrParser {
             BasicBlock irBlock = b.getValue();
             parseBlock(irBlock, f);
         }
-
+        ObjBlock tmpb= bMap.get(f.getBbExit());
+        objF.setBbExit(tmpb);
         BasicBlock b = f.getBbs().getHead().getValue();
 
         ArrayList<Argument> args = f.getArgs();

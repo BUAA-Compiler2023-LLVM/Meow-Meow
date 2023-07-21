@@ -75,7 +75,13 @@ public class ObjFunction {
         for(IList.INode<ObjBlock, ObjFunction> b : objBlocks)
             b.getValue().print();
     }
-
+    private ObjBlock Exit=null;
+    public void setBbExit(ObjBlock b) {
+        this.Exit=b;
+    }
+    public ObjBlock getBbExit() {
+        return this.Exit;
+    }
     public ObjBlock getFirstBlock() {
         return objBlocks.getHead().getValue();
     }
