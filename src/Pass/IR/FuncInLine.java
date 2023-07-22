@@ -80,7 +80,6 @@ public class FuncInLine implements Pass.IRPass {
         ArrayList<Instruction> toBeReplaced = new ArrayList<>();
         for(Function caller : function.getCallerList()){
             if(caller.equals(function)){
-                //  递归给我gun啊！！！
                 continue;
             }
             for(IList.INode<BasicBlock, Function> bbNode : caller.getBbs()){
@@ -306,7 +305,7 @@ public class FuncInLine implements Pass.IRPass {
             BasicBlock newBlock = ((BasicBlock) replaceMap.get(loopBlock));
             copyBlockToBlock(loopBlock, newBlock, replaceMap);
             if(!loopBlock.getNxtBlocks().isEmpty()) {
-                for (BasicBlock basicBlock : new HashSet<>(loopBlock.getNxtBlocks())) {
+                for (BasicBlock basicBlock : loopBlock.getNxtBlocks()) {
                     if (!visitedMap.contains(basicBlock)) {
                         visitedMap.add(basicBlock);
                         dfsStack.push(basicBlock);

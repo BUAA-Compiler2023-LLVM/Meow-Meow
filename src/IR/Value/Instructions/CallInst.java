@@ -11,7 +11,7 @@ public class CallInst extends Instruction{
     private Function function;
 
     public CallInst(Function function, ArrayList<Value> values) {
-        super("", function.getType(), OP.Call);
+        super("%" + (++Value.valNumber), function.getType(), OP.Call);
         this.hasName = !function.getType().isVoidTy();
         this.function = function;
         for (Value value : values) {
