@@ -14,7 +14,6 @@ public class PassManager {
     public static PassManager getInstance(){
         return passManager;
     }
-    HashSet<String> openedPasses = new HashSet<>();
     ArrayList<IRPass> irPasses = new ArrayList<>();
     ArrayList<ObjPass> objPasses = new ArrayList<>();
 
@@ -25,36 +24,21 @@ public class PassManager {
         irPasses.add(new Mem2Reg());
         irPasses.add(new DCE());
         irPasses.add(new FuncInLine());
-        irPasses.add(new RemovePhi());
+        irPasses.add(new GVN());
 
-
-        //  然后根据需求开放pass
-        openedPasses.add("GlobalValueLocalize");
-        openedPasses.add("MergeBB");
-        openedPasses.add("Mem2Reg");
-        openedPasses.add("DCE");
-
-        openedPasses.add("FuncInLine");
+//        irPasses.add(new RemovePhi());
     }
 
 
     public void runIRPasses(IRModule irModule){
         for(IRPass irPass : irPasses){
-            if(openedPasses.contains(irPass.getName())){
-                irPass.run(irModule);
-            }
+            irPass.run(irModule);
         }
     }
 
     public void runObjPasses(ObjModule objModule){
         for(ObjPass objPass : objPasses){
-            if(openedPasses.contains(objPass.getName())){
-                objPass.run(objModule);
-            }
+            objPass.run(objModule);
         }
-    }
-
-    public void addOpenPass(String pass){
-        openedPasses.add(pass);
     }
 }
