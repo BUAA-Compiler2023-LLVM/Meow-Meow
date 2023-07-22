@@ -159,7 +159,7 @@ public class FuncInLine implements Pass.IRPass {
         for (int i = 0; i < formalParameters.size(); i++) {
             Value formalParam = formalParameters.get(i);
             Value actualParam = actualParameters.get(i);
-            if (actualParam.getType().isIntegerTy()) {
+            if (actualParam.getType().isIntegerTy() || actualParam.getType().isFloatTy()) {
                 formalParam.replaceUsedWith(actualParam);
             }
             else {
@@ -216,7 +216,7 @@ public class FuncInLine implements Pass.IRPass {
         //  如果只有一个ret指令显然我们呢直接替换就可以了
         //  否则我们应该将返回值转换成一个phi指令的形式
         Type retType = calledFunction.getType();
-        if (retType.isIntegerTy()) {
+        if (retType.isIntegerTy() || retType.isFloatTy()) {
             if(rets.size() == 1){
                 Instruction retInst = rets.get(0);
                 callInst.replaceUsedWith(retInst.getOperand(0));
@@ -390,7 +390,11 @@ public class FuncInLine implements Pass.IRPass {
         //  这里只要先建个phi占位即可
         else if(inst instanceof Phi phi){
             int length = phi.getOperands().size();
-            ArrayList<Value> copyValues = new ArrayList<>(Collections.nCopies(length, ConstInteger.const0_32));
+            ArrayList<Value> copyValues;
+            if(phi.getType().isIntegerTy()) {
+                copyValues = new ArrayList<>(Collections.nCopies(length, ConstInteger.const0_32));
+            }
+            else copyValues = new ArrayList<>(Collections.nCopies(length, ConstFloat.const0));
             copyInst = f.getPhi(phi.getType(), copyValues);
         }
         else if(inst instanceof BrInst brInst){
