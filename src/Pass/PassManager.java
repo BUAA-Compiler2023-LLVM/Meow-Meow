@@ -34,7 +34,7 @@ public class PassManager {
         openedPasses.add("Mem2Reg");
         openedPasses.add("DCE");
 
-//        openedPasses.add("FuncInLine");
+        openedPasses.add("FuncInLine");
     }
 
 

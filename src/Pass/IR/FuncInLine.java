@@ -416,7 +416,7 @@ public class FuncInLine implements Pass.IRPass {
         }
         else if(inst instanceof CallInst callInst){
             ArrayList<Value> args = new ArrayList<>();
-            for (int i = 1; i < callInst.getOperands().size(); i++) {
+            for (int i = 0; i < callInst.getOperands().size(); i++) {
                 args.add(findValue(replaceMap, callInst.getOperands().get(i)));
             }
 

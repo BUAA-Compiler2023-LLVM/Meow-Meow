@@ -22,14 +22,15 @@ public class Compiler {
         PassManager passManager = PassManager.getInstance();
         passManager.runIRPasses(irModule);
 
-        IRDump.DumpModule(irModule,"not_removed_phi.ll");
+        IRDump.DumpModule(irModule, "llvm.ll");
+//        IRDump.DumpModule(irModule,"not_removed_phi.ll");
+//
+//        RemovePhi rmp=new RemovePhi();
+//        rmp.run(irModule);
+//
+//        IRDump.DumpModule(irModule,"removed_phi.ll");
 
-        RemovePhi rmp=new RemovePhi();
-        rmp.run(irModule);
-
-        IRDump.DumpModule(irModule,"removed_phi.ll");
-
-        Backend backend = new Backend(irModule);
-        RISC_Dump.DumpBackend(backend);
+//        Backend backend = new Backend(irModule);
+//        RISC_Dump.DumpBackend(backend);
     }
 }

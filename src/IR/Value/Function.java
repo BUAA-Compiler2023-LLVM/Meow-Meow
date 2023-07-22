@@ -94,7 +94,7 @@ public class Function extends Value{
         }
     }
     public void addCallee(Function function){
-        if(calleeList.contains(function)) {
+        if(!calleeList.contains(function)) {
             this.calleeList.add(function);
         }
     }
