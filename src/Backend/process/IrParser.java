@@ -8,14 +8,12 @@ import Backend.instruction.*;
 import Backend.operand.*;
 import Frontend.AST;
 import IR.IRModule;
-import IR.Type.ArrayType;
-import IR.Type.IntegerType;
-import IR.Type.PointerType;
-import IR.Type.Type;
+import IR.Type.*;
 import IR.Value.*;
 import IR.Value.Instructions.*;
 import Utils.DataStruct.IList;
 
+import java.awt.*;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.Optional;
@@ -164,6 +162,8 @@ public class IrParser {
         else if(irInst instanceof BinaryInst) {
             if(irInst.getOp() == OP.Add)
                 parseAdd((BinaryInst) irInst, irBlock, irFunction);
+            if(irInst.getOp() == OP.Fadd)
+                parseFAdd((BinaryInst) irInst, irBlock, irFunction);
         }
         else if(irInst instanceof BrInst)
             parseBr((BrInst) irInst, irBlock, irFunction);
@@ -427,6 +427,16 @@ public class IrParser {
         }
     }
 
+    private void parseFAdd(BinaryInst inst, BasicBlock irBlock, Function irFunction) {
+        ObjBlock objBlock = bMap.get(irBlock);
+        ObjOperand src1 = parseOperand(inst.getLeftVal(), 0, irFunction, irBlock);
+        ObjOperand src2 = parseOperand(inst.getRightVal(), 0, irFunction, irBlock);
+        ObjOperand dst = parseOperand(inst, 0, irFunction, irBlock);
+
+        ObjBinary objFAdd = ObjBinary.getFAdd(dst, src1, src2);
+        objBlock.addInstr(objFAdd);
+    }
+
     private void parseStore(StoreInst inst, BasicBlock irBlock, Function irFunction) {
         ObjBlock objBlock = bMap.get(irBlock);
 
@@ -489,11 +499,22 @@ public class IrParser {
 
     private ObjOperand genDstOperand(Value irValue, Function irFunction) {
         ObjFunction objFunction = fMap.get(irFunction);
-        ObjVirReg dstReg = new ObjVirReg();
-        objFunction.addUsedVirReg(dstReg);
-        operandMap.put(irValue, dstReg);
-        operandMap1.put( dstReg,irValue);
-        return dstReg;
+
+        if(irValue.getType() instanceof FloatType) {
+            ObjFVirReg dstReg = new ObjFVirReg();
+            objFunction.addUsedVirReg(dstReg);
+            operandMap.put(irValue, dstReg);
+            operandMap1.put(dstReg,irValue);
+            return dstReg;
+        }
+
+        else {
+            ObjVirReg dstReg = new ObjVirReg();
+            objFunction.addUsedVirReg(dstReg);
+            operandMap.put(irValue, dstReg);
+            operandMap1.put(dstReg,irValue);
+            return dstReg;
+        }
     }
 
     private ObjOperand parseOperand(Value irValue, int canImm, Function irFunction, BasicBlock irBlock) {
@@ -532,6 +553,22 @@ public class IrParser {
         }
         if(irValue instanceof ConstInteger)
             return parseConstIntOperand(((ConstInteger) irValue).getValue(), canImm, irFunction, irBlock);
+
+        if(irValue instanceof ConstFloat) {
+            float floatValue = ((ConstFloat) irValue).getValue();
+            int intValue = Float.floatToRawIntBits(floatValue);
+            String hexString = Integer.toHexString(intValue);
+
+             System.out.println(floatValue);
+             System.out.println(intValue);
+             System.out.println(hexString);
+
+            ObjOperand src = genDstOperand(irValue, irFunction);
+            ObjOperand initValue = parseConstIntOperand(intValue, 32, irFunction, irBlock);
+            ObjMove objMove = new ObjMove(src, initValue);
+            bMap.get(irBlock).addInstr(objMove);
+            return src;
+        }
 
         return genDstOperand(irValue, irFunction);
     }

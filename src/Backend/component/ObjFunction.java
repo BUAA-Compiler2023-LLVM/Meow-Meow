@@ -1,6 +1,7 @@
 package Backend.component;
 
 import Backend.operand.ObjImm;
+import Backend.operand.ObjReg;
 import Backend.operand.ObjVirReg;
 import IR.Value.BasicBlock;
 import IR.Value.Function;
@@ -13,7 +14,7 @@ public class ObjFunction {
     private String name;
     private boolean isBuiltin;
     private IList<ObjBlock, ObjFunction> objBlocks;
-    private HashSet<ObjVirReg> usedVirRegs;
+    private HashSet<ObjReg> usedVirRegs;
 
     private int allocaSize;
     private int Rsize, argsSize;
@@ -46,10 +47,10 @@ public class ObjFunction {
     public void addBlocks(ObjBlock block) {
         block.getNode().insertListEnd(objBlocks);
     }
-    public void addUsedVirReg(ObjVirReg objVirReg) {
+    public void addUsedVirReg(ObjReg objVirReg) {
         usedVirRegs.add(objVirReg);
     }
-    public HashSet<ObjVirReg> getUsedVirRegs() {
+    public HashSet<ObjReg> getUsedVirRegs() {
         return usedVirRegs;
     }
 

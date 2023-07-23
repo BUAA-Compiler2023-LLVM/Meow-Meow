@@ -26,8 +26,7 @@ public class ObjBlock {
         this.name = name;
         this.node = new IList.INode<>(this);
         this.instrs = new IList<>(this);
-        trueBlock = null;
-        falseBlock = null;
+        trueBlock = null;        falseBlock = null;
 
         preBlocks = new ArrayList<>();
         nxtBlocks = new ArrayList<>();
