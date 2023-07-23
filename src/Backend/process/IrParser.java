@@ -48,7 +48,43 @@ public class IrParser {
         }
     }
     private ObjGlobalVariable parseGlobalVariable(GlobalVar g) {
-        ObjGlobalVariable objGlobalVariable = new ObjGlobalVariable();
+
+        Type type = ((PointerType) g.getType()).getEleType();
+        ArrayList<Integer> elements = new ArrayList<>();
+        ArrayList<Value> init = g.getValues();
+
+        if(init == null || init.isEmpty()) {
+            int totSize = 4;
+            if(type instanceof ArrayType)
+                totSize = 4 * ((ArrayType) type).getTotalSize();
+            ObjGlobalVariable objGlobalVariable = new ObjGlobalVariable(g.getName(), totSize);
+            return objGlobalVariable;
+        }
+
+
+        if(type instanceof IntegerType) {
+            int intValue = ((ConstInteger) init.get(0)).getValue();
+            elements.add(intValue);
+        }
+        else if(type instanceof FloatType) {
+            float floatValue = ((ConstFloat) init.get(0)).getValue();
+            int intValue = Float.floatToRawIntBits(floatValue);
+            elements.add(intValue);
+        }
+        else if(type instanceof ArrayType) {
+            for (Value value : init) {
+                int intValue = 0;
+                if(value.getType() instanceof IntegerType)
+                    intValue = ((ConstInteger) value).getValue();
+                else if(value.getType() instanceof FloatType) {
+                    float floatValue = ((ConstFloat) value).getValue();
+                    intValue = Float.floatToRawIntBits(floatValue);
+                }
+                elements.add(intValue);
+            }
+        }
+
+        ObjGlobalVariable objGlobalVariable = new ObjGlobalVariable(g.getName(), elements);
         return objGlobalVariable;
     }
 
@@ -281,6 +317,9 @@ public class IrParser {
         Value left = inst.getLeftVal(), right = inst.getRightVal();
         ObjBlock objBlock = bMap.get(irBlock);
         ObjFunction objFunction = fMap.get(irFunction);
+
+//        System.out.println(left.getType());
+//        System.out.println(right.getType());
 
         // ne eq lt le gt ge
         if(op == OP.Ne) {

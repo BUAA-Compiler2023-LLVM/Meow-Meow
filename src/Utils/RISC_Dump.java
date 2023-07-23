@@ -3,6 +3,7 @@ package Utils;
 import Backend.Backend;
 import Backend.component.ObjBlock;
 import Backend.component.ObjFunction;
+import Backend.component.ObjGlobalVariable;
 import Backend.component.ObjModule;
 import Backend.instruction.ObjInstr;
 import Utils.DataStruct.IList;
@@ -32,7 +33,7 @@ public class RISC_Dump {
         }
     }
 
-    public static void DumpObjFunction(ObjFunction objFunction) throws IOException{
+    public static void DumpObjFunction(ObjFunction objFunction) throws IOException {
         out.write(objFunction.getName() + ":\n");
         // System.out.println(objFunction.getName());
         IList <ObjBlock, ObjFunction> bs = objFunction.getObjBlocks();
@@ -40,13 +41,18 @@ public class RISC_Dump {
             DumpObjBlocks(b.getValue());
     }
 
-    public static void DumpObjModle(ObjModule objModule) throws IOException{
+    public static void DumpObjModle(ObjModule objModule) throws IOException {
+
+        ArrayList<ObjGlobalVariable> globalVariables = objModule.getGlobalVariables();
+        for (ObjGlobalVariable g : globalVariables)
+            out.write(g.toString() + "\n");
+
         ArrayList<ObjFunction> functions = objModule.getFunctions();
         for(ObjFunction f : functions)
             DumpObjFunction(f);
     }
 
-    public static void DumpBackend(Backend backend) throws IOException{
+    public static void DumpBackend(Backend backend) throws IOException {
         DumpObjModle(backend.getModule());
         out.close();
     }

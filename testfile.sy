@@ -1,8 +1,15 @@
+int a[5] = {0, 1, 2}, b[10];
+int A = 5;
+void f(int i) {
+    A = A + 2;
+    b[i] = A;
+}
 int main() {
-    float x = 2.5, y = 5.5, z;
-    if(x < y)
-        z = x;
-    else
-        z = y;
-    return z;
+    A = A + 2;
+    int x = 1, y = 0;
+    while(x <= 10) {
+        A = A + x;
+        f(y);
+    }
+    return A;
 }

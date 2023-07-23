@@ -19,6 +19,7 @@ public class ObjModule {
     public ArrayList<ObjFunction> getFunctions() {
         return functions;
     }
+    public ArrayList<ObjGlobalVariable> getGlobalVariables() { return globalVariables; }
 
     public void addGlobalVariable(ObjGlobalVariable g) {
         globalVariables.add(g);
