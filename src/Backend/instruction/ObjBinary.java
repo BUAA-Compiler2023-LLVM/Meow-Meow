@@ -1,5 +1,6 @@
 package Backend.instruction;
 
+import Backend.operand.ObjFVirReg;
 import Backend.operand.ObjImm;
 import Backend.operand.ObjImm12;
 import Backend.operand.ObjOperand;
@@ -47,6 +48,19 @@ public class ObjBinary extends ObjInstr {
             setSrc1(newReg);
         if (src2.equals(oldReg))
             setSrc2(newReg);
+    }
+
+    public static ObjBinary getFAdd(ObjOperand dst, ObjOperand src1, ObjOperand src2)  {
+        return new ObjBinary("fadd.s", dst, src1, src2);
+    }
+    public static ObjBinary getFMul(ObjOperand dst, ObjOperand src1, ObjOperand src2) {
+        return new ObjBinary("fmul.s", dst, src1, src2);
+    }
+    public static ObjBinary getFSub(ObjOperand dst, ObjOperand src1, ObjOperand src2) {
+        return new ObjBinary("fsub.s", dst, src1, src2);
+    }
+    public static ObjBinary getFDiv(ObjOperand dst, ObjOperand src1, ObjOperand src2) {
+        return new ObjBinary("fdiv.s", dst, src1, src2);
     }
 
     public static ObjBinary getAdd(ObjOperand dst, ObjOperand src1, ObjOperand src2) {
@@ -115,10 +129,12 @@ public class ObjBinary extends ObjInstr {
 
     @Override
     public String toString() {
-        String s = " " + type;
+        String s = type;
         if (isSrc2Imm12())
             if(type.equals("add") || type.equals("xor") || type.equals("or") || type.equals("and"))
                 s = type + "i";
+        while(s.length() < 6)
+            s = " " + s;
         s += "\t" + dst + ",\t" + src1 + ",\t" + src2;
         return s;
     }

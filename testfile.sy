@@ -1,5 +1,8 @@
 int main() {
-    float x = 2.5, y = 5.0;
-    float z = (x + y) * y;
+    float x = 2.5, y = 5.5, z;
+    if(x < y)
+        z = x;
+    else
+        z = y;
     return z;
 }

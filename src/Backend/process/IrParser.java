@@ -159,12 +159,32 @@ public class IrParser {
             parseStore((StoreInst) irInst, irBlock, irFunction);
         else if(irInst instanceof  CmpInst)
             parseIcmp((CmpInst) irInst, irBlock, irFunction);
+
         else if(irInst instanceof BinaryInst) {
             if(irInst.getOp() == OP.Add)
                 parseAdd((BinaryInst) irInst, irBlock, irFunction);
             if(irInst.getOp() == OP.Fadd)
                 parseFAdd((BinaryInst) irInst, irBlock, irFunction);
+
+            if(irInst.getOp() == OP.Mul)
+                parseMul((BinaryInst) irInst, irBlock, irFunction);
+            if(irInst.getOp() == OP.Fmul)
+                parseFMul((BinaryInst) irInst, irBlock, irFunction);
+
+            if(irInst.getOp() == OP.Sub)
+                parseSub((BinaryInst) irInst, irBlock, irFunction);
+            if(irInst.getOp() == OP.Fsub)
+                parseFSub((BinaryInst) irInst, irBlock, irFunction);
+
+            if(irInst.getOp() == OP.Div)
+                parseDiv((BinaryInst) irInst, irBlock, irFunction);
+            if(irInst.getOp() == OP.Fdiv)
+                parseFDiv((BinaryInst) irInst, irBlock, irFunction);
+
+            if(irInst.getOp() == OP.Mod)
+                parseMod((BinaryInst) irInst, irBlock, irFunction);
         }
+
         else if(irInst instanceof BrInst)
             parseBr((BrInst) irInst, irBlock, irFunction);
         else if(irInst instanceof CallInst)
@@ -399,6 +419,87 @@ public class IrParser {
             objBlock.addInstr(objBranch);
             objBlock.setTrueBlock(objTargetBlock);
         }
+    }
+
+    private void parseMod(BinaryInst inst, BasicBlock irBlock, Function irFunction) {
+        ObjBlock objBlock = bMap.get(irBlock);
+        ObjOperand src1 = parseOperand(inst.getLeftVal(), 0, irFunction, irBlock);
+        ObjOperand src2 = parseOperand(inst.getRightVal(), 0, irFunction, irBlock);
+        ObjOperand dst = parseOperand(inst, 0, irFunction, irBlock);
+
+        ObjBinary objRem = ObjBinary.getRem(dst, src1, src2);
+        objBlock.addInstr(objRem);
+    }
+
+    private void parseMul(BinaryInst inst, BasicBlock irBlock, Function irFunction) {
+        ObjBlock objBlock = bMap.get(irBlock);
+        ObjOperand src1 = parseOperand(inst.getLeftVal(), 0, irFunction, irBlock);
+        ObjOperand src2 = parseOperand(inst.getRightVal(), 0, irFunction, irBlock);
+        ObjOperand dst = parseOperand(inst, 0, irFunction, irBlock);
+
+        ObjBinary objMul = ObjBinary.getMul(dst, src1, src2);
+        objBlock.addInstr(objMul);
+    }
+
+    private void parseFMul(BinaryInst inst, BasicBlock irBlock, Function irFunction) {
+        ObjBlock objBlock = bMap.get(irBlock);
+        ObjOperand src1 = parseOperand(inst.getLeftVal(), 0, irFunction, irBlock);
+        ObjOperand src2 = parseOperand(inst.getRightVal(), 0, irFunction, irBlock);
+        ObjOperand dst = parseOperand(inst, 0, irFunction, irBlock);
+
+        ObjBinary objMul = ObjBinary.getFMul(dst, src1, src2);
+        objBlock.addInstr(objMul);
+    }
+
+    private void parseDiv(BinaryInst inst, BasicBlock irBlock, Function irFunction) {
+        ObjBlock objBlock = bMap.get(irBlock);
+        ObjOperand src1 = parseOperand(inst.getLeftVal(), 0, irFunction, irBlock);
+        ObjOperand src2 = parseOperand(inst.getRightVal(), 0, irFunction, irBlock);
+        ObjOperand dst = parseOperand(inst, 0, irFunction, irBlock);
+
+        ObjBinary objDiv = ObjBinary.getDiv(dst, src1, src2);
+        objBlock.addInstr(objDiv);
+    }
+
+    private void parseFDiv(BinaryInst inst, BasicBlock irBlock, Function irFunction) {
+        ObjBlock objBlock = bMap.get(irBlock);
+        ObjOperand src1 = parseOperand(inst.getLeftVal(), 0, irFunction, irBlock);
+        ObjOperand src2 = parseOperand(inst.getRightVal(), 0, irFunction, irBlock);
+        ObjOperand dst = parseOperand(inst, 0, irFunction, irBlock);
+
+        ObjBinary objFDiv = ObjBinary.getFDiv(dst, src1, src2);
+        objBlock.addInstr(objFDiv);
+    }
+
+    private void parseSub(BinaryInst inst, BasicBlock irBlock, Function irFunction) {
+        ObjBlock objBlock = bMap.get(irBlock);
+        boolean isOp1Const = inst.getLeftVal() instanceof ConstInteger;
+        boolean isOp2Const = inst.getRightVal() instanceof ConstInteger;
+        ObjOperand src1, src2;
+        ObjOperand dst = parseOperand(inst, 0, irFunction, irBlock);
+
+        if (isOp1Const && isOp2Const) {
+            int op1Imm = ((ConstInteger) inst.getLeftVal()).getValue();
+            int op2Imm = ((ConstInteger) inst.getRightVal()).getValue();
+            ObjMove objMove = new ObjMove(dst, new ObjImm(op1Imm - op2Imm));
+            objBlock.addInstr(objMove);
+        }
+        else {
+            src1 = parseOperand(inst.getLeftVal(), 0, irFunction, irBlock);
+            src2 = parseOperand(inst.getRightVal(), 12, irFunction, irBlock);
+            ObjBinary objSub = ObjBinary.getSub(dst, src1, src2);
+            objBlock.addInstr(objSub);
+        }
+    }
+
+    private void parseFSub(BinaryInst inst, BasicBlock irBlock, Function irFunction) {
+        ObjBlock objBlock = bMap.get(irBlock);
+        ObjOperand src1 = parseOperand(inst.getLeftVal(), 0, irFunction, irBlock);
+        ObjOperand src2 = parseOperand(inst.getRightVal(), 0, irFunction, irBlock);
+        ObjOperand dst = parseOperand(inst, 0, irFunction, irBlock);
+
+        ObjBinary objFSub = ObjBinary.getFSub(dst, src1, src2);
+        objBlock.addInstr(objFSub);
     }
 
     private void parseAdd(BinaryInst inst, BasicBlock irBlock, Function irFunction) {
