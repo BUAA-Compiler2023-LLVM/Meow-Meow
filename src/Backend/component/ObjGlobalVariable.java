@@ -14,6 +14,10 @@ public class ObjGlobalVariable {
 
     private String content;
 
+    public String getName() {
+        return name;
+    }
+
     public ObjGlobalVariable(String name, ArrayList<Integer> elements) {
         this.name = name.substring(1);
         this.isInit = true;

@@ -25,6 +25,7 @@ public class IrParser {
     private ObjModule objModule;
     private HashMap<Function, ObjFunction> fMap;
     private HashMap<BasicBlock, ObjBlock> bMap;
+    private HashMap<GlobalVar, ObjGlobalVariable> gMap;
     private HashMap<Value, ObjOperand> operandMap;
     public HashMap< ObjOperand,Value> operandMap1;
     public IrParser(IRModule irModule) {
@@ -32,6 +33,7 @@ public class IrParser {
         objModule = new ObjModule();
         fMap = new HashMap<>();
         bMap = new HashMap<>();
+        gMap = new HashMap<>();
         operandMap = new HashMap<>();
         operandMap1 = new HashMap<>();
     }
@@ -45,6 +47,8 @@ public class IrParser {
         for(GlobalVar g : irModule.getGlobalVars()) {
             ObjGlobalVariable objGlobalVariable = parseGlobalVariable(g);
             objModule.addGlobalVariable(objGlobalVariable);
+
+            gMap.put(g, objGlobalVariable);
         }
     }
     private ObjGlobalVariable parseGlobalVariable(GlobalVar g) {
@@ -710,8 +714,20 @@ public class IrParser {
             return src;
         }
 
+        if(irValue instanceof GlobalVar)
+            return parseGlobalOperand((GlobalVar) irValue, irFunction, irBlock);
+
         return genDstOperand(irValue, irFunction);
     }
+
+    private ObjOperand parseGlobalOperand(GlobalVar g, Function irFunction, BasicBlock irBlock) {
+        ObjBlock objBlock = bMap.get(irBlock);
+        ObjGlobalVariable objG = gMap.get(g);
+
+        ObjLabel label = new ObjLabel(objG.getName());
+        return label;
+    }
+
     private ObjOperand parseConstIntOperand(int immediate, int canImm, Function irFunction, BasicBlock irBlock) {
         ObjImm imm = new ObjImm(immediate);
         ObjImm12 imm12 = new ObjImm12(immediate);

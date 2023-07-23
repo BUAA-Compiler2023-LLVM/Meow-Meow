@@ -27,40 +27,40 @@ main:
 b0:
 	  addi	$sp,	$sp,	-4
 	  sw	$ra,	0($sp)
-	  lw	vr0,	0(vr1)
-	  addi	vr2,	vr0,	2
-	  sw	vr2,	0(vr1)
+	  lw	vr0,	0(A)
+	  addi	vr1,	vr0,	2
+	  sw	vr1,	0(A)
 	   j	b1
 b1:
-	  li	vr4,	10
-	  slti	vr5,	vr4,	1
-	  xori	vr3,	vr5,	1
-	  xori	vr7,	vr3,	0
-	  sltu	vr6,	$zero,	vr7
-	bnez	vr6	b2
+	  li	vr3,	10
+	  slti	vr4,	vr3,	1
+	  xori	vr2,	vr4,	1
+	  xori	vr6,	vr2,	0
+	  sltu	vr5,	$zero,	vr6
+	bnez	vr5	b2
 	   j	b6
 b2:
-	  lw	vr8,	0(vr1)
-	  addi	vr9,	vr8,	1
-	  sw	vr9,	0(vr1)
+	  lw	vr7,	0(A)
+	  addi	vr8,	vr7,	1
+	  sw	vr8,	0(A)
 	   j	b3
 b3:
 	   j	b4
 b4:
-	  lw	vr10,	0(vr1)
-	  addi	vr11,	vr10,	2
-	  sw	vr11,	0(vr1)
-	move	vr13,	vr12
-	  li	vr14,	4
-	  li	vr15,	0
-	   mul	vr16,	vr15,	vr14
-	   add	vr13,	vr13,	vr16
-	  lw	vr17,	0(vr1)
-	  sw	vr17,	0(vr13)
+	  lw	vr9,	0(A)
+	  addi	vr10,	vr9,	2
+	  sw	vr10,	0(A)
+	move	vr11,	b
+	  li	vr12,	4
+	  li	vr13,	0
+	   mul	vr14,	vr13,	vr12
+	   add	vr11,	vr11,	vr14
+	  lw	vr15,	0(A)
+	  sw	vr15,	0(vr11)
 	   j	b5
 b5:
 	   j	b1
 b6:
-	  lw	vr18,	0(vr1)
-	move	$a0,	vr18
+	  lw	vr16,	0(A)
+	move	$a0,	vr16
 	 ret
