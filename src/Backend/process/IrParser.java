@@ -57,23 +57,21 @@ public class IrParser {
         ArrayList<Integer> elements = new ArrayList<>();
         ArrayList<Value> init = g.getValues();
 
-        if(init == null || init.isEmpty()) {
-            int totSize = 4;
-            if(type instanceof ArrayType)
-                totSize = 4 * ((ArrayType) type).getTotalSize();
-            ObjGlobalVariable objGlobalVariable = new ObjGlobalVariable(g.getName(), totSize);
-            return objGlobalVariable;
-        }
-
-
         if(type instanceof IntegerType) {
-            int intValue = ((ConstInteger) init.get(0)).getValue();
-            elements.add(intValue);
+            Value initValue = g.getValue();
+            if(initValue != null) {
+                int intValue = ((ConstInteger) initValue).getValue();
+                elements.add(intValue);
+            }
+
         }
         else if(type instanceof FloatType) {
-            float floatValue = ((ConstFloat) init.get(0)).getValue();
-            int intValue = Float.floatToRawIntBits(floatValue);
-            elements.add(intValue);
+            Value initValue = g.getValue();
+            if(initValue != null) {
+                float floatValue = ((ConstFloat) init.get(0)).getValue();
+                int intValue = Float.floatToRawIntBits(floatValue);
+                elements.add(intValue);
+            }
         }
         else if(type instanceof ArrayType) {
             for (Value value : init) {
@@ -88,8 +86,19 @@ public class IrParser {
             }
         }
 
-        ObjGlobalVariable objGlobalVariable = new ObjGlobalVariable(g.getName(), elements);
-        return objGlobalVariable;
+        if(elements.isEmpty()) {
+            int totSize = 4;
+            if(type instanceof ArrayType)
+                totSize = 4 * ((ArrayType) type).getTotalSize();
+            ObjGlobalVariable objGlobalVariable = new ObjGlobalVariable(g.getName(), totSize);
+            return objGlobalVariable;
+        }
+        else {
+            ObjGlobalVariable objGlobalVariable = new ObjGlobalVariable(g.getName(), elements);
+            return objGlobalVariable;
+        }
+
+
     }
 
     private void iMap() {

@@ -1,5 +1,11 @@
+int A = 5;
+int f(int x) {
+    A = A + x;
+    return A;
+}
 int main(){
-    int a=15;
-    int b = 7;
-    return a%b;
+    int x = 1;
+    if(x <= 5)
+        x = f(A);
+    return A;
 }
