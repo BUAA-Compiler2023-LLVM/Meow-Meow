@@ -98,7 +98,6 @@ public class IrParser {
             return objGlobalVariable;
         }
 
-
     }
 
     private void iMap() {
@@ -207,7 +206,7 @@ public class IrParser {
         else if(irInst instanceof StoreInst)
             parseStore((StoreInst) irInst, irBlock, irFunction);
         else if(irInst instanceof  CmpInst)
-            parseIcmp((CmpInst) irInst, irBlock, irFunction);
+            parseCmp((CmpInst) irInst, irBlock, irFunction);
 
         else if(irInst instanceof BinaryInst) {
             if(irInst.getOp() == OP.Add)
@@ -232,6 +231,14 @@ public class IrParser {
 
             if(irInst.getOp() == OP.Mod)
                 parseMod((BinaryInst) irInst, irBlock, irFunction);
+
+
+            if(irInst.getOp() == OP.And)
+                parseAnd((BinaryInst) irInst, irBlock, irFunction);
+            if(irInst.getOp() == OP.Or)
+                parseOr((BinaryInst) irInst, irBlock, irFunction);
+            if(irInst.getOp() == OP.Xor)
+                parseXor((BinaryInst) irInst, irBlock, irFunction);
         }
 
         else if(irInst instanceof BrInst)
@@ -242,7 +249,31 @@ public class IrParser {
             parseGep((GepInst) irInst, irBlock, irFunction);
         else if(irInst instanceof Move)
             parseMove((Move) irInst, irBlock, irFunction);
+        else if(irInst instanceof ConversionInst)
+            parseConversionInst((ConversionInst) irInst, irBlock, irFunction);
     }
+
+    private void parseConversionInst(ConversionInst inst, BasicBlock irBlock, Function irFunction) {
+        ObjOperand dst = parseOperand(inst, 0, irFunction, irBlock);
+        ObjOperand src = parseOperand(inst.getOperand(0), 0, irFunction, irBlock);
+        ObjBlock objBlock = bMap.get(irBlock);
+        if(inst.getOp() == OP.Ftoi) { // float to I32
+            ObjConversion Ftoi = ObjConversion.getFtoi(dst, src);
+            objBlock.addInstr(Ftoi);
+        }
+        else if(inst.getOp() == OP.Itof) { // I32 to float
+            ObjConversion Itof = ObjConversion.getItof(dst, src);
+            objBlock.addInstr(Itof);
+        }
+        else if(inst.getOp() == OP.Zext) { // I1 to I32
+            ObjMove objMove = new ObjMove(dst, src);
+            objBlock.addInstr(objMove);
+        }
+        else if(inst.getOp() == OP.BitCast) { // to I32*
+
+        }
+    }
+
     private void parseMove(Move inst, BasicBlock irBlock, Function irFunction) {
         ObjBlock objBlock = bMap.get(irBlock);
         ObjOperand src=parseOperand(inst.getOperand( 0), 12,irFunction, irBlock);
@@ -324,7 +355,7 @@ public class IrParser {
         objBlock.addInstr(objCall);
     }
 
-    private void parseIcmp(CmpInst inst, BasicBlock irBlock, Function irFunction) {
+    private void parseCmp(CmpInst inst, BasicBlock irBlock, Function irFunction) {
         OP op = inst.getOp();
         ObjOperand dst = parseOperand(inst, 0, irFunction, irBlock);
         Value left = inst.getLeftVal(), right = inst.getRightVal();
@@ -351,6 +382,18 @@ public class IrParser {
             ObjBinary objBinary2 = ObjBinary.getSltu(dst, ZERO, tmpReg);
             objBlock.addInstr(objBinary2);
         }
+        else if(op == OP.FNe) {
+            ObjOperand objLeft = parseOperand(left, 0, irFunction, irBlock);
+            ObjOperand objRight = parseOperand(right, 0, irFunction, irBlock);
+            ObjOperand tmpReg = genTmpReg(irFunction);
+
+            ObjBinary Feq = ObjBinary.getFeq(tmpReg, objLeft, objRight);
+            objBlock.addInstr(Feq);
+            ObjBinary objBinary = ObjBinary.getSltu(dst, ZERO, tmpReg);
+            objBlock.addInstr(objBinary);
+        }
+
+
         else if(op == OP.Eq) { // ( a xor b == 0 )
             ObjOperand objLeft = parseOperand(left, 0, irFunction, irBlock);
             ObjOperand objRight = parseOperand(right, 12, irFunction, irBlock);
@@ -372,6 +415,15 @@ public class IrParser {
             ObjBinary objBinary3 = ObjBinary.getXori(dst, tmpReg2, new ObjImm12(1));
             objBlock.addInstr(objBinary3);
         }
+        else if(op == OP.FEq) {
+            ObjOperand objLeft = parseOperand(left, 0, irFunction, irBlock);
+            ObjOperand objRight = parseOperand(right, 0, irFunction, irBlock);
+
+            ObjBinary Feq = ObjBinary.getFeq(dst, objLeft, objRight);
+            objBlock.addInstr(Feq);
+        }
+
+
         else if(op == OP.Lt) {
             ObjOperand objLeft = parseOperand(left, 0, irFunction, irBlock);
             ObjOperand objRight = parseOperand(right, 12, irFunction, irBlock);
@@ -383,6 +435,14 @@ public class IrParser {
                 objBinary = ObjBinary.getSlt(dst, objLeft, objRight);
             objBlock.addInstr(objBinary);
         }
+        else if(op == OP.FLt) {
+            ObjOperand objLeft = parseOperand(left, 0, irFunction, irBlock);
+            ObjOperand objRight = parseOperand(right, 0, irFunction, irBlock);
+            ObjBinary Flt = ObjBinary.getFlt(dst, objLeft, objRight);
+            objBlock.addInstr(Flt);
+        }
+
+
         else if(op == OP.Le) { // left <= Right    !( Right < left )
             ObjOperand objLeft = parseOperand(left, 12, irFunction, irBlock);
             ObjOperand objRight = parseOperand(right, 0, irFunction, irBlock);
@@ -399,6 +459,15 @@ public class IrParser {
             ObjBinary objBinary2 = ObjBinary.getXori(dst, tmpReg, new ObjImm12(1));
             objBlock.addInstr(objBinary2);
         }
+        else if(op == OP.FLe) {
+            ObjOperand objLeft = parseOperand(left, 0, irFunction, irBlock);
+            ObjOperand objRight = parseOperand(right, 0, irFunction, irBlock);
+            ObjBinary Fle = ObjBinary.getFle(dst, objLeft, objRight);
+            objBlock.addInstr(Fle);
+        }
+
+
+
         else if(op == OP.Gt) { // (left > Right)
             ObjOperand objLeft = parseOperand(left, 12, irFunction, irBlock);
             ObjOperand objRight = parseOperand(right, 0, irFunction, irBlock);
@@ -409,6 +478,15 @@ public class IrParser {
                 objBinary = ObjBinary.getSlt(dst, objRight, objLeft);
             objBlock.addInstr(objBinary);
         }
+        else if(op == OP.FGt) {
+            ObjOperand objLeft = parseOperand(left, 0, irFunction, irBlock);
+            ObjOperand objRight = parseOperand(right, 0, irFunction, irBlock);
+            ObjBinary Fgt = ObjBinary.getFGt(dst, objLeft, objRight);
+            objBlock.addInstr(Fgt);
+        }
+
+
+
         else if(op == OP.Ge) { // left >= Right    ! ( left < Right )
             ObjOperand objLeft = parseOperand(left, 0, irFunction, irBlock);
             ObjOperand objRight = parseOperand(right, 12, irFunction, irBlock);
@@ -424,6 +502,12 @@ public class IrParser {
 
             ObjBinary objBinary2 = ObjBinary.getXori(dst, tmpReg, new ObjImm12(1));
             objBlock.addInstr(objBinary2);
+        }
+        else if(op == OP.FGe) {
+            ObjOperand objLeft = parseOperand(left, 0, irFunction, irBlock);
+            ObjOperand objRight = parseOperand(right, 0, irFunction, irBlock);
+            ObjBinary Fge = ObjBinary.getFGe(dst, objLeft, objRight);
+            objBlock.addInstr(Fge);
         }
     }
 
@@ -470,6 +554,81 @@ public class IrParser {
             ObjBranch objBranch = new ObjBranch(objTargetBlock);
             objBlock.addInstr(objBranch);
             objBlock.setTrueBlock(objTargetBlock);
+        }
+    }
+
+    private void parseAnd(BinaryInst inst, BasicBlock irBlock, Function irFunction) {
+        ObjBlock objBlock = bMap.get(irBlock);
+        ObjOperand src1 = parseOperand(inst.getLeftVal(), 12, irFunction, irBlock);
+        ObjOperand src2 = parseOperand(inst.getRightVal(), 12, irFunction, irBlock);
+        ObjOperand dst = parseOperand(inst, 0, irFunction, irBlock);
+
+        if ((src1 instanceof ObjImm12) && (src2 instanceof ObjImm12)) {
+            int ans = ((ObjImm12) src1).getImmediate12() & ((ObjImm12) src2).getImmediate12();
+            ObjMove objMove = new ObjMove(dst, parseConstIntOperand(ans, 32, irFunction, irBlock));
+            objBlock.addInstr(objMove);
+        }
+        else if(src1 instanceof ObjImm12) {
+            ObjBinary objAddi = ObjBinary.getAddi(dst, src2, src1);
+            objBlock.addInstr(objAddi);
+        }
+        else if(src2 instanceof ObjImm12) {
+            ObjBinary objAddi = ObjBinary.getAddi(dst, src1, src2);
+            objBlock.addInstr(objAddi);
+        }
+        else {
+            ObjBinary objAnd = ObjBinary.getAnd(dst, src1, src2);
+            objBlock.addInstr(objAnd);
+        }
+    }
+
+    private void parseOr(BinaryInst inst, BasicBlock irBlock, Function irFunction) {
+        ObjBlock objBlock = bMap.get(irBlock);
+        ObjOperand src1 = parseOperand(inst.getLeftVal(), 12, irFunction, irBlock);
+        ObjOperand src2 = parseOperand(inst.getRightVal(), 12, irFunction, irBlock);
+        ObjOperand dst = parseOperand(inst, 0, irFunction, irBlock);
+
+        if ((src1 instanceof ObjImm12) && (src2 instanceof ObjImm12)) {
+            int ans = ((ObjImm12) src1).getImmediate12() | ((ObjImm12) src2).getImmediate12();
+            ObjMove objMove = new ObjMove(dst, parseConstIntOperand(ans, 32, irFunction, irBlock));
+            objBlock.addInstr(objMove);
+        }
+        else if(src1 instanceof ObjImm12) {
+            ObjBinary objOri = ObjBinary.getOri(dst, src2, src1);
+            objBlock.addInstr(objOri);
+        }
+        else if(src2 instanceof ObjImm12) {
+            ObjBinary objOri = ObjBinary.getOri(dst, src1, src2);
+            objBlock.addInstr(objOri);
+        }
+        else {
+            ObjBinary objOr = ObjBinary.getOr(dst, src1, src2);
+            objBlock.addInstr(objOr);
+        }
+    }
+
+    private void parseXor(BinaryInst inst, BasicBlock irBlock, Function irFunction) {
+        ObjBlock objBlock = bMap.get(irBlock);
+        ObjOperand src1 = parseOperand(inst.getLeftVal(), 12, irFunction, irBlock);
+        ObjOperand src2 = parseOperand(inst.getRightVal(), 12, irFunction, irBlock);
+        ObjOperand dst = parseOperand(inst, 0, irFunction, irBlock);
+
+        if ((src1 instanceof ObjImm12) && (src2 instanceof ObjImm12)) {
+            int ans = ((ObjImm12) src1).getImmediate12() ^ ((ObjImm12) src2).getImmediate12();
+            ObjMove objMove = new ObjMove(dst, parseConstIntOperand(ans, 32, irFunction, irBlock));
+            objBlock.addInstr(objMove);
+        }
+        else if(src1 instanceof ObjImm12) {
+            ObjBinary objXori = ObjBinary.getXori(dst, src2, src1);
+            objBlock.addInstr(objXori);
+        }
+        else if(src2 instanceof ObjImm12) {
+            ObjBinary objXori = ObjBinary.getXori(dst, src1, src2);
+            objBlock.addInstr(objXori);
+        }
+        else {
+            ObjBinary objXor = ObjBinary.getXor(dst, src1, src2);
+            objBlock.addInstr(objXor);
         }
     }
 

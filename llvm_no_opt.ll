@@ -15,28 +15,28 @@ declare i32 @parallel_start()
 declare void @parallel_end(i32)
 define i32 @main() {
 b0:
-	%0 = alloca float
-	store float 0.9, float* %0
-	%1 = alloca float
-	store float 5.6, float* %1
-	%2 = load float, float* %0
-	%3 = load float, float* %1
-	%4 = fcmp olt float %2, %3
-	%5 = icmp ne i1 %4, 0
-	br i1 %5, label %b1, label %b2
+	%0 = alloca i32
+	store i32 5, i32* %0
+	%1 = alloca i32
+	store i32 6, i32* %1
+	%2 = load i32, i32* %0
+	%3 = icmp ne i32 %2, 0
+	br i1 %3, label %b3, label %b2
 b1:
-	%6 = load float, float* %0
-	%7 = load float, float* %1
-	%8 = fadd float %6, %7
-	call void @putint(float %8)
-	%9 = fptosi float %8 to i32
-	ret i32 %9
+	%4 = load i32, i32* %0
+	%5 = load i32, i32* %1
+	%6 = sub i32 %4, %5
+	call void @putint(i32 %6)
+	ret i32 %6
 b2:
-	%10 = load float, float* %0
-	%11 = load float, float* %1
-	%12 = fsub float %10, %11
-	call void @putint(float %12)
-	%13 = fptosi float %12 to i32
-	ret i32 %13
+	%7 = load i32, i32* %0
+	%8 = load i32, i32* %1
+	%9 = add i32 %7, %8
+	call void @putint(i32 %9)
+	ret i32 %9
+b3:
+	%10 = load i32, i32* %1
+	%11 = icmp ne i32 %10, 0
+	br i1 %11, label %b1, label %b2
 }
 

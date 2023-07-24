@@ -15,17 +15,18 @@ declare i32 @parallel_start()
 declare void @parallel_end(i32)
 define i32 @main() {
 b0:
-	%0 = fcmp olt float 0x3fecccccc0000000, 0x4016666660000000
-	br i1 %0, label %b1, label %b2
+	%0 = icmp ne i32 5, 0
+	br i1 %0, label %b3, label %b2
 b1:
-	%1 = fadd float 0x3fecccccc0000000, 0x4016666660000000
-	call void @putint(float %1)
-	%2 = fptosi float %1 to i32
-	ret i32 %2
+	%1 = sub i32 5, 6
+	call void @putint(i32 %1)
+	ret i32 %1
 b2:
-	%3 = fsub float 0x3fecccccc0000000, 0x4016666660000000
-	call void @putint(float %3)
-	%4 = fptosi float %3 to i32
-	ret i32 %4
+	%2 = add i32 5, 6
+	call void @putint(i32 %2)
+	ret i32 %2
+b3:
+	%3 = icmp ne i32 6, 0
+	br i1 %3, label %b1, label %b2
 }
 
