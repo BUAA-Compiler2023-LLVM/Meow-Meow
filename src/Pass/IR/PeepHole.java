@@ -44,6 +44,9 @@ public class PeepHole implements Pass.IRPass {
                 }
 
                 for(CmpInst cmpInst : cmpInsts){
+                    if(!cmpInst.getOp().equals(OP.Ne)){
+                        continue;
+                    }
                     Value left = cmpInst.getLeftVal();
                     Value right = cmpInst.getRightVal();
                     if(left instanceof CmpInst){
