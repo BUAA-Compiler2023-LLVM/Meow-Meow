@@ -6,10 +6,7 @@ import IR.Type.IntegerType;
 import IR.Value.BasicBlock;
 import IR.Value.ConstInteger;
 import IR.Value.Function;
-import IR.Value.Instructions.BinaryInst;
-import IR.Value.Instructions.CmpInst;
-import IR.Value.Instructions.Instruction;
-import IR.Value.Instructions.OP;
+import IR.Value.Instructions.*;
 import IR.Value.Value;
 import Pass.Pass;
 import Utils.DataStruct.IList;
@@ -28,7 +25,34 @@ public class PeepHole implements Pass.IRPass {
         // A = icmp %0, %1; B = icmp ne A, 0
         // A.replaceUsedWith(B)
         PeepHole2(module);
+        // store A ptr1; ...; B = load ptr1;
+        PeepHole3(module);
+    }
 
+    private void PeepHole3(IRModule module){
+        for(Function function : module.getFunctions()){
+            for(IList.INode<BasicBlock, Function> bbNode : function.getBbs()){
+                BasicBlock bb = bbNode.getValue();
+                ArrayList<Instruction> memInsts = new ArrayList<>();
+                for(IList.INode<Instruction, BasicBlock> instNode : bb.getInsts()){
+                    Instruction inst = instNode.getValue();
+                    if(inst instanceof StoreInst || inst instanceof LoadInst){
+                        memInsts.add(inst);
+                    }
+                }
+
+                for(int i = 0; i < memInsts.size() - 1; i++){
+                    Instruction inst = memInsts.get(i);
+                    Instruction nxtInst = memInsts.get(i + 1);
+                    if(inst instanceof StoreInst storeInst && nxtInst instanceof LoadInst loadInst
+                            && storeInst.getPointer().equals(loadInst.getPointer())){
+                        Value value = storeInst.getValue();
+                        loadInst.replaceUsedWith(value);
+                        loadInst.removeSelf();
+                    }
+                }
+            }
+        }
     }
 
     private void PeepHole2(IRModule module){
