@@ -7,12 +7,14 @@ import IR.Value.BasicBlock;
 import IR.Value.ConstInteger;
 import IR.Value.Function;
 import IR.Value.Instructions.BinaryInst;
+import IR.Value.Instructions.CmpInst;
 import IR.Value.Instructions.Instruction;
 import IR.Value.Instructions.OP;
 import IR.Value.Value;
 import Pass.Pass;
 import Utils.DataStruct.IList;
 
+import java.util.ArrayList;
 import java.util.HashSet;
 
 public class PeepHole implements Pass.IRPass {
@@ -23,6 +25,44 @@ public class PeepHole implements Pass.IRPass {
     public void run(IRModule module) {
         //  PeepHole1: Rem2DivSubMul
         PeepHole1(module);
+        // A = icmp %0, %1; B = icmp ne A, 0
+        // A.replaceUsedWith(B)
+        PeepHole2(module);
+
+    }
+
+    private void PeepHole2(IRModule module){
+        for(Function function : module.getFunctions()){
+            for(IList.INode<BasicBlock, Function> bbNode : function.getBbs()){
+                BasicBlock bb = bbNode.getValue();
+                ArrayList<CmpInst> cmpInsts = new ArrayList<>();
+                for(IList.INode<Instruction, BasicBlock> instNode : bb.getInsts()){
+                    Instruction inst = instNode.getValue();
+                    if(inst instanceof CmpInst cmpInst){
+                        cmpInsts.add(cmpInst);
+                    }
+                }
+
+                for(CmpInst cmpInst : cmpInsts){
+                    Value left = cmpInst.getLeftVal();
+                    Value right = cmpInst.getRightVal();
+                    if(left instanceof CmpInst){
+                        if(right.equals(ConstInteger.const0_32) ||
+                        right.equals(ConstInteger.const0_1)){
+                            cmpInst.replaceUsedWith(left);
+                            cmpInst.removeSelf();
+                        }
+                    }
+                    else if(right instanceof CmpInst){
+                        if(left.equals(ConstInteger.const0_32) ||
+                        left.equals(ConstInteger.const0_1)){
+                            cmpInst.replaceUsedWith(right);
+                            cmpInst.removeSelf();
+                        }
+                    }
+                }
+            }
+        }
     }
 
     private void PeepHole1(IRModule module){
