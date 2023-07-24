@@ -1,35 +1,19 @@
-	.globl	A
-	.data
-	.type	A,	@object
-	.size	A,	4
-A:
-	.word	5
-
 main:
 b0:
 	  addi	$sp,	$sp,	-4
 	  sw	$ra,	0($sp)
-	  li	vr1,	5
-	  slti	vr2,	vr1,	1
-	  xori	vr0,	vr2,	1
-	  xori	vr4,	vr0,	0
-	  sltu	vr3,	$zero,	vr4
-	bnez	vr3	b1
-	   j	b5
-b1:
-	  lw	vr5,	0(A)
+	  li	vrf0,	1063675494
+	  li	vrf1,	1085485875
+	 flt.s	vr0,	vrf0,	vrf1
+	bnez	vr0	b1
 	   j	b2
+b1:
+	fadd.s	vrf2,	vrf0,	vrf1
+	fcvt.w.s	vr1,	vrf2,	rtz
+	move	$a0,	vr1
+	 ret
 b2:
-	   j	b3
-b3:
-	  lw	vr6,	0(A)
-	   add	vr7,	vr6,	vr5
-	  sw	vr7,	0(A)
-	  lw	vr8,	0(A)
-	   j	b4
-b4:
-	   j	b5
-b5:
-	  lw	vr9,	0(A)
-	move	$a0,	vr9
+	fsub.s	vrf3,	vrf0,	vrf1
+	fcvt.w.s	vr2,	vrf3,	rtz
+	move	$a0,	vr2
 	 ret
