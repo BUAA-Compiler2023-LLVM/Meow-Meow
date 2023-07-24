@@ -128,8 +128,14 @@ public class ObjBinary extends ObjInstr {
     public static ObjBinary getSll(ObjOperand dst, ObjOperand src1, ObjOperand src2) {
         return new ObjBinary("sll", dst, src1, src2);
     }
+    public static ObjBinary getSlli(ObjOperand dst, ObjOperand src1, ObjOperand src2) {
+        return new ObjBinary("slli", dst, src1, src2);
+    }
     public static ObjBinary getSrl(ObjOperand dst, ObjOperand src1, ObjOperand src2) {
         return new ObjBinary("srl", dst, src1, src2);
+    }
+    public static ObjBinary getSrli(ObjOperand dst, ObjOperand src1, ObjOperand src2) {
+        return new ObjBinary("srli", dst, src1, src2);
     }
     public static ObjBinary getSra(ObjOperand dst, ObjOperand src1, ObjOperand src2) {
         return new ObjBinary("sra", dst, src1, src2);

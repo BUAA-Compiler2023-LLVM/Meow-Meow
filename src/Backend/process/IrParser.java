@@ -239,6 +239,11 @@ public class IrParser {
                 parseOr((BinaryInst) irInst, irBlock, irFunction);
             if(irInst.getOp() == OP.Xor)
                 parseXor((BinaryInst) irInst, irBlock, irFunction);
+
+            if(irInst.getOp() == OP.Shl)
+                parseShl((BinaryInst) irInst, irBlock, irFunction);
+            if(irInst.getOp() == OP.Shr)
+                parseShr((BinaryInst) irInst, irBlock, irFunction);
         }
 
         else if(irInst instanceof BrInst)
@@ -629,6 +634,48 @@ public class IrParser {
         else {
             ObjBinary objXor = ObjBinary.getXor(dst, src1, src2);
             objBlock.addInstr(objXor);
+        }
+    }
+
+    private void parseShl(BinaryInst inst, BasicBlock irBlock, Function irFunction) {
+        ObjBlock objBlock = bMap.get(irBlock);
+        ObjOperand src1 = parseOperand(inst.getLeftVal(), 12, irFunction, irBlock);
+        ObjOperand src2 = parseOperand(inst.getRightVal(), 12, irFunction, irBlock);
+        ObjOperand dst = parseOperand(inst, 0, irFunction, irBlock);
+
+        if ((src1 instanceof ObjImm12) && (src2 instanceof ObjImm12)) {
+            int ans = ((ObjImm12) src1).getImmediate12() << ((ObjImm12) src2).getImmediate12();
+            ObjMove objMove = new ObjMove(dst, parseConstIntOperand(ans, 32, irFunction, irBlock));
+            objBlock.addInstr(objMove);
+        }
+        else if(src2 instanceof ObjImm12) {
+            ObjBinary objSlli = ObjBinary.getSlli(dst, src1, src2);
+            objBlock.addInstr(objSlli);
+        }
+        else {
+            ObjBinary objSll = ObjBinary.getSll(dst, src1, src2);
+            objBlock.addInstr(objSll);
+        }
+    }
+
+    private void parseShr(BinaryInst inst, BasicBlock irBlock, Function irFunction) {
+        ObjBlock objBlock = bMap.get(irBlock);
+        ObjOperand src1 = parseOperand(inst.getLeftVal(), 12, irFunction, irBlock);
+        ObjOperand src2 = parseOperand(inst.getRightVal(), 12, irFunction, irBlock);
+        ObjOperand dst = parseOperand(inst, 0, irFunction, irBlock);
+
+        if ((src1 instanceof ObjImm12) && (src2 instanceof ObjImm12)) {
+            int ans = ((ObjImm12) src1).getImmediate12() >>> ((ObjImm12) src2).getImmediate12();
+            ObjMove objMove = new ObjMove(dst, parseConstIntOperand(ans, 32, irFunction, irBlock));
+            objBlock.addInstr(objMove);
+        }
+        else if(src2 instanceof ObjImm12) {
+            ObjBinary objSrli = ObjBinary.getSrli(dst, src1, src2);
+            objBlock.addInstr(objSrli);
+        }
+        else {
+            ObjBinary objSrl = ObjBinary.getSrl(dst, src1, src2);
+            objBlock.addInstr(objSrl);
         }
     }
 

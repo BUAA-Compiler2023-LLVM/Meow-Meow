@@ -1,6 +1,6 @@
 int main() {
     int x = 5, y = 6;
-    if(!x)
-        return x ^ y;
-    return x + y;
+    if(x < y)
+        return x + y;
+    return x - y;
 }

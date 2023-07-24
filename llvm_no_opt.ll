@@ -20,23 +20,21 @@ b0:
 	%1 = alloca i32
 	store i32 6, i32* %1
 	%2 = load i32, i32* %0
-	%3 = icmp ne i32 %2, 0
-	br i1 %3, label %b3, label %b2
+	%3 = load i32, i32* %1
+	%4 = icmp slt i32 %2, %3
+	%5 = icmp ne i1 %4, 0
+	br i1 %5, label %b1, label %b2
 b1:
-	%4 = load i32, i32* %0
-	%5 = load i32, i32* %1
-	%6 = sub i32 %4, %5
-	call void @putint(i32 %6)
-	ret i32 %6
+	%6 = load i32, i32* %0
+	%7 = load i32, i32* %1
+	%8 = add i32 %6, %7
+	call void @putint(i32 %8)
+	ret i32 %8
 b2:
-	%7 = load i32, i32* %0
-	%8 = load i32, i32* %1
-	%9 = add i32 %7, %8
-	call void @putint(i32 %9)
-	ret i32 %9
-b3:
+	%9 = load i32, i32* %0
 	%10 = load i32, i32* %1
-	%11 = icmp ne i32 %10, 0
-	br i1 %11, label %b1, label %b2
+	%11 = sub i32 %9, %10
+	call void @putint(i32 %11)
+	ret i32 %11
 }
 
