@@ -24,7 +24,9 @@ public class PassManager {
         irPasses.add(new Mem2Reg());
         irPasses.add(new DCE());
         irPasses.add(new FuncInLine());
-        irPasses.add(new GVN());
+//        irPasses.add(new ConstFold());
+//        irPasses.add(new GVN());
+        irPasses.add(new PeepHole());
 
 //        irPasses.add(new RemovePhi());
     }

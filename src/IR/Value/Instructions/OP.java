@@ -10,6 +10,7 @@ public enum OP {
     Div,
     Fdiv,
     Mod,
+    Fmod,
     Shl,
     Shr,
     And,
@@ -60,6 +61,7 @@ public enum OP {
             case Sub, Fsub -> OP.Fsub;
             case Mul, Fmul -> OP.Fmul;
             case Div, Fdiv -> OP.Fdiv;
+            case Mod, Fmod -> OP.Fmod;
             case Lt, FLt -> OP.FLt;
             case Le, FLe -> OP.FLe;
             case Ge, FGe -> OP.FGe;
@@ -80,6 +82,8 @@ public enum OP {
             case "*f" -> OP.Fmul;
             case "/" -> OP.Div;
             case "/f" -> OP.Fdiv;
+            case "%" -> OP.Mod;
+            case "%f" -> OP.Fmod;
             case "<=" -> OP.Le;
             case "<=f" -> OP.FLe;
             case "<" -> OP.Lt;
@@ -94,7 +98,6 @@ public enum OP {
             case "!=f" -> OP.FNe;
             case "&&" -> OP.And;
             case "||" -> OP.Or;
-            case "%" -> OP.Mod;
             case "ftoi" -> OP.Ftoi;
             case "itof" -> OP.Itof;
             case "zext" -> OP.Zext;
@@ -116,6 +119,7 @@ public enum OP {
             case "Div" -> "sdiv";
             case "Fdiv" -> "fdiv";
             case "Mod" -> "srem";
+            case "Fmod" -> "frem";
             case "Ne" -> "icmp ne";
             case "FNe" -> "fcmp one";
             case "Eq" -> "icmp eq";
