@@ -3,13 +3,14 @@ package Pass.IR;
 import IR.IRModule;
 import IR.Value.BasicBlock;
 import IR.Value.Function;
+import IR.Value.Instructions.*;
 import IR.Value.Value;
+import Pass.IR.Utils.DomAnalysis;
+import Pass.IR.Utils.InterproceduralAnalysis;
 import Pass.Pass;
+import Utils.DataStruct.IList;
 
-import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.HashSet;
-import java.util.Stack;
+import java.util.*;
 
 public class GVN implements Pass.IRPass {
 
@@ -17,6 +18,7 @@ public class GVN implements Pass.IRPass {
 
     @Override
     public void run(IRModule module) {
+        InterproceduralAnalysis.run(module);
         for(Function function : module.getFunctions()){
             runGVNOnFunction(function);
         }
@@ -24,32 +26,64 @@ public class GVN implements Pass.IRPass {
 
     private void runGVNOnFunction(Function function){
         valueTable.clear();
-        Stack<BasicBlock> stack = new Stack<>();
-        ArrayList<BasicBlock> preOrder = new ArrayList<>();
+        DomAnalysis.run(function);
         HashSet<BasicBlock> visited = new HashSet<>();
+        ArrayList<BasicBlock> RPOrder = new ArrayList<>();
 
-        stack.push(function.getBbEntry());
-        visited.add(function.getBbEntry());
+        BasicBlock entry = function.getBbEntry();
+        RPOSearch(entry, visited, RPOrder);
+        Collections.reverse(RPOrder);
 
-        while (!stack.isEmpty()) {
-            BasicBlock curBlock = stack.pop();
-            preOrder.add(curBlock);
-            for (BasicBlock nxtBlock : curBlock.getNxtBlocks()) {
-                if (!visited.contains(nxtBlock))
-                {
-                    stack.push(nxtBlock);
-                    visited.add(nxtBlock);
-                }
-            }
-        }
-
-        for (BasicBlock bb : preOrder) {
+        for(BasicBlock bb : RPOrder){
             runGVNOnBlock(bb);
         }
     }
 
-    private void runGVNOnBlock(BasicBlock bb){
+    private void RPOSearch(BasicBlock bb, HashSet<BasicBlock> visited, ArrayList<BasicBlock> RPOrder){
+        visited.add(bb);
+        for(BasicBlock nxtBb : bb.getNxtBlocks()){
+            if(!visited.contains(nxtBb)) {
+                RPOSearch(bb, visited, RPOrder);
+            }
+        }
+        RPOrder.add(bb);
+    }
 
+    private void runGVNOnBlock(BasicBlock bb){
+        IList.INode<Instruction, BasicBlock> itInstNode = bb.getInsts().getHead();
+        ArrayList<Instruction> deletedInsts = new ArrayList<>();
+        while (itInstNode != null){
+            Instruction inst = itInstNode.getValue();
+            itInstNode = itInstNode.getNext();
+            if (canGVN(inst) && runGVNOnInst(inst)){
+                deletedInsts.add(inst);
+            }
+        }
+
+        for(BasicBlock idomBb : bb.getIdoms()){
+            runGVNOnBlock(idomBb);
+        }
+
+        for(Instruction inst : deletedInsts){
+            removeInstFromGVN(inst);
+        }
+    }
+
+    private boolean runGVNOnInst(Instruction inst){
+        return false;
+    }
+
+    private void removeInstFromGVN(Instruction inst){
+
+    }
+
+
+    private boolean canGVN(Instruction inst){
+        if(inst instanceof CallInst callInst){
+            Function function = callInst.getFunction();
+            return !function.isLibFunction() && !function.isMayHasSideEffect();
+        }
+        return inst instanceof BinaryInst || inst instanceof GepInst || inst instanceof ConversionInst;
     }
 
     @Override
