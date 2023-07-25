@@ -47,7 +47,7 @@ public class InterproceduralAnalysis{
 //                    }
                     if(inst instanceof StoreInst) {
                         Value pointer = ((StoreInst) inst).getPointer();
-                        Value array = AliasAnalysis.getArrRoot(pointer);
+                        Value array = AliasAnalysis.getRoot(pointer);
                         if (!AliasAnalysis.isLocal(array)) {
                             function.setMayHasSideEffect(true);
 //                            function.addStoreGV((GlobalVar) array);

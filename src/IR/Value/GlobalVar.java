@@ -16,12 +16,14 @@ public class GlobalVar extends Value{
     private ArrayList<Value> values;
     //  nowVisit用于递归输出toString
     private int nowVisit;
+    private final boolean isArray;
 
     //  全局变量
     public GlobalVar(String name, Type type, Value value){
         super(name, type);
         //  这个Value是他的初始值
         this.value = value;
+        this.isArray = false;
         this.nowVisit = 0;
     }
 
@@ -29,10 +31,12 @@ public class GlobalVar extends Value{
     public GlobalVar(String name, Type type, ArrayList<Value> values){
         super(name, type);
         this.values = values;
+        this.isArray = true;
     }
 
-
-
+    public boolean isArray(){
+        return isArray;
+    }
 
     public Value getValue() {
         return value;

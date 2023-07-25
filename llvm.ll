@@ -13,17 +13,12 @@ declare void @putch(i32)
 declare float @getfloat()
 declare i32 @parallel_start()
 declare void @parallel_end(i32)
+@a = global [3 x i32] [i32 1, i32 2, i32 3]
 define i32 @main() {
 b0:
-	%0 = icmp slt i32 5, 6
-	br i1 %0, label %b1, label %b2
-b1:
-	%1 = add i32 5, 6
+	%0 = getelementptr [3 x i32], [3 x i32]* @a, i32 0, i32 0
+	%1 = load i32, i32* %0
 	call void @putint(i32 %1)
 	ret i32 %1
-b2:
-	%2 = sub i32 5, 6
-	call void @putint(i32 %2)
-	ret i32 %2
 }
 

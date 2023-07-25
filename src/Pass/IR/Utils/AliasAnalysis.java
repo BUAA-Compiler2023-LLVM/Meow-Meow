@@ -10,11 +10,11 @@ import IR.Value.Value;
 
 public class AliasAnalysis {
 
-    //  获取某个数组value的根定义，要么是alloc指令(局部数组或参数数组)，要么是全局数组
-    public static Value getArrRoot(Value pointer){
+    //  获取某个数组value的根定义，要么是alloc指令(局部变量，局部数组或参数数组)，要么是全局数组
+    public static Value getRoot(Value pointer){
         Value iter = pointer;
 
-        //  这里loadInst是因为有可能为参数数组(本质上最初定义也是allocInst)
+        //  这里loadInst是因为有可能为局部变量或参数数组(本质上最初定义也是allocInst)
         //  我们一路循环直到iter是AllocInst或者为全局数组
         while (iter instanceof GepInst || iter instanceof LoadInst){
             if (iter instanceof GepInst) {
