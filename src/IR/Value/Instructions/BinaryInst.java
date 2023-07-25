@@ -3,6 +3,8 @@ package IR.Value.Instructions;
 import IR.Type.IntegerType;
 import IR.Type.Type;
 import IR.Value.BasicBlock;
+import IR.Value.ConstFloat;
+import IR.Value.ConstInteger;
 import IR.Value.Value;
 
 public class BinaryInst extends Instruction {
@@ -19,6 +21,15 @@ public class BinaryInst extends Instruction {
 
     public Value getRightVal(){
         return getOperand(1);
+    }
+
+    public boolean hasOneConst(){
+        boolean isLeftConst = (getOperand(0) instanceof ConstInteger)
+                || (getOperand(0) instanceof ConstFloat);
+        boolean isRightConst = (getOperand(1) instanceof ConstInteger)
+                || (getOperand(1) instanceof ConstFloat);
+        if(isLeftConst && isRightConst) return false;
+        return isLeftConst || isRightConst;
     }
 
     @Override

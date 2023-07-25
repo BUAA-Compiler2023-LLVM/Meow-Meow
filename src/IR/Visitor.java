@@ -30,6 +30,9 @@ public class Visitor {
     private final Function PrintFArrFunc = new Function("@putfarray", VoidType.voidType);
     private final Function InputFArrFunc = new Function("@getfarray", IntegerType.I32);
     private final Function MemsetFunc = new Function("@memset", VoidType.voidType);
+    private final Function StartTimeFunc = new Function("@starttime", VoidType.voidType);
+    private final Function StopTimeFunc = new Function("@stoptime", VoidType.voidType);
+
 
     private boolean isPrint = false;
 
@@ -59,6 +62,8 @@ public class Visitor {
             case "putfloat" -> PrintFloatFunc;
             case "getfarray" -> InputFArrFunc;
             case "putfarray" -> PrintFArrFunc;
+            case "starttime" -> StartTimeFunc;
+            case "stoptime" -> StopTimeFunc;
             default -> null;
         };
 
@@ -723,6 +728,8 @@ public class Visitor {
         InputFArrFunc.setAsLibFunction();
 
         MemsetFunc.setAsLibFunction();
+        StartTimeFunc.setAsLibFunction();
+        StopTimeFunc.setAsLibFunction();
     }
 
     public IRModule visitAST(AST compAST) {
