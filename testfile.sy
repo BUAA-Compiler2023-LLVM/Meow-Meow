@@ -1,6 +1,6 @@
-int main(){
-    int a = 3;
-    int b = 2;
-    b = 2;
-    return a / b;
+int main() {
+    int x = 5, y = 6;
+    if(x < y)
+        return x + y;
+    return x - y;
 }

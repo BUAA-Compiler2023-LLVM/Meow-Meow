@@ -50,6 +50,23 @@ public class ObjBinary extends ObjInstr {
             setSrc2(newReg);
     }
 
+    public static ObjBinary getFeq(ObjOperand dst, ObjOperand src1, ObjOperand src2) {
+        return new ObjBinary("feq.s", dst, src1, src2);
+    }
+    public static ObjBinary getFlt(ObjOperand dst, ObjOperand src1, ObjOperand src2) {
+        return new ObjBinary("flt.s", dst, src1, src2);
+    }
+    public static ObjBinary getFle(ObjOperand dst, ObjOperand src1, ObjOperand src2) {
+        return new ObjBinary("fle.s", dst, src1, src2);
+    }
+    public static ObjBinary getFGt(ObjOperand dst, ObjOperand src1, ObjOperand src2) {
+        return new ObjBinary("fgt.s", dst, src1, src2);
+    }
+    public static ObjBinary getFGe(ObjOperand dst, ObjOperand src1, ObjOperand src2) {
+        return new ObjBinary("fge.s", dst, src1, src2);
+    }
+
+
     public static ObjBinary getFAdd(ObjOperand dst, ObjOperand src1, ObjOperand src2)  {
         return new ObjBinary("fadd.s", dst, src1, src2);
     }
@@ -111,8 +128,14 @@ public class ObjBinary extends ObjInstr {
     public static ObjBinary getSll(ObjOperand dst, ObjOperand src1, ObjOperand src2) {
         return new ObjBinary("sll", dst, src1, src2);
     }
+    public static ObjBinary getSlli(ObjOperand dst, ObjOperand src1, ObjOperand src2) {
+        return new ObjBinary("slli", dst, src1, src2);
+    }
     public static ObjBinary getSrl(ObjOperand dst, ObjOperand src1, ObjOperand src2) {
         return new ObjBinary("srl", dst, src1, src2);
+    }
+    public static ObjBinary getSrli(ObjOperand dst, ObjOperand src1, ObjOperand src2) {
+        return new ObjBinary("srli", dst, src1, src2);
     }
     public static ObjBinary getSra(ObjOperand dst, ObjOperand src1, ObjOperand src2) {
         return new ObjBinary("sra", dst, src1, src2);
