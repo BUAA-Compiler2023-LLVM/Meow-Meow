@@ -2,11 +2,9 @@ package Pass.IR;
 
 import IR.IRBuildFactory;
 import IR.IRModule;
+import IR.Type.IntegerType;
 import IR.Value.*;
-import IR.Value.Instructions.BinaryInst;
-import IR.Value.Instructions.CmpInst;
-import IR.Value.Instructions.Instruction;
-import IR.Value.Instructions.OP;
+import IR.Value.Instructions.*;
 import Pass.Pass;
 import Utils.DataStruct.IList;
 
@@ -43,7 +41,24 @@ public class ConstFold implements Pass.IRPass {
         if(inst instanceof BinaryInst binaryInst){
             return simplifyBinaryInst(binaryInst, rec);
         }
+        else if(inst instanceof ConversionInst conversionInst){
+            return simplifyConversionInst(conversionInst);
+        }
         return inst;
+    }
+
+    private Value simplifyConversionInst(ConversionInst conversionInst){
+        OP op = conversionInst.getOp();
+        if(op.equals(OP.Zext)){
+            return simplifyZextInst(conversionInst);
+        }
+        else if(op.equals(OP.Ftoi)){
+            return simplifyFtoiInst(conversionInst);
+        }
+        else if(op.equals(OP.Itof)){
+            return simplifyItofInst(conversionInst);
+        }
+        return conversionInst;
     }
 
     private Value simplifyBinaryInst(BinaryInst binaryInst, int rec){
@@ -282,6 +297,30 @@ public class ConstFold implements Pass.IRPass {
             }
         }
         return modInst;
+    }
+
+    private Value simplifyZextInst(ConversionInst zextInst){
+        Value value = zextInst.getValue();
+        if (value instanceof ConstInteger constValue) {
+            return new ConstInteger(constValue.getValue(), IntegerType.I32);
+        }
+        return zextInst;
+    }
+
+    private Value simplifyFtoiInst(ConversionInst ftoiInst){
+        Value value = ftoiInst.getValue();
+        if (value instanceof ConstFloat constFloat) {
+            return new ConstInteger((int) constFloat.getValue(), IntegerType.I32);
+        }
+        return ftoiInst;
+    }
+
+    private Value simplifyItofInst(ConversionInst itofInst){
+        Value value = itofInst.getValue();
+        if (value instanceof ConstInteger constInteger) {
+            return new ConstFloat((float) constInteger.getValue());
+        }
+        return itofInst;
     }
 
 //    private Value tryCombineAddOrSubInst(BinaryInst inst, Value value, boolean valueInRight, OP curOp, int rec){

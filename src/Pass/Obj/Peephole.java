@@ -33,15 +33,16 @@ public class Peephole implements Pass.ObjPass{
     private void zero(ObjBlock objBlock){
         for(IList.INode<ObjInstr, ObjBlock> instNode : objBlock.getInstrs()){
             ObjInstr nowInstr=instNode.getValue();
-            ObjBinary nowBinary=(ObjBinary) nowInstr;
-            if(nowBinary.isSrc2Imm()){
-                ObjImm nowimm=(ObjImm)nowBinary.getSrc2();
-                if(nowimm.getImmediate()==0){
-                    if(nowBinary.getDst().equals(nowBinary.getSrc1())){//相同
-                        //delete
-                    }
-                    else{
-                        nowBinary.setType("mov");//改成move
+            if(nowInstr instanceof ObjBinary nowBinary){
+                if(nowBinary.isSrc2Imm()){
+                    ObjImm nowImm = (ObjImm)nowBinary.getSrc2();
+                    if(nowImm.getImmediate() == 0){
+                        if(nowBinary.getDst().equals(nowBinary.getSrc1())){//相同
+                            //delete
+                        }
+                        else{
+//                            nowBinary.setType("mov");//改成move
+                        }
                     }
                 }
             }
