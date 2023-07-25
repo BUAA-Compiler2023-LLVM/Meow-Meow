@@ -17,6 +17,14 @@ public class ConstFloat extends Const {
     }
 
     @Override
+    public boolean equals(Object o) {
+        if (this == o) return true;
+        if (o == null || getClass() != o.getClass()) return false;
+        ConstFloat that = (ConstFloat) o;
+        return value == that.value;
+    }
+
+    @Override
     public String toString() {
         return "float " + this.value;
     }

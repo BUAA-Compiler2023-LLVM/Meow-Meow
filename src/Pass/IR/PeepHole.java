@@ -20,7 +20,7 @@ public class PeepHole implements Pass.IRPass {
 
     @Override
     public void run(IRModule module) {
-        //  PeepHole1: Rem2DivSubMul
+        //  PeepHole1: Rem2DivSubMul & RemOptimize
         PeepHole1(module);
         // A = icmp %0, %1; B = icmp ne A, 0
         // A.replaceUsedWith(B)
@@ -123,6 +123,16 @@ public class PeepHole implements Pass.IRPass {
                     continue;
                 }
             }
+
+            //  0 % a = 0; a % a = 0; a % 1 = 0;
+            if(A.equals(ConstInteger.const0_32) || A.equals(B)
+                    || (B instanceof ConstInteger constInteger
+                    && constInteger.getValue() == 1)){
+                rem.replaceUsedWith(ConstInteger.const0_32);
+                rem.removeSelf();
+                return;
+            }
+
             BinaryInst div = f.getBinaryInst(A, B, OP.Div, IntegerType.I32);
             BinaryInst mul = f.getBinaryInst(div, B, OP.Mul, IntegerType.I32);
             BinaryInst sub = f.getBinaryInst(A, mul, OP.Sub, IntegerType.I32);

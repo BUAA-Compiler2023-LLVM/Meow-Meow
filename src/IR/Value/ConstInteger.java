@@ -13,6 +13,14 @@ public class ConstInteger extends Const {
         this.value = value;
     }
 
+    @Override
+    public boolean equals(Object o) {
+        if (this == o) return true;
+        if (o == null || getClass() != o.getClass()) return false;
+        ConstInteger that = (ConstInteger) o;
+        return value == that.value;
+    }
+
     public int getValue() {
         return value;
     }
