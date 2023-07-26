@@ -11,6 +11,7 @@ import IR.IRModule;
 import IR.Type.*;
 import IR.Value.*;
 import IR.Value.Instructions.*;
+import IR.Visitor;
 import Utils.DataStruct.IList;
 
 import java.awt.*;
@@ -28,6 +29,23 @@ public class IrParser {
     private HashMap<GlobalVar, ObjGlobalVariable> gMap;
     private HashMap<Value, ObjOperand> operandMap;
     public HashMap< ObjOperand,Value> operandMap1;
+
+    private final static ObjFunction PrintFunc = new ObjFunction("@putint", true);
+    private final static ObjFunction InputFunc = new ObjFunction("@getint", true);
+    private final static ObjFunction PrintChFunc = new ObjFunction("@putch", true);
+    private final static ObjFunction InputChFunc = new ObjFunction("@getch", true);
+    private final static ObjFunction PrintArrFunc = new ObjFunction("@putarray", true);
+    private final static ObjFunction InputArrFunc = new ObjFunction("@getarray", true);
+    private final static ObjFunction PrintFloatFunc = new ObjFunction("@putfloat", true);
+    private final static ObjFunction InputFloatFunc = new ObjFunction("@getfloat", true);
+    private final static ObjFunction PrintFArrFunc = new ObjFunction("@putfarray", true);
+    private final static ObjFunction InputFArrFunc = new ObjFunction("@getfarray", true);
+    private final static ObjFunction MemsetFunc = new ObjFunction("@memset", true);
+    private final static ObjFunction StartTimeFunc = new ObjFunction("@starttime", true);
+    private final static ObjFunction StopTimeFunc = new ObjFunction("@stoptime", true);
+
+    private HashMap<String, ObjFunction> Library_functions;
+
     public IrParser(IRModule irModule) {
         this.irModule = irModule;
         objModule = new ObjModule();
@@ -36,6 +54,21 @@ public class IrParser {
         gMap = new HashMap<>();
         operandMap = new HashMap<>();
         operandMap1 = new HashMap<>();
+        Library_functions = new HashMap<>();
+
+        Library_functions.put("@putint", PrintFunc);
+        Library_functions.put("@getint", InputFunc);
+        Library_functions.put("@putch", PrintChFunc);
+        Library_functions.put("@getch", InputChFunc);
+        Library_functions.put("@putarray", PrintArrFunc);
+        Library_functions.put("@getarray", InputArrFunc);
+        Library_functions.put("@putfloat", PrintFloatFunc);
+        Library_functions.put("@getfloat", InputFloatFunc);
+        Library_functions.put("@putfarray", PrintFArrFunc);
+        Library_functions.put("@getfarray", InputFArrFunc);
+        Library_functions.put("@memset", MemsetFunc);
+        Library_functions.put("@starttime", StartTimeFunc);
+        Library_functions.put("@stoptime", StopTimeFunc);
     }
 
     public ObjModule parseModule() {
@@ -101,6 +134,7 @@ public class IrParser {
     }
 
     private void iMap() {
+
         for(Function f : irModule.getFunctions()) {
             ObjFunction objFunction = new ObjFunction(f.getName(), f.isLibFunction());
             objModule.addFunction(objFunction);
@@ -259,11 +293,13 @@ public class IrParser {
     }
 
     private void parseConversionInst(ConversionInst inst, BasicBlock irBlock, Function irFunction) {
+        System.out.println(inst);
         ObjOperand dst = parseOperand(inst, 0, irFunction, irBlock);
         ObjOperand src = parseOperand(inst.getOperand(0), 0, irFunction, irBlock);
         ObjBlock objBlock = bMap.get(irBlock);
         if(inst.getOp() == OP.Ftoi) { // float to I32
             ObjConversion Ftoi = ObjConversion.getFtoi(dst, src);
+            System.out.println(Ftoi);
             objBlock.addInstr(Ftoi);
         }
         else if(inst.getOp() == OP.Itof) { // I32 to float
@@ -327,13 +363,14 @@ public class IrParser {
         ObjFunction objFunction = fMap.get(irFunction);
         ObjBlock objBlock = bMap.get(irBlock);
         // System.out.println(inst.getFunction().getName());
-        if(inst.getFunction().getName() == "@putint")
-            return ;
-        if(inst.getFunction().getName() == "@memset")
-            return ;
-
+//        if(inst.getFunction().getName() == "@putint")
+//            return ;
+//        if(inst.getFunction().getName() == "@memset")
+//            return ;
 
         ObjFunction tarFunction = fMap.get(inst.getFunction());
+        if (Library_functions.containsKey(inst.getFunction().getName()))
+            tarFunction = Library_functions.get(inst.getFunction().getName());
 
         ArrayList<Value> operands = inst.getOperands();
         int arg_nums = operands.size();
@@ -358,6 +395,18 @@ public class IrParser {
 
         ObjCall objCall = new ObjCall(tarFunction);
         objBlock.addInstr(objCall);
+
+        if(! (inst.getType() instanceof VoidType)) {
+            ObjOperand dst = parseOperand(inst, 0, irFunction, irBlock);
+            if(inst.getType() instanceof IntegerType) {
+                ObjMove objMove = new ObjMove(dst, A.get(0));
+                objBlock.addInstr(objMove);
+            }
+            else if(inst.getType() instanceof FloatType) {
+                ObjConversion objCov = ObjConversion.getItof(dst, A.get(0));
+                objBlock.addInstr(objCov);
+            }
+        }
     }
 
     private void parseCmp(CmpInst inst, BasicBlock irBlock, Function irFunction) {
