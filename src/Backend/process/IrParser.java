@@ -101,7 +101,7 @@ public class IrParser {
         else if(type instanceof FloatType) {
             Value initValue = g.getValue();
             if(initValue != null) {
-                float floatValue = ((ConstFloat) init.get(0)).getValue();
+                float floatValue = ((ConstFloat) initValue).getValue();
                 int intValue = Float.floatToRawIntBits(floatValue);
                 elements.add(intValue);
             }
@@ -199,8 +199,15 @@ public class IrParser {
         for(int i = 0; i < num_A; i ++) {
             Value arg = args.get(i);
             ObjOperand operand = parseOperand(arg, 0, f, b);
-            ObjMove objMove = new ObjMove(operand, A.get(i));
-            objF.getFirstBlock().addInstrHead(objMove);
+            if(arg.getType() instanceof FloatType) {
+                ObjConversion objCon = ObjConversion.getItof(operand, A.get(i));
+                objF.getFirstBlock().addInstrHead(objCon);
+            }
+            else {
+                ObjMove objMove = new ObjMove(operand, A.get(i));
+                objF.getFirstBlock().addInstrHead(objMove);
+            }
+
         }
         int off = objF.getStackSize();
         for(int i = 8; i < args_num; i ++) {
