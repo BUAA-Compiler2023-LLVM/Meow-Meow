@@ -70,10 +70,10 @@ public class IrParser {
         Library_functions.put("@starttime", StartTimeFunc);
         Library_functions.put("@stoptime", StopTimeFunc);
 
-        SP.setNeedsColor();
-        RA.setNeedsColor();
+        SP.notNeedsColor();
+        RA.notNeedsColor();
         for(int i = 0; i < 8; i ++)
-            A.get(0).setNeedsColor();
+            A.get(0).notNeedsColor();
     }
 
     public ObjModule parseModule() {
