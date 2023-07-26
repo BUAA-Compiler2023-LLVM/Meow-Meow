@@ -51,6 +51,7 @@ public class ObjPhyReg extends ObjReg {
         this.name = name;
         this.index = nameToIndex.get(name);
         this.isAllocated = false;
+        this.color=this.index;
     }
     public ObjPhyReg(int index) {
         this.name = indexToName.get(index);
