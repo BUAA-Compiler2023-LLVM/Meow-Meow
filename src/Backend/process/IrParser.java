@@ -69,6 +69,11 @@ public class IrParser {
         Library_functions.put("@memset", MemsetFunc);
         Library_functions.put("@starttime", StartTimeFunc);
         Library_functions.put("@stoptime", StopTimeFunc);
+
+        SP.setNeedsColor();
+        RA.setNeedsColor();
+        for(int i = 0; i < 8; i ++)
+            A.get(0).setNeedsColor();
     }
 
     public ObjModule parseModule() {
