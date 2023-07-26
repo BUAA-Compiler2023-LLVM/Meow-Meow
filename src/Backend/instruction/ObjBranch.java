@@ -20,6 +20,22 @@ public class ObjBranch extends ObjInstr{
         this.condType = condType;
     }
 
+    public void setSrc(ObjOperand src) {
+        addUseReg(this.src, src);
+        this.src = src;
+    }
+
+    @Override
+    public void replaceReg(ObjOperand oldReg, ObjOperand newReg) {
+        if(src != null && src.equals(oldReg))
+            setSrc(src);
+    }
+    @Override
+    public void replaceUseReg(ObjOperand oldReg, ObjOperand newReg) {
+        if(src != null && src.equals(oldReg))
+            setSrc(src);
+    }
+
     public ObjBlock getTarget() {
         return target;
     }

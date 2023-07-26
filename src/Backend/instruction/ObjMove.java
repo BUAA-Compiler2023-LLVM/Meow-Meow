@@ -25,6 +25,21 @@ public class ObjMove extends ObjInstr{
     public ObjOperand getSrc() {
         return src;
     }
+
+    @Override
+    public void replaceReg(ObjOperand oldReg, ObjOperand newReg) {
+        if (dst.equals(oldReg))
+            setDst(newReg);
+        if (src.equals(oldReg))
+            setSrc(newReg);
+    }
+
+    @Override
+    public void replaceUseReg(ObjOperand oldReg, ObjOperand newReg) {
+        if (src.equals(oldReg))
+            setSrc(newReg);
+    }
+
     @Override
     public String toString() {
         if ((src instanceof ObjImm) || (src instanceof ObjImm12))
