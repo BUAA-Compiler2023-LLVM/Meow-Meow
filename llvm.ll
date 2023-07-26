@@ -13,53 +13,30 @@ declare void @putch(i32)
 declare float @getfloat()
 declare i32 @parallel_start()
 declare void @parallel_end(i32)
-define i32 @func(i32 %0, i32 %1) {
+@A = global float 5.5
+define float @add(i32 %0, float %1) {
 b0:
 	br label %b1
 b1:
-	%2 = add i32 10000, %0
-	%3 = sub i32 %2, %1
-	ret i32 %3
+	%2 = load float, float* @A
+	%3 = fadd float %2, 0x3fe99999a0000000
+	store float %3, float* @A
+	%4 = sitofp i32 %0 to float
+	%5 = fadd float %4, %1
+	%6 = load float, float* @A
+	%7 = fadd float %5, %6
+	ret float %7
 }
 
 define i32 @main() {
 b0:
 	%0 = call i32 @getint()
-	call void @starttime()
-	br label %b1
-b1:
-	%1 = phi i32 [ 0, %b0 ],[ %7, %b6 ]
-	%2 = phi i32 [ 0, %b0 ],[ %14, %b6 ]
-	%3 = phi i32 [ 0, %b0 ],[ %17, %b6 ]
-	%4 = phi i32 [ 0, %b0 ],[ %16, %b6 ]
-	%5 = icmp slt i32 %3, %0
-	%6 = icmp ne i1 %5, 0
-	br i1 %6, label %b2, label %b3
-b2:
-	br label %b4
-b3:
-	call void @stoptime()
-	call void @putint(i32 %4)
-	call void @putch(i32 10)
-	call void @putch(i32 10)
-	call void @putint(i32 0)
-	ret i32 0
-b4:
-	%7 = phi i32 [ 0, %b2 ],[ %13, %b5 ]
-	%8 = phi i32 [ 0, %b2 ],[ %12, %b5 ]
-	%9 = icmp slt i32 %7, 60
-	%10 = icmp ne i1 %9, 0
-	br i1 %10, label %b5, label %b6
-b5:
-	%11 = call i32 @func(i32 %3, i32 10000)
-	%12 = add i32 %8, %11
-	%13 = add i32 %7, 1
-	br label %b4
-b6:
-	%14 = sdiv i32 %8, 60
-	%15 = add i32 %4, %14
-	%16 = srem i32 %15, 536854529
-	%17 = add i32 %3, 1
-	br label %b1
+	%1 = sitofp i32 5 to float
+	%2 = call float @add(i32 %0, float %1)
+	%3 = sitofp i32 %0 to float
+	%4 = fadd float %3, %2
+	call void @putint(float %4)
+	%5 = fptosi float %4 to i32
+	ret i32 %5
 }
 

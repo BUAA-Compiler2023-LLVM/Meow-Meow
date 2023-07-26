@@ -1,5 +1,6 @@
 package Backend.instruction;
 
+import Backend.operand.ObjFVirReg;
 import Backend.operand.ObjOperand;
 
 public class ObjLoad extends ObjInstr {
@@ -46,6 +47,9 @@ public class ObjLoad extends ObjInstr {
 
     @Override
     public String toString() {
-        return "  lw\t" + dst + ",\t" + offset + "(" + addr + ")";
+        String output = "lw\t" + dst + ",\t" + offset + "(" + addr + ")";
+        if(dst instanceof ObjFVirReg)
+            output = "f" + output;
+        return output;
     }
 }

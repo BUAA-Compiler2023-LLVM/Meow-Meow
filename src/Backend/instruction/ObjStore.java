@@ -1,5 +1,6 @@
 package Backend.instruction;
 
+import Backend.operand.ObjFVirReg;
 import Backend.operand.ObjOperand;
 
 public class ObjStore extends ObjInstr {
@@ -48,6 +49,9 @@ public class ObjStore extends ObjInstr {
 
     @Override
     public String toString() {
-        return "  sw\t" + src + ",\t" + offset + "(" + addr + ")";
+        String output = "sw\t" + src + ",\t" + offset + "(" + addr + ")";
+        if(src instanceof ObjFVirReg)
+            output = "s" + output;
+        return output;
     }
 }
