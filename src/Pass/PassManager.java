@@ -3,7 +3,9 @@ package Pass;
 import Backend.component.ObjModule;
 import IR.IRModule;
 import Pass.IR.*;
+import Pass.Obj.Peephole;
 import Pass.Pass.*;
+
 import Utils.IRDump;
 
 import java.util.ArrayList;
@@ -23,13 +25,15 @@ public class PassManager {
         irPasses.add(new MergeBB());
         irPasses.add(new Mem2Reg());
         irPasses.add(new InstComb());
+        irPasses.add(new RemovePhi());
 //        irPasses.add(new DCE());
 //        irPasses.add(new FuncInLine());
 //        irPasses.add(new PeepHole());
 //        irPasses.add(new ConstFold());
 //        irPasses.add(new GVN());
+        objPasses.add(new Peephole());
 
-//        irPasses.add(new RemovePhi());
+
     }
 
 
