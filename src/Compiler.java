@@ -1,4 +1,5 @@
 import Backend.Backend;
+import Backend.component.ObjModule;
 import Backend.process.RegAllo;
 import Frontend.*;
 import IR.IRModule;
@@ -31,6 +32,7 @@ public class Compiler {
         IRDump.DumpModule(irModule,"removed_phi.ll");
 
         Backend backend = new Backend(irModule);
+        passManager.runObjPasses(backend.getModule());
         RISC_Dump.DumpBackend(backend);
     }
 }

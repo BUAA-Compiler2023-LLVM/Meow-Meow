@@ -2,6 +2,7 @@ package Backend.instruction;
 
 import Backend.component.ObjBlock;
 import Backend.operand.ObjOperand;
+import Backend.operand.ObjPhyReg;
 import Backend.operand.ObjReg;
 import Utils.DataStruct.IList;
 
@@ -53,4 +54,21 @@ public class ObjInstr {
 
     public void replaceReg(ObjOperand oldReg, ObjOperand newReg) {}
     public void replaceUseReg(ObjOperand oldReg, ObjOperand newReg) {}
+
+    public ArrayList<ObjReg> getWriteRegs()
+    {
+        return new ArrayList<>(regDef);
+    }
+
+    public ArrayList<ObjReg> getReadRegs()
+    {
+        ArrayList<ObjReg> readRegs = regUse;
+
+        if (this instanceof ObjCall)
+        {
+            readRegs.add(ObjPhyReg.SP);
+        }
+
+        return readRegs;
+    }
 }

@@ -82,6 +82,22 @@ public class ObjBlock {
         }
     }
 
+    public ArrayList<ObjReg> getLiveIns(){
+        return liveIns;
+    }
+
+    public ArrayList<ObjReg> getLiveOuts(){
+        return liveOuts;
+    }
+
+    public ArrayList<ObjReg> getDef(){
+        return Def;
+    }
+
+    public ArrayList<ObjReg> getUse(){
+        return Use;
+    }
+
     public String getName() {
         return name;
     }

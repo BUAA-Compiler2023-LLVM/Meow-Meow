@@ -5,12 +5,15 @@ import Backend.component.ObjModule;
 import Backend.instruction.*;
 import Backend.operand.ObjImm;
 import Backend.operand.ObjImm12;
+import Backend.operand.ObjReg;
 import IR.Value.BasicBlock;
 import IR.Value.Instructions.Instruction;
 import Pass.Pass;
 import Utils.DataStruct.IList;
 
+import java.lang.reflect.Array;
 import java.util.ArrayList;
+import java.util.HashMap;
 
 public class Peephole implements Pass.ObjPass{
     @Override
@@ -25,16 +28,19 @@ public class Peephole implements Pass.ObjPass{
             IList<ObjBlock,ObjFunction> blocks = function.getObjBlocks();
             for(IList.INode<ObjBlock,ObjFunction> instBlock : blocks){
                 ObjBlock block = instBlock.getValue();
-                zero(block);
-                multiple(block);
-                uselessMove(block);
-                uselessJump(block,instBlock.getNext());
+                for(IList.INode<ObjInstr, ObjBlock> instNode : block.getInstrs()){
+                    zero(instNode);
+                    multiple(instNode);
+                    uselessMove(instNode);
+                    uselessJump(instNode,instBlock.getNext());
+                    uselessMemory(instNode);
+                }
             }
+            dataflow(function);
         }
     }
     // add t0, t1, 0 => mov t0, t1
-    private void zero(ObjBlock objBlock){
-        for(IList.INode<ObjInstr, ObjBlock> instNode : objBlock.getInstrs()){
+    private void zero(IList.INode<ObjInstr, ObjBlock> instNode){
             ObjInstr nowInstr=instNode.getValue();
             if(nowInstr instanceof ObjBinary nowBinary){
                 if(nowBinary.isSrc2Imm12()){
@@ -57,7 +63,7 @@ public class Peephole implements Pass.ObjPass{
                     instNode.removeFromList();
                 }
             }
-        }
+
     }
     /* 乘法优化 mul t0, t1, 19 => sll t2, t1, 5
                                 sll t3, t1, 1
@@ -66,8 +72,7 @@ public class Peephole implements Pass.ObjPass{
                                 add t2, t2, t3
                                 mov t0, t2
      */
-    private void multiple(ObjBlock objBlock){
-        for(IList.INode<ObjInstr, ObjBlock> instNode: objBlock.getInstrs()){
+    private void multiple(IList.INode<ObjInstr, ObjBlock> instNode){
             ObjInstr nowInstr = instNode.getValue();
             if(nowInstr instanceof ObjBinary nowBinary&&nowBinary.getType().equals("mul")){
                 if(nowBinary.isSrc2Imm12()){
@@ -90,13 +95,12 @@ public class Peephole implements Pass.ObjPass{
                     }
                 }
             }
-        }
+
     }
     /* move t0, t1
        move t0, t2 => move t0, t2
      */
-    private void uselessMove(ObjBlock objBlock){
-        for(IList.INode<ObjInstr, ObjBlock> instNode: objBlock.getInstrs()){
+    private void uselessMove(IList.INode<ObjInstr, ObjBlock> instNode){
             ObjInstr nowInstr = instNode.getValue();
             IList.INode<ObjInstr, ObjBlock> nextNode=instNode.getNext();
             if(nowInstr instanceof ObjMove objMove){
@@ -107,25 +111,24 @@ public class Peephole implements Pass.ObjPass{
                 }
             }
         }
-    }
+
     /* j aaa
        aaa:  => null
      */
-    private void uselessJump(ObjBlock objBlock, IList.INode<ObjBlock,ObjFunction> nextBlock){
-        for(IList.INode<ObjInstr,ObjBlock> instNode: objBlock.getInstrs()){
+    private void uselessJump(IList.INode<ObjInstr, ObjBlock> instNode, IList.INode<ObjBlock,ObjFunction> nextBlock){
             ObjInstr nowInstr=instNode.getValue();
             if(nowInstr instanceof ObjBranch objBranch){
                 if(nextBlock!=null && !(objBranch.getCondType()) && objBranch.getTarget().equals(nextBlock.getValue())){
                     instNode.removeFromList();
                 }
             }
-        }
+
     }
     /* store a, c(d)   store a, c(d)
        load b, c(d) => mov b, a
      */
-    private void uselessMemory(ObjBlock objBlock){
-        for(IList.INode<ObjInstr,ObjBlock> instNode: objBlock.getInstrs()){
+    private void uselessMemory(IList.INode<ObjInstr, ObjBlock> instNode){
+
             ObjInstr nowInstr=instNode.getValue();
             IList.INode<ObjInstr,ObjBlock> nextNode=instNode.getNext();
             if(nextNode!=null &&nowInstr instanceof ObjStore objStore &&nextNode.getValue() instanceof ObjLoad objLoad){
@@ -137,6 +140,31 @@ public class Peephole implements Pass.ObjPass{
                 }
             }
         }
-    }
 
+    private HashMap<HashMap<ObjInstr, ObjInstr>,HashMap<ObjReg, ObjInstr>> initDataFlow(ObjBlock objBlock){
+        HashMap<ObjInstr, ObjInstr> write2read = new HashMap<>();
+        HashMap<ObjReg, ObjInstr> changeReg = new HashMap<>();
+        for(IList.INode<ObjInstr, ObjBlock> instNode : objBlock.getInstrs()){
+            ObjInstr nowInstr=instNode.getValue();
+            ArrayList<ObjReg> writeReg=nowInstr.getWriteRegs();
+            ArrayList<ObjReg> readReg=nowInstr.getReadRegs();
+            if(nowInstr instanceof ObjBranch || nowInstr instanceof ObjCall || nowInstr instanceof ObjRet || nowInstr instanceof ObjStore){
+                write2read.put(nowInstr,nowInstr);
+            }
+            for(ObjReg reg : writeReg){
+                    changeReg.put(reg,nowInstr);
+            }
+            for(ObjReg reg : readReg){
+                if(changeReg.containsKey(reg)){
+                    write2read.put(changeReg.get(reg),nowInstr);
+                }
+            }
+        }
+        HashMap <HashMap<ObjInstr, ObjInstr>,HashMap<ObjReg, ObjInstr>>  dataFlow=new HashMap<>();
+        dataFlow.put(write2read,changeReg);
+        return dataFlow;
+    }
+    private void dataflow(ObjFunction objFunction){
+
+    }
 }

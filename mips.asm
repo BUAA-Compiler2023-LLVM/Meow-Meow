@@ -7,10 +7,8 @@ A:
 
 add:
 b0:
-	  addi	$sp,	$sp,	0
 	fcvt.d.w	vrf4,	$a1
 	move	vr0,	$a0
-	   j	b1
 b1:
 	flw	vrf0,	0(A)
 	  li	vrf1,	1061997773
