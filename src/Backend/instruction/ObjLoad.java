@@ -10,6 +10,11 @@ public class ObjLoad extends ObjInstr {
         setAddr(addr);
         setOffset(offset);
     }
+    public ObjLoad(ObjOperand dst, ObjOperand addr) {
+        setDst(dst);
+        setAddr(addr);
+        isLa=true;
+    }
     public void setDst(ObjOperand dst) {
         addDefReg(this.dst, dst);
         this.dst = dst;
@@ -22,6 +27,7 @@ public class ObjLoad extends ObjInstr {
         addUseReg(this.offset, offset);
         this.offset = offset;
     }
+    public boolean isLa=false;
 
     public ObjOperand getAddr() { return addr; }
     public ObjOperand getOffset() { return offset; }
@@ -33,7 +39,7 @@ public class ObjLoad extends ObjInstr {
             setDst(newReg);
         if (addr.equals(oldReg))
             setAddr(newReg);
-        if (offset.equals(oldReg))
+        if (offset!=null && offset.equals(oldReg))
             setOffset(newReg);
     }
 
@@ -41,15 +47,25 @@ public class ObjLoad extends ObjInstr {
     public void replaceUseReg(ObjOperand oldReg, ObjOperand newReg) {
         if (addr.equals(oldReg))
             setAddr(newReg);
-        if (offset.equals(oldReg))
+        if (offset!=null && offset.equals(oldReg))
             setOffset(newReg);
     }
 
     @Override
     public String toString() {
-        String output = "lw\t" + dst + ",\t" + offset + "(" + addr + ")";
-        if(dst instanceof ObjFVirReg)
-            output = "f" + output;
+        String output;
+        if(!isLa)
+        {
+           output = "lw\t" + dst + ",\t" + offset + "(" + addr + ")";
+            if(dst instanceof ObjFVirReg)
+                output = "f" + output;
+        }
+        else
+        {
+          output = "la\t" + dst + ",\t"  + addr ;
+            if(dst instanceof ObjFVirReg)
+                output = "f" + output;
+        }
         return output;
     }
 }

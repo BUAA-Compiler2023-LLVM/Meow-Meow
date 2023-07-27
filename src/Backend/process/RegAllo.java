@@ -3,10 +3,7 @@ package Backend.process;
 import Backend.component.ObjBlock;
 import Backend.component.ObjFunction;
 import Backend.component.ObjModule;
-import Backend.instruction.ObjInstr;
-import Backend.instruction.ObjLoad;
-import Backend.instruction.ObjMove;
-import Backend.instruction.ObjStore;
+import Backend.instruction.*;
 import Backend.operand.*;
 import IR.Value.BasicBlock;
 import IR.Value.Const;
@@ -21,12 +18,15 @@ import java.util.HashMap;
 import java.util.HashSet;
 import java.util.Stack;
 
+import static Backend.operand.ObjPhyReg.AllRegs;
 import static Backend.operand.ObjPhyReg.SP;
 
 public class RegAllo {
 	private final ObjModule objModule;
 
-	private final int K = 32;
+	private final int K = 19;
+	//t0-t6 && s0-s11 一共19个能分配的
+	private boolean printLiveVar=false;
 
 	private HashSet<ObjOperand> initials = new HashSet<>();
 	/**
@@ -53,7 +53,7 @@ public class RegAllo {
 	/**
 	 * 当一条传送指令 (u,v) 被合并，且 v 已经被放入 coalescedNodes 中，alias(v) = u
 	 */
-	private HashMap<ObjOperand, ObjOperand> alias=new HashMap<>();
+	private HashMap<ObjOperand, ObjOperand> alias = new HashMap<>();
 	/**
 	 * 本轮中要被溢出的节点的集合
 	 */
@@ -125,7 +125,7 @@ public class RegAllo {
 		frozenMoves = new HashSet<>();
 		degree = new HashMap<>();
 		color = new HashMap<>();
-		alias=new HashMap<>();
+		alias = new HashMap<>();
 	}
 
 	private void GetDefUse() {
@@ -138,7 +138,9 @@ public class RegAllo {
 				bb.getValue().LocalInterfere.clear();
 				for (IList.INode<ObjInstr, ObjBlock> inst : bb.getValue().getInstrs()) {
 					for (ObjReg r : inst.getValue().regUse) {
-						if (!r.isPrecolored()) {
+						if (r instanceof  ObjVirReg)
+							//if (!r.isPrecolored())
+						{
 							initials.add(r);
 							loopDepths.put(r, 0);
 							degree.put(r, 0);
@@ -146,19 +148,19 @@ public class RegAllo {
 							moveList.put(r, new HashSet<>());
 						}
 
-						if (!bb.getValue().Use.contains(r)) {
+						if (!bb.getValue().Use.contains(r) &&r instanceof  ObjVirReg) {//
 							bb.getValue().Use.add(r);
 						}
 					}
 					for (ObjReg r : inst.getValue().regDef) {
-						if (!r.isPrecolored()) {
+						if (r instanceof  ObjVirReg) {
 							initials.add(r);
 							loopDepths.put(r, 0);
 							degree.put(r, 0);
 							adjList.put(r, new HashSet<>());
 							moveList.put(r, new HashSet<>());
 						}
-						if (!bb.getValue().Use.contains(r) && !bb.getValue().Def.contains(r)) {
+						if (!bb.getValue().Use.contains(r) && !bb.getValue().Def.contains(r) && r instanceof  ObjVirReg) {
 							bb.getValue().Def.add(r);
 						}
 					}
@@ -226,22 +228,30 @@ public class RegAllo {
 				ArrayList<ObjReg> tmpout = bb.getValue().liveOuts;
 				while (tmpinst != null) {
 					if (tmpinst.getValue() instanceof ObjMove) {
-						worklistMoves.add((ObjMove) tmpinst.getValue());
-						for (ObjReg o : tmpinst.getValue().regDef) {
-							if (!moveList.containsKey(o)) moveList.put(o, new HashSet<>());
-							moveList.get(o).add((ObjMove) tmpinst.getValue());
+						//只有双方都不是物理寄存器的，才放move里
+						if (((ObjMove) tmpinst.getValue()).getDst() instanceof ObjVirReg && ((ObjMove) tmpinst.getValue()).getSrc()  instanceof ObjVirReg) {
+							worklistMoves.add((ObjMove) tmpinst.getValue());
+							for (ObjReg o : tmpinst.getValue().regDef) {
+								if (!moveList.containsKey(o)) moveList.put(o, new HashSet<>());
+								moveList.get(o).add((ObjMove) tmpinst.getValue());
+							}
+							for (ObjReg o : tmpinst.getValue().regUse) {
+								if (!moveList.containsKey(o)) moveList.put(o, new HashSet<>());
+								moveList.get(o).add((ObjMove) tmpinst.getValue());
+							}
 						}
-						for (ObjReg o : tmpinst.getValue().regUse) {
-							if (!moveList.containsKey(o)) moveList.put(o, new HashSet<>());
-							moveList.get(o).add((ObjMove) tmpinst.getValue());
-						}
+
 					}
 					if (tmpinst.getPrev() == null) break;
 					ArrayList<ObjReg> tmpin = new ArrayList<>();
 					ObjInstr ins = tmpinst.getValue();
 					tmpin.addAll(tmpout);
 					tmpin.removeIf(ins.regDef::contains);
-					tmpin.addAll(ins.regUse);
+					//tmpin.addAll(ins.regUse);
+					for (ObjReg x : ins.regUse) {
+						if (x instanceof  ObjVirReg)
+							tmpin.add(x);
+					}
 					bb.getValue().LocalInterfere.add(tmpin);
 					tmpout = tmpin;
 					tmpinst = tmpinst.getPrev();
@@ -271,7 +281,7 @@ public class RegAllo {
 				for (ArrayList<ObjReg> x : bb.getValue().LocalInterfere) {
 					int len1 = x.size();
 					for (int i = 0; i < len1; i++) {
-						for (int j = i + 1; j < len; j++) {
+						for (int j = i + 1; j < len1; j++) {
 							AddEdge(x.get(i), x.get(j));
 						}
 					}
@@ -317,6 +327,7 @@ public class RegAllo {
 
 	private HashSet<ObjOperand> Adjacent(ObjOperand x) {
 		//冲突图中的相邻的点
+
 		HashSet<ObjOperand> ret = new HashSet<>(adjList.get(x));
 		for (ObjOperand i : selectStack)
 		//启发式图着色过程中暂时删掉的点的栈
@@ -345,6 +356,12 @@ public class RegAllo {
 	public void process() {
 		init();
 		LivenessAnalysis();
+		if(printLiveVar)
+		for (ObjFunction func : objModule.getFunctions()) {
+			for (IList.INode<ObjBlock, ObjFunction> bb : func.getObjBlocks()) {
+				bb.getValue().printBbDetail();
+			}
+		}
 		Build();
 		MakeWorkList();
 		while (!(simplifyWorklist.isEmpty() && worklistMoves.isEmpty() && freezeWorklist.isEmpty() && spillWorklist.isEmpty())) {
@@ -355,18 +372,47 @@ public class RegAllo {
 		}
 		AssignColors();
 		if (spilledNodes.size() != 0) {
+			System.out.println("**REAL SPILL**");
 			RewriteProgram();
 			process();
 		}
 	}
 
 	public void allocate() {
-		for(HashMap.Entry<ObjOperand, Integer> entry : color.entrySet()){
-			ObjOperand key= entry.getKey();
-			int val= entry.getValue();
-			key.color=val;
+		for (HashMap.Entry<ObjOperand, Integer> entry : color.entrySet()) {
+			ObjOperand key = entry.getKey();
+			int val = entry.getValue();
+			key.color = val;
+			System.out.println(key + " -> "+ ObjPhyReg.indexToName.get(color.get(key)) );
 		}
+		for (ObjFunction func : objModule.getFunctions()) {
 
+			for (IList.INode<ObjBlock, ObjFunction> bb : func.getObjBlocks()) {
+				for (IList.INode<ObjInstr, ObjBlock> inst : bb.getValue().getInstrs()) {
+					for (HashMap.Entry<ObjOperand, Integer> entry : color.entrySet()) {
+						ObjOperand key = entry.getKey();
+						int val = entry.getValue();
+						key.color = val;
+						inst.getValue().replaceReg(key, AllRegs.get(val));
+					}
+				}
+			}
+		}
+		ArrayList<ObjInstr> toberemoved= new ArrayList<>();
+		for (ObjFunction func : objModule.getFunctions()) {
+			for (IList.INode<ObjBlock, ObjFunction> bb : func.getObjBlocks()) {
+				for (IList.INode<ObjInstr, ObjBlock> inst : bb.getValue().getInstrs()) {
+					if(inst.getValue() instanceof  ObjMove && ((ObjMove) inst.getValue()).getDst().equals(((ObjMove) inst.getValue()).getSrc()))
+					{
+						toberemoved.add(inst.getValue());
+					}
+				}
+			}
+		}
+		for(ObjInstr i : toberemoved)
+		{
+			i.getNode().removeFromList();
+		}
 	}
 
 	private void RewriteProgram() {
@@ -381,8 +427,16 @@ public class RegAllo {
 						if (spilledNodes.contains(x)) {
 							needrewrite.add(inst.getValue());
 							if (x.spillPlace == -1) {
+								System.out.println("SPILL "+x);
 								x.spillPlace = nowoffset;
 								nowoffset += 4;
+								func.addAllocaSize(4);
+								ObjInstr spplus= func.getFirstBlock().getInstrs().getHead().getValue();
+								ObjInstr spplus1= func.getBbExit().getInstrs().getTail().getPrev().getValue();
+								assert spplus instanceof ObjBinary;
+								assert spplus1 instanceof ObjBinary;
+								((ObjBinary)spplus).setSrc2(new ObjImm12(-nowoffset));
+								((ObjBinary)spplus1).setSrc2(new ObjImm12(nowoffset));
 							}
 						}
 					}
@@ -424,7 +478,10 @@ public class RegAllo {
 		while (!selectStack.empty()) {
 			ObjOperand n = selectStack.pop();
 			HashSet<Integer> okColors = new HashSet<>();
-			for (int i = 0; i < K; i++) {
+			for (int i = 5; i <=9; i++) {
+				okColors.add(i);
+			}
+			for (int i = 18; i <=31; i++) {
 				okColors.add(i);
 			}
 			for (ObjOperand w : adjList.get(n)) {
@@ -455,11 +512,10 @@ public class RegAllo {
 	}
 
 	private void Freeze() {
-		for (ObjOperand u : freezeWorklist) {
-			freezeWorklist.remove(u);
-			simplifyWorklist.add(u);
-			FreezeMoves(u);
-		}
+		ObjOperand u = freezeWorklist.iterator().next();
+		freezeWorklist.remove(u);
+		simplifyWorklist.add(u);
+		FreezeMoves(u);
 	}
 
 	private void FreezeMoves(ObjOperand u) {
@@ -483,7 +539,9 @@ public class RegAllo {
 	}
 
 	private void Coalesce() {
+		HashSet <ObjMove> toberemoved= new HashSet<>();
 		for (ObjMove m : worklistMoves) {
+
 			ObjOperand x = GetAlias(m.getSrc());
 			ObjOperand y = GetAlias(m.getDst());//
 			ObjOperand u, v;
@@ -494,7 +552,8 @@ public class RegAllo {
 				u = x;
 				v = y;
 			}
-			worklistMoves.remove(m);
+//			worklistMoves.remove(m);
+			toberemoved.add(m);
 			if (u.equals(v)) {
 				coalescedMoves.add(m);
 				AddWorkList(u);
@@ -502,13 +561,16 @@ public class RegAllo {
 				constrainedMoves.add(m);
 				AddWorkList(u);
 				AddWorkList(v);
-			} else {
+			} else {//v一定没有预着色，u可能有预着色
 				boolean ok = true;
 				for (ObjOperand t : Adjacent(v)) {
 					if (!OK(t, u)) ok = false;
 				}
-				HashSet<ObjOperand> tmp = new HashSet<>(Adjacent(u));
-				tmp.addAll(Adjacent(v));
+				HashSet<ObjOperand> tmp = new HashSet<>();
+				if (!u.isPrecolored()) {
+					tmp.addAll(Adjacent(u));
+					tmp.addAll(Adjacent(v));
+				}
 				if (u.isPrecolored() && ok || !u.isPrecolored() && Conservative(tmp)) {
 					coalescedMoves.add(m);
 					Combine(u, v);
@@ -518,6 +580,10 @@ public class RegAllo {
 				}
 			}
 
+		}
+		for(ObjMove m : toberemoved)
+		{
+			worklistMoves.remove(m);
 		}
 
 	}
@@ -540,6 +606,7 @@ public class RegAllo {
 			AddEdge(t, u);
 			DecrementDegree(t);
 		}
+
 		if (degree.get(u) >= K && freezeWorklist.contains(u)) {
 			freezeWorklist.remove(u);
 			spillWorklist.add(u);
@@ -576,12 +643,12 @@ public class RegAllo {
 
 	private void Simplify() {
 		//冲突图里全是低度数传送无关点，需要一个个放到栈里删掉
-		for (ObjOperand n : simplifyWorklist) {
-			simplifyWorklist.remove(n);
-			selectStack.push(n);
-			for (ObjOperand m : Adjacent(n)) {
-				DecrementDegree(m);
-			}
+
+		ObjOperand n = simplifyWorklist.iterator().next();
+		simplifyWorklist.remove(n);
+		selectStack.push(n);
+		for (ObjOperand m : Adjacent(n)) {
+			DecrementDegree(m);
 		}
 	}
 

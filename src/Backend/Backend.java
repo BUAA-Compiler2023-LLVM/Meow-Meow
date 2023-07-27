@@ -12,9 +12,7 @@ public class Backend {
     public Backend(IRModule irModule) {
         IrParser irParser = new IrParser(irModule);
         this.objModule = irParser.parseModule();
-//        RegAllo ar=new RegAllo(objModule);
-//        ar.operandMap1=irParser.operandMap1;
-//        ar.process();
+
     }
     public ObjModule getModule() {
         return objModule;

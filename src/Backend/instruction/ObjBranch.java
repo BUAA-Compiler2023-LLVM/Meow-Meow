@@ -28,7 +28,7 @@ public class ObjBranch extends ObjInstr{
     @Override
     public void replaceReg(ObjOperand oldReg, ObjOperand newReg) {
         if(src != null && src.equals(oldReg))
-            setSrc(src);
+            setSrc(newReg);
     }
     @Override
     public void replaceUseReg(ObjOperand oldReg, ObjOperand newReg) {
@@ -50,7 +50,7 @@ public class ObjBranch extends ObjInstr{
             if(condType)
                 s = "beqz\t";
             else s = "bnez\t";
-            return s + src + "\t" + target.getName();
+            return s + src + ",\t" + target.getName();
         }
         else return "   j\t" + target.getName();
     }

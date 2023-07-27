@@ -6,9 +6,10 @@ import java.util.HashSet;
 import java.util.Map;
 
 public class ObjPhyReg extends ObjReg {
-    private final static HashMap<Integer, String> indexToName = new HashMap<>();
+    public final static HashMap<Integer, String> indexToName = new HashMap<>();
     private final static HashMap<String, Integer> nameToIndex = new HashMap<>();
     public final static ArrayList<ObjPhyReg> A = new ArrayList<>();
+    public final static ArrayList<ObjPhyReg> AllRegs = new ArrayList<>();
 
     static {
         indexToName.put(0, "zero");
@@ -19,7 +20,7 @@ public class ObjPhyReg extends ObjReg {
         indexToName.put(5, "t0");
         indexToName.put(6, "t1");
         indexToName.put(7, "t2");
-        indexToName.put(8, "fp");
+        indexToName.put(8, "s0");
         indexToName.put(9, "s1");
 
 
@@ -36,13 +37,43 @@ public class ObjPhyReg extends ObjReg {
         for (Map.Entry<Integer, String> entry : indexToName.entrySet())
             nameToIndex.put(entry.getValue(), entry.getKey());
 
-        for (int i = 0; i < 8; i ++)
-            A.add(new ObjPhyReg("a" + String.valueOf(i)));
+//        for (int i = 0; i < 8; i ++)
+//        {
+//            ObjPhyReg opr= new ObjPhyReg("a" + String.valueOf(i));
+//            A.add(opr);
+//        }
+
     }
     public final static ObjPhyReg ZERO = new ObjPhyReg("zero");
     // public final static ObjPhyReg A0 = new ObjPhyReg("a0");
     public final static ObjPhyReg SP = new ObjPhyReg("sp");
     public final static ObjPhyReg RA = new ObjPhyReg("ra");
+    static{
+        AllRegs.add(ZERO);
+        AllRegs.add(RA);
+        AllRegs.add(SP);
+        AllRegs.add(new ObjPhyReg("gp"));
+        AllRegs.add(new ObjPhyReg("tp"));
+        AllRegs.add(new ObjPhyReg("t0"));
+        AllRegs.add(new ObjPhyReg("t1"));
+        AllRegs.add(new ObjPhyReg("t2"));
+        AllRegs.add(new ObjPhyReg("s0"));
+        AllRegs.add(new ObjPhyReg("s1"));
+
+        for(int i = 0; i <= 7 ; i ++)
+        {
+            ObjPhyReg opr= new ObjPhyReg("a" + String.valueOf(i));
+            AllRegs.add(opr);
+            A.add(opr);
+        }
+
+        for(int i = 18; i <= 27; i ++)
+            AllRegs.add(new ObjPhyReg("s" + String.valueOf(i - 16)));
+
+        for(int i = 28; i <= 31; i ++)
+            AllRegs.add(new ObjPhyReg("t" + String.valueOf(i - 25)));
+
+    }
     private final int index;
     private final String name;
     private boolean isAllocated;
@@ -72,6 +103,6 @@ public class ObjPhyReg extends ObjReg {
 
     @Override
     public String toString() {
-        return "$" + name;
+        return  name;
     }
 }

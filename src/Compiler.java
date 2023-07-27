@@ -23,7 +23,6 @@ public class Compiler {
         passManager.runIRPasses(irModule);
 
         IRDump.DumpModule(irModule, "llvm.ll");
-        IRDump.DumpModule(irModule,"not_removed_phi.ll");
 
         RemovePhi rmp=new RemovePhi();
         rmp.run(irModule);
@@ -31,6 +30,11 @@ public class Compiler {
         IRDump.DumpModule(irModule,"removed_phi.ll");
 
         Backend backend = new Backend(irModule);
-        RISC_Dump.DumpBackend(backend);
+        RISC_Dump.DumpBackend(backend,"not_alloc_reg.asm");
+
+        RegAllo ar=new RegAllo(backend.getModule());
+        ar.process();
+        ar.allocate();
+        RISC_Dump.DumpBackend(backend,"alloc_reg.asm");
     }
 }

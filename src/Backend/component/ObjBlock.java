@@ -2,7 +2,9 @@ package Backend.component;
 
 import Backend.instruction.ObjInstr;
 import Backend.operand.ObjReg;
+import IR.Value.BasicBlock;
 import IR.Value.Function;
+import IR.Value.Instructions.Instruction;
 import IR.Value.Value;
 import Utils.DataStruct.IList;
 
@@ -52,7 +54,37 @@ public class ObjBlock {
     public ObjBlock getFalseBlock() {
         return falseBlock;
     }
-
+    public void printBbDetail()
+    {
+        System.out.println("===========");
+        System.out.println("\t"+this.getName());
+        System.out.print("PREV:   [");
+        for(ObjBlock o :this.getPreBlocks())
+        {
+            System.out.print(o.getName()+", ");
+        }
+        System.out.println("]");
+        System.out.print("NEXT:   [");
+        for(ObjBlock o :this.getNxtBlocks())
+        {
+            System.out.print(o.getName()+", ");
+        }
+        System.out.println("]");
+        for( IList.INode<ObjInstr, ObjBlock> inst : this.instrs)
+        {
+            System.out.println(inst.getValue().toString());
+        }
+        System.out.println("DEF:    "+Def);
+        System.out.println("USE:    "+Use);
+        System.out.println("IN:    "+liveIns);
+        System.out.println("OUT:    "+liveOuts);
+        System.out.println("LOCAL INTERF");
+        for(ArrayList<ObjReg> x : LocalInterfere)
+        {
+            System.out.println(x);
+        }
+        System.out.println("===========");
+    }
     public void setTrueBlock(ObjBlock trueBlock) {
         this.trueBlock = trueBlock;
     }
