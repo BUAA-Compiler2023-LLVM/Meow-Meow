@@ -4,9 +4,11 @@ import Backend.operand.ObjFVirReg;
 import Backend.operand.ObjOperand;
 
 public class ObjStore extends ObjInstr {
+    private String type;
     private ObjOperand src, addr, offset;
 
-    public ObjStore(ObjOperand src, ObjOperand addr, ObjOperand offset) {
+    public ObjStore(ObjOperand src, ObjOperand addr, ObjOperand offset, String ty) {
+        type = ty;
         setSrc(src);
         setAddr(addr);
         setOffset(offset);
@@ -49,9 +51,9 @@ public class ObjStore extends ObjInstr {
 
     @Override
     public String toString() {
-        String output = "sw\t" + src + ",\t" + offset + "(" + addr + ")";
+        String output = type + "\t" + src + ",\t" + offset + "(" + addr + ")";
         if(src instanceof ObjFVirReg)
-            output = "s" + output;
+            output = "f" + output;
         return output;
     }
 }

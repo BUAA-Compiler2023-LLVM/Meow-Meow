@@ -4,17 +4,22 @@ import Backend.operand.ObjFVirReg;
 import Backend.operand.ObjOperand;
 
 public class ObjLoad extends ObjInstr {
+    private String type;
     private ObjOperand dst, addr, offset;
-    public ObjLoad(ObjOperand dst, ObjOperand addr, ObjOperand offset) {
+
+    public ObjLoad(ObjOperand dst, ObjOperand addr, ObjOperand offset, String ty) {
+        type = ty;
         setDst(dst);
         setAddr(addr);
         setOffset(offset);
     }
-    public ObjLoad(ObjOperand dst, ObjOperand addr) {
+    public ObjLoad(ObjOperand dst, ObjOperand addr, String ty) {
+        type = ty;
         setDst(dst);
         setAddr(addr);
         isLa=true;
     }
+
     public void setDst(ObjOperand dst) {
         addDefReg(this.dst, dst);
         this.dst = dst;
@@ -56,7 +61,7 @@ public class ObjLoad extends ObjInstr {
         String output;
         if(!isLa)
         {
-           output = "lw\t" + dst + ",\t" + offset + "(" + addr + ")";
+           output = type + "\t" + dst + ",\t" + offset + "(" + addr + ")";
             if(dst instanceof ObjFVirReg)
                 output = "f" + output;
         }

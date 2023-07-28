@@ -19,16 +19,27 @@ public class PassManager {
     ArrayList<IRPass> irPasses = new ArrayList<>();
     ArrayList<ObjPass> objPasses = new ArrayList<>();
 
+
+    /*
+    * 一些irPass顺序的想法：
+    * 1. ConstFold要在InstComb之前
+    * 2. GlobalValueLocalize必须最先做
+    * 3. MergeBb必须在Mem2reg前
+    * 4. FuncInLine尽量靠前
+    * ...
+    *
+    * */
     private PassManager(){
         //  这里放入所有pass,控制pass的顺序
         irPasses.add(new GlobalValueLocalize());
         irPasses.add(new MergeBB());
         irPasses.add(new Mem2Reg());
+        irPasses.add(new FuncInLine());
+        irPasses.add(new ConstFold());
         irPasses.add(new InstComb());
-//        irPasses.add(new DCE());
-//        irPasses.add(new FuncInLine());
-//        irPasses.add(new PeepHole());
-//        irPasses.add(new ConstFold());
+        irPasses.add(new DCE());
+        irPasses.add(new PeepHole());
+
 //        irPasses.add(new GVN());
         objPasses.add(new Peephole());
 

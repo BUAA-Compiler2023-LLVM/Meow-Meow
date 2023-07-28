@@ -13,30 +13,14 @@ declare void @putch(i32)
 declare float @getfloat()
 declare i32 @parallel_start()
 declare void @parallel_end(i32)
-@A = global float 5.5
-define float @add(i32 %0, float %1) {
-b0:
-	br label %b1
-b1:
-	%2 = load float, float* @A
-	%3 = fadd float %2, 0x3fe99999a0000000
-	store float %3, float* @A
-	%4 = sitofp i32 %0 to float
-	%5 = fadd float %4, %1
-	%6 = load float, float* @A
-	%7 = fadd float %5, %6
-	ret float %7
-}
-
+@g = global [4 x i32] [i32 1, i32 2, i32 3, i32 4]
 define i32 @main() {
 b0:
-	%0 = call i32 @getint()
-	%1 = sitofp i32 5 to float
-	%2 = call float @add(i32 %0, float %1)
-	%3 = sitofp i32 %0 to float
-	%4 = fadd float %3, %2
-	call void @putint(float %4)
-	%5 = fptosi float %4 to i32
-	ret i32 %5
+	%0 = getelementptr [4 x i32], [4 x i32]* @g, i32 0, i32 1
+	%1 = load i32, i32* %0
+	%2 = sdiv i32 %1, 2
+	%3 = mul i32 18, %2
+	call void @putint(i32 %3)
+	ret i32 %3
 }
 

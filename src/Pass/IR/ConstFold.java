@@ -139,19 +139,19 @@ public class ConstFold implements Pass.IRPass {
 
     private Value simplifyBinaryInst(BinaryInst binaryInst, int rec){
         OP op = binaryInst.getOp();
-        if(op == OP.Add){
+        if(op == OP.Add || op == OP.Fadd){
             return simplifyAddInst(binaryInst, rec);
         }
-        else if(op == OP.Sub){
+        else if(op == OP.Sub || op == OP.Fsub){
             return simplifySubInst(binaryInst, rec);
         }
-        else if(op == OP.Mul){
+        else if(op == OP.Mul || op == OP.Fmul){
             return simplifyMulInst(binaryInst, rec);
         }
-        else if(op == OP.Div){
+        else if(op == OP.Div || op == OP.Fdiv){
             return simplifyDivInst(binaryInst, rec);
         }
-        else if(op == OP.Mod){
+        else if(op == OP.Mod || op == OP.Fmod){
             return simplifyModInst(binaryInst, rec);
         }
         else return binaryInst;
