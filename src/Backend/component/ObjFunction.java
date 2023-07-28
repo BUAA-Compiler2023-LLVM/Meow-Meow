@@ -68,7 +68,10 @@ public class ObjFunction {
     }
     public int getArgsSize() { return argsSize; }
     public int getStackSize() {
-        return Rsize + argsSize + allocaSize;
+        int size = Rsize + argsSize + allocaSize;
+        if(size % 8 != 0)
+            size += 4;
+        return size;
     }
 
     public void print() {

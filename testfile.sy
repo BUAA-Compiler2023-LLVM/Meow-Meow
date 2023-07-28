@@ -1,12 +1,5 @@
-int g[4] = {1, 2, 3, 4};
+
 int main(){
-    int a, b, c, d;
-    a = g[0];
-    b = g[1];
-    c = g[2];
-    d = g[3];
-    b = a / 2;
-    c = 3 * b;
-    d = 6 * c;
-    return d;
+    int g[1] = {1};
+    return 0;
 }
