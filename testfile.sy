@@ -1,10 +1,12 @@
+int g[4] = {1, 2, 3, 4};
 int main(){
-    float a = 1;
-    float b = 2;
-    float c = 3;
-    float d = 4;
-    b = a + 2;
-    c = b + 1;
-    d = c + 1;
+    int a, b, c, d;
+    a = g[1];
+    b = g[2];
+    c = g[3];
+    d = g[4];
+    b = a / 2;
+    c = 3 * b;
+    d = 6 * c;
     return d;
 }
