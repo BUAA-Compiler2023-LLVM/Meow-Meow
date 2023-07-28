@@ -86,7 +86,7 @@ public class IrParser {
 	private void changeFunctionNames() {
 		for (ObjFunction func : objModule.getFunctions()) {
 			for (IList.INode<ObjBlock, ObjFunction> bb : func.getObjBlocks()) {
-				bb.getValue().setName(func.getName()+bb.getValue().getName());
+				bb.getValue().setName(func.getName()+"_"+bb.getValue().getName());
 			}
 		}
 

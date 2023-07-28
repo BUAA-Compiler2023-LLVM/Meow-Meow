@@ -12,6 +12,7 @@ public class ObjInstr {
 
     private IList.INode<ObjInstr, ObjBlock> node;
     public ArrayList<ObjReg> regDef, regUse;
+    public ArrayList<ObjReg> livein=new ArrayList<>();
     public ObjInstr() {
         this.node = new IList.INode<>(this);
         regDef = new ArrayList<>();

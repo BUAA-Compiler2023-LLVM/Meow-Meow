@@ -69,4 +69,9 @@ public class RISC_Dump {
 		DumpObjModle(backend.getModule());
 		out.close();
 	}
+	public static void DumpObjModle(ObjModule objModule, String filename) throws IOException {
+		out = new BufferedWriter(new FileWriter(filename));
+		DumpObjModle(objModule);
+		out.close();
+	}
 }
