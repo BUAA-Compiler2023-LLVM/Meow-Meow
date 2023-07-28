@@ -92,10 +92,14 @@ public class IRDump {
                         //如果是一个需要名字的move指令
                         //需要名字的情况：没有pair，有pair但是之前出现的pair有过名字
                         inst.setName("%" + nowNum++);
-                        if(((Move)inst).pair!=null)
+                        if(((Move)inst).pair.size()!=0)
                         {
-                            ((Move)inst).pair.setName("%" +( nowNum-1));
-                            ((Move)inst).pair.hasname=false;
+                            for(Move x : ((Move)inst).pair)
+                            {
+                                x.setName("%" +( nowNum-1));
+                                x.hasname=false;
+                            }
+
                         }
                     }
                 }else

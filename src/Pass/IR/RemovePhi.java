@@ -81,7 +81,11 @@ public class RemovePhi implements Pass.IRPass {
 							}
 
 						}
-						Move.setpair(pairlist.get(0),pairlist.get(1));
+						for(Move x : pairlist)
+						{
+							x.setpair(pairlist);
+						}
+
 						Move x = new Move(pairlist.get(0),IntegerType.I32);
 						x.getNode().insertBefore(i);
 						i.getValue().replaceUsedWith(x);
