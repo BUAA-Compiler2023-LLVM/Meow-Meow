@@ -5,13 +5,14 @@ import IR.Type.VoidType;
 import IR.Value.BasicBlock;
 import IR.Value.Value;
 
+import java.util.ArrayList;
+
 public class Move extends Instruction{
 	public boolean hasname=true;
-	public Move pair=null;
-	public static void setpair(Move x, Move y)
+	public ArrayList<Move> pair=new ArrayList<>();
+	public void setpair(ArrayList<Move> p)
 	{
-		x.pair=y;
-		y.pair=x;
+		pair=p;
 	}
 
 	public Move(Value src ,Type type) {
