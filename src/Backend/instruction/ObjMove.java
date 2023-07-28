@@ -2,6 +2,7 @@ package Backend.instruction;
 
 import Backend.operand.ObjImm;
 import Backend.operand.ObjImm12;
+import Backend.operand.ObjLabel;
 import Backend.operand.ObjOperand;
 
 public class ObjMove extends ObjInstr{
@@ -42,8 +43,10 @@ public class ObjMove extends ObjInstr{
 
     @Override
     public String toString() {
-        if ((src instanceof ObjImm) || (src instanceof ObjImm12))
-            return "  li\t" + dst + ",\t" + src;
+        if(src instanceof ObjLabel)
+            return "la\t" + dst + ",\t" + src;
+        else if ((src instanceof ObjImm) || (src instanceof ObjImm12))
+            return "li\t" + dst + ",\t" + src;
         return "move\t" + dst + ",\t" + src;
     }
 }

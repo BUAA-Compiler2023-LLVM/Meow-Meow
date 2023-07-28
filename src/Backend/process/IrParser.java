@@ -313,7 +313,8 @@ public class IrParser {
 				parseShl((BinaryInst) irInst, irBlock, irFunction);
 			if (irInst.getOp() == OP.Shr)
 				parseShr((BinaryInst) irInst, irBlock, irFunction);
-		} else if (irInst instanceof BrInst)
+		}
+		else if (irInst instanceof BrInst)
 			parseBr((BrInst) irInst, irBlock, irFunction);
 		else if (irInst instanceof CallInst)
 			parseCall((CallInst) irInst, irBlock, irFunction);

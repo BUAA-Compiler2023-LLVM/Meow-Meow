@@ -16,7 +16,7 @@ declare void @parallel_end(i32)
 @g = global [4 x i32] [i32 1, i32 2, i32 3, i32 4]
 define i32 @main() {
 b0:
-	%0 = getelementptr [4 x i32], [4 x i32]* @g, i32 0, i32 1
+	%0 = getelementptr [4 x i32], [4 x i32]* @g, i32 0, i32 0
 	%1 = load i32, i32* %0
 	%2 = sdiv i32 %1, 2
 	%3 = mul i32 18, %2

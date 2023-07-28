@@ -20,16 +20,16 @@ b0:
 	%1 = alloca i32
 	%2 = alloca i32
 	%3 = alloca i32
-	%4 = getelementptr [4 x i32], [4 x i32]* @g, i32 0, i32 1
+	%4 = getelementptr [4 x i32], [4 x i32]* @g, i32 0, i32 0
 	%5 = load i32, i32* %4
 	store i32 %5, i32* %0
-	%6 = getelementptr [4 x i32], [4 x i32]* @g, i32 0, i32 2
+	%6 = getelementptr [4 x i32], [4 x i32]* @g, i32 0, i32 1
 	%7 = load i32, i32* %6
 	store i32 %7, i32* %1
-	%8 = getelementptr [4 x i32], [4 x i32]* @g, i32 0, i32 3
+	%8 = getelementptr [4 x i32], [4 x i32]* @g, i32 0, i32 2
 	%9 = load i32, i32* %8
 	store i32 %9, i32* %2
-	%10 = getelementptr [4 x i32], [4 x i32]* @g, i32 0, i32 4
+	%10 = getelementptr [4 x i32], [4 x i32]* @g, i32 0, i32 3
 	%11 = load i32, i32* %10
 	store i32 %11, i32* %3
 	%12 = load i32, i32* %0
