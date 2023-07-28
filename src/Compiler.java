@@ -31,12 +31,12 @@ public class Compiler {
         IRDump.DumpModule(irModule,"removed_phi.ll");
 
         Backend backend = new Backend(irModule);
-        passManager.runObjPasses(backend.getModule());
+        // passManager.runObjPasses(backend.getModule());
         RISC_Dump.DumpBackend(backend,"mips.asm");
-//
-//        RegAllo ar=new RegAllo(backend.getModule());
-//        ar.process();
-//        ar.allocate();
-//        RISC_Dump.DumpBackend(backend,"alloc_reg.asm");
+
+        RegAllo ar=new RegAllo(backend.getModule());
+        ar.process();
+        ar.allocate();
+        RISC_Dump.DumpBackend(backend,"alloc_reg.asm");
     }
 }
