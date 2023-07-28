@@ -13,14 +13,14 @@ declare void @putch(i32)
 declare float @getfloat()
 declare i32 @parallel_start()
 declare void @parallel_end(i32)
-@g = global [4 x i32] [i32 1, i32 2, i32 3, i32 4]
 define i32 @main() {
 b0:
-	%0 = getelementptr [4 x i32], [4 x i32]* @g, i32 0, i32 0
-	%1 = load i32, i32* %0
-	%2 = sdiv i32 %1, 2
-	%3 = mul i32 18, %2
-	call void @putint(i32 %3)
-	ret i32 %3
+	%0 = alloca [1 x i32]
+	%1 = getelementptr [1 x i32], [1 x i32]* %0, i32 0, i32 0
+	call void @memset(i32* %1, i32 0, i32 4)
+	%2 = getelementptr [1 x i32], [1 x i32]* %0, i32 0, i32 0
+	store i32 1, i32* %2
+	call void @putint(i32 0)
+	ret i32 0
 }
 
