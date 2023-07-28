@@ -60,7 +60,7 @@ public class ObjFunction {
         allocaSize += size;
     }
     public int getAllocaSize() { return allocaSize; }
-    public void setRsize() { Rsize = 4; }
+    public void setRsize() { Rsize = 8; }
     public int getRsize() { return Rsize; }
     public void setArgsSize(int size) {
         if(size > argsSize)
