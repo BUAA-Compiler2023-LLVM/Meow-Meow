@@ -42,7 +42,7 @@ public class PassManager {
         irPasses.add(new PeepHole());
 
 //        irPasses.add(new GVN());
-        objPasses.add(new Peephole());
+        //objPasses.add(new Peephole());
 
 
     }
