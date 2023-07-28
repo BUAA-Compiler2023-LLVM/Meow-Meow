@@ -239,15 +239,17 @@ public class IrParser {
 			ObjImm12 Imm = new ObjImm12(objF.getStackSize() - 8);
 			ObjStore objStore = new ObjStore(RA, SP, Imm, "sd");
 			objF.getFirstBlock().addInstrHead(objStore);
+
+
+
+			ObjLoad objLoad = new ObjLoad(RA, SP, Imm, "ld");
+			objLoad.getNode().insertBefore(objF.getBbExit().getInstrs().getTail());
 		}
 
 		ObjOperand alloc = parseConstIntOperand(-objF.getStackSize(), 12, f, b);
 		ObjBinary add = ObjBinary.getAdd(ObjPhyReg.SP, ObjPhyReg.SP, alloc);
 		objF.getFirstBlock().addInstrHead(add);
 
-		ObjImm12 Imm = new ObjImm12(-(objF.getStackSize() - 8));
-		ObjLoad objLoad = new ObjLoad(RA, SP, Imm, "ld");
-		objLoad.getNode().insertBefore(objF.getBbExit().getInstrs().getTail());
 
 		ObjOperand alloc1 = parseConstIntOperand(objF.getStackSize(), 12, f, b);
 		ObjBinary add1 = ObjBinary.getAdd(ObjPhyReg.SP, ObjPhyReg.SP, alloc1);
