@@ -230,14 +230,14 @@ public class IrParser {
 			ObjOperand operand = parseOperand(arg, 0, f, b);
 
 			ObjImm12 Imm = new ObjImm12(off + (i - 8) * 4);
-			ObjLoad objLoad = new ObjLoad(operand, SP, Imm);
+			ObjLoad objLoad = new ObjLoad(operand, SP, Imm, "lw");
 			objF.getFirstBlock().addInstrHead(objLoad);
 		}
 
 
 		if (objF.getRsize() > 0) {
-			ObjImm12 Imm = new ObjImm12(objF.getStackSize() - 4);
-			ObjStore objStore = new ObjStore(RA, SP, Imm);
+			ObjImm12 Imm = new ObjImm12(objF.getStackSize() - 8);
+			ObjStore objStore = new ObjStore(RA, SP, Imm, "sd");
 			objF.getFirstBlock().addInstrHead(objStore);
 		}
 
@@ -245,8 +245,8 @@ public class IrParser {
 		ObjBinary add = ObjBinary.getAdd(ObjPhyReg.SP, ObjPhyReg.SP, alloc);
 		objF.getFirstBlock().addInstrHead(add);
 
-		ObjImm12 Imm = new ObjImm12(-(objF.getStackSize() - 4));
-		ObjLoad objLoad = new ObjLoad(RA, SP, Imm);
+		ObjImm12 Imm = new ObjImm12(-(objF.getStackSize() - 8));
+		ObjLoad objLoad = new ObjLoad(RA, SP, Imm, "ld");
 		objLoad.getNode().insertBefore(objF.getBbExit().getInstrs().getTail());
 
 		ObjOperand alloc1 = parseConstIntOperand(objF.getStackSize(), 12, f, b);
@@ -418,7 +418,7 @@ public class IrParser {
 			ObjOperand objOperand = parseOperand(arg, 12, irFunction, irBlock);
 
 			ObjImm12 offset = new ObjImm12((i - 8) * 4);
-			ObjStore objStore = new ObjStore(objOperand, SP, offset);
+			ObjStore objStore = new ObjStore(objOperand, SP, offset, "sw");
 			objBlock.addInstr(objStore);
 		}
 
@@ -839,12 +839,12 @@ public class IrParser {
 		{
 			ObjOperand tmp=genTmpReg(irFunction);
 			ObjOperand addr = parseOperand(irAddr, 0, irFunction, irBlock);
-			ObjLoad objLoad = new ObjLoad(tmp, addr);
+			ObjLoad objLoad = new ObjLoad(tmp, addr, "lw");
 			objBlock.addInstr(objLoad);
 
 			ObjOperand src = parseOperand(inst.getValue(), 0, irFunction, irBlock);
 			ObjOperand offset = new ObjImm12(0);
-			ObjStore objStore = new ObjStore(src, tmp, offset);
+			ObjStore objStore = new ObjStore(src, tmp, offset, "sw");
 			objBlock.addInstr(objStore);
 		}
 		else
@@ -853,7 +853,7 @@ public class IrParser {
 
 			ObjOperand addr = parseOperand(irAddr, 0, irFunction, irBlock);
 			ObjOperand offset = new ObjImm12(0);
-			ObjStore objStore = new ObjStore(src, addr, offset);
+			ObjStore objStore = new ObjStore(src, addr, offset, "sw");
 			objBlock.addInstr(objStore);
 		}
 
@@ -868,18 +868,18 @@ public class IrParser {
 			ObjOperand tmp=genTmpReg(irFunction);
 			ObjOperand dst = parseOperand(inst, 0, irFunction, irBlock);
 			ObjOperand addr = parseOperand(irAddr, 0, irFunction, irBlock);
-			ObjLoad objLoad = new ObjLoad(tmp, addr);
+			ObjLoad objLoad = new ObjLoad(tmp, addr, "lw");
 			objBlock.addInstr(objLoad);
 
 			ObjOperand offset = new ObjImm12(0);
-			ObjLoad objLoad1 = new ObjLoad(dst, tmp,offset);
+			ObjLoad objLoad1 = new ObjLoad(dst, tmp, offset,  "lw");
 			objBlock.addInstr(objLoad1);
 		}else
 		{
 			ObjOperand dst = parseOperand(inst, 0, irFunction, irBlock);
 			ObjOperand addr = parseOperand(irAddr, 0, irFunction, irBlock);
 			ObjOperand offset = new ObjImm12(0);
-			ObjLoad objLoad = new ObjLoad(dst, addr, offset);
+			ObjLoad objLoad = new ObjLoad(dst, addr, offset, "lw");
 			objBlock.addInstr(objLoad);
 		}
 

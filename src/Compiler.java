@@ -25,14 +25,14 @@ public class Compiler {
 
         IRDump.DumpModule(irModule, "llvm.ll");
 
-//        RemovePhi rmp=new RemovePhi();
-//        rmp.run(irModule);
-//
-//        IRDump.DumpModule(irModule,"removed_phi.ll");
-//
-//        Backend backend = new Backend(irModule);
-//        passManager.runObjPasses(backend.getModule());
-//        RISC_Dump.DumpBackend(backend,"not_alloc_reg.asm");
+        RemovePhi rmp=new RemovePhi();
+        rmp.run(irModule);
+
+        IRDump.DumpModule(irModule,"removed_phi.ll");
+
+        Backend backend = new Backend(irModule);
+        passManager.runObjPasses(backend.getModule());
+        RISC_Dump.DumpBackend(backend,"mips.asm");
 //
 //        RegAllo ar=new RegAllo(backend.getModule());
 //        ar.process();

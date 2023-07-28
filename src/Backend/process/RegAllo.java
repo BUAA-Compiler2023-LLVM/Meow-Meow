@@ -448,14 +448,14 @@ public class RegAllo {
 			for (ObjInstr i : needrewrite) {
 				for (ObjOperand x : i.regUse) {
 					if (spilledNodes.contains(x)) {
-						ObjLoad lw = new ObjLoad(x, SP, new ObjImm12(x.spillPlace));
+						ObjLoad lw = new ObjLoad(x, SP, new ObjImm12(x.spillPlace), "ld");
 						lw.getNode().insertBefore(i.getNode());
 					}
 				}
 				for (ObjOperand x : i.regDef) {
 					if (i.regUse.contains(x)) continue;
 					if (spilledNodes.contains(x)) {
-						ObjStore sw = new ObjStore(x, SP, new ObjImm12(x.spillPlace));
+						ObjStore sw = new ObjStore(x, SP, new ObjImm12(x.spillPlace), "sd");
 						sw.getNode().insertAfter(i.getNode());
 					}
 				}
