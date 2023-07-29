@@ -33,7 +33,7 @@ public class RemovePhi implements Pass.IRPass {
 						for (int ii = 0; ii < i.getValue().getOperands().size(); ii++) {
 							Value val = i.getValue().getOperand(ii);//%x1
 							BasicBlock src = curbb.getPreBlocks().get(ii);//%b1
-							Move mv = new Move(val, IntegerType.I32);//Ŀ�꣺new1=val1 new1=val2
+							Move mv = new Move(val, val.getType());
 							pairlist.add(mv);
 							if (src.getNxtBlocks().size() > 1) {
 								BasicBlock tmp = null;
@@ -78,7 +78,7 @@ public class RemovePhi implements Pass.IRPass {
 							x.setpair(pairlist);
 						}
 
-						Move x = new Move(pairlist.get(0), IntegerType.I32);
+						Move x = new Move(pairlist.get(0), pairlist.get(0).getType());
 						x.getNode().insertBefore(i);
 						i.getValue().replaceUsedWith(x);
 					}
@@ -129,7 +129,7 @@ public class RemovePhi implements Pass.IRPass {
 							tobeRemoved.add(i.getValue());
 							assert !((RetInst) i.getValue()).isVoid();
 							Value val = ((RetInst) i.getValue()).getValue();
-							Move mv = new Move(val, IntegerType.I32);
+							Move mv = new Move(val, val.getType());
 							mv.insertBefore(i.getValue());
 							BrInst br=new BrInst(newbb);
 							br.insertBefore(i.getValue());
@@ -138,7 +138,7 @@ public class RemovePhi implements Pass.IRPass {
 					}
 				}
 
-				Move x = new Move(pairlist.get(0), IntegerType.I32);
+				Move x = new Move(pairlist.get(0), pairlist.get(0).getType());
 				newbb.addInst(x);
 				newbb.addInst(new RetInst(x));
 				newbb.insertAfter(function.getBbs().getTail().getValue());
