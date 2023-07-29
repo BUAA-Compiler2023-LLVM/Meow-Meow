@@ -39,7 +39,7 @@ public class PassManager {
         irPasses.add(new InstComb());
         irPasses.add(new DCE());
 //        irPasses.add(new RemoveUselessStore());
-//        irPasses.add(new PeepHole());
+       irPasses.add(new PeepHole());
 
 //        irPasses.add(new GVN());
 

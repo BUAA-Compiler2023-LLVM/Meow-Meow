@@ -369,18 +369,18 @@ public class RegAllo {
 		for (ObjOperand x : all) {
 			if (!S.contains(x)) T.add(x);
 		}
-		System.out.print("S: [");
-		for(ObjOperand x : S)
-		{
-			System.out.print(x+", ");
-		}
-		System.out.println("]");
-		System.out.print("T: [");
-		for(ObjOperand x : T)
-		{
-			System.out.print(x+", ");
-		}
-		System.out.println("]");
+//		System.out.print("S: [");
+//		for(ObjOperand x : S)
+//		{
+//			System.out.print(x+", ");
+//		}
+//		System.out.println("]");
+//		System.out.print("T: [");
+//		for(ObjOperand x : T)
+//		{
+//			System.out.print(x+", ");
+//		}
+//		System.out.println("]");
 	}
 
 	private void Build(ObjFunction func) {
@@ -553,7 +553,7 @@ public class RegAllo {
 		}
 		AssignColors();
 		if (spilledNodes.size() != 0) {
-			System.out.println("**REAL SPILL**");
+			//System.out.println("**REAL SPILL**");
 			RewriteProgram(func);
 			process(func);
 		}
@@ -572,7 +572,7 @@ public class RegAllo {
 		}
 		AssignColors();
 		if (spilledNodes.size() != 0) {
-			System.out.println("**REAL SPILL**");
+			//System.out.println("**REAL SPILL**");
 			RewriteProgram(func);
 			process(func);
 		}
@@ -585,7 +585,7 @@ public class RegAllo {
 			ObjOperand key = entry.getKey();
 			int val = entry.getValue();
 			key.color = val;
-			System.out.println(key+" -> "+ObjPhyReg.indexToName.get(val));
+			//System.out.println(key+" -> "+ObjPhyReg.indexToName.get(val));
 		}
 	}
 
@@ -639,7 +639,7 @@ public class RegAllo {
 					if (spilledNodes.contains(x)) {
 						needrewrite.add(inst.getValue());
 						if (x.spillPlace == -1) {
-							System.out.println("SPILL " + x);
+							//System.out.println("SPILL " + x);
 							x.spillPlace = nowoffset;
 							nowoffset += 8;
 							func.addAllocaSize(8);
@@ -683,13 +683,13 @@ public class RegAllo {
 //		coloredNodes.clear();
 //		coalescedNodes.clear();
 //		color.clear();
-		try{
-			DumpObjModle(objModule,"rewrite_"+rewritetime+".asm");
-			rewritetime+=1;
-		}catch (IOException e)
-		{
-			System.out.println(e);
-		}
+//		try{
+//			//DumpObjModle(objModule,"rewrite_"+rewritetime+".asm");
+//			rewritetime+=1;
+//		}catch (IOException e)
+//		{
+//			//System.out.println(e);
+//		}
 
 
 	}
