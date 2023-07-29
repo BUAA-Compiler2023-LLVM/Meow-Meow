@@ -7,12 +7,14 @@ import java.util.ArrayList;
 
 public class ObjGlobalVariable {
     private String name;
-    private boolean isInit, isStr;
+    private boolean isInit, isStr,isConst=false;
     private int size;
 
     private ArrayList<Integer> elements;
 
     private String content;
+
+    private static int lc=0;
 
     public String getName() {
         return name;
@@ -36,6 +38,18 @@ public class ObjGlobalVariable {
         this.content = null;
     }
 
+    public ObjGlobalVariable( int floatvar) {
+        this.name = ".LC"+lc;
+        lc++;
+        this.isInit = true;
+        this.isStr = false;
+        this.isConst=true;
+        this.size = 4;
+        this.elements = new ArrayList<>();
+        this.elements.add(floatvar);
+        this.content = null;
+    }
+
     public ObjGlobalVariable(String name, String content) {
         this.name = name.substring(1);
         this.isInit = true;
@@ -54,12 +68,17 @@ public class ObjGlobalVariable {
 
     @Override
     public String toString() {
-        String output = "\t.globl\t" + name + "\n";
-        if(isInit)
-            output += "\t.data\n";
-        else output += "\t.bss\n";
-        output += "\t.type\t" + name + ",\t" + "@object\n";
-        output += "\t.size\t" + name + ",\t" + String.valueOf(size) + "\n";
+        String output = "";
+        if (!isConst)
+            output+="\t.globl\t" + name + "\n";
+        if(isConst)
+            output += "\t.section .srodata\n";
+        else if(isInit) output += "\t.data\n";
+            else output += "\t.bss\n";
+        if (!isConst) {
+            output += "\t.type\t" + name + ",\t" + "@object\n";
+            output += "\t.size\t" + name + ",\t" + String.valueOf(size) + "\n";
+        }
         output += name + ":\n";
 
         if(isInit) {

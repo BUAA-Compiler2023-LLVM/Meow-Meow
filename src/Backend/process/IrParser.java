@@ -87,7 +87,7 @@ public class IrParser {
 	private void changeFunctionNames() {
 		for (ObjFunction func : objModule.getFunctions()) {
 			for (IList.INode<ObjBlock, ObjFunction> bb : func.getObjBlocks()) {
-				bb.getValue().setName(func.getName()+"_"+bb.getValue().getName());
+				bb.getValue().setName(func.getName() + "_" + bb.getValue().getName());
 			}
 		}
 
@@ -219,10 +219,11 @@ public class IrParser {
 			Value arg = args.get(i);
 			ObjOperand operand = parseOperand(arg, 0, f, b);
 			if (arg.getType() instanceof FloatType) {
-				ObjConversion objCon = ObjConversion.getItof(operand, A.get(i));
-				objF.getFirstBlock().addInstrHead(objCon);
+				//ObjConversion objCon = ObjConversion.getItof(operand, A.get(i));
+				ObjMove objMove = new ObjMove(operand, ObjFPhyReg.A.get(i));
+				objF.getFirstBlock().addInstrHead(objMove);
 			} else {
-				ObjMove objMove = new ObjMove(operand, A.get(i));
+				ObjMove objMove = new ObjMove(operand, ObjPhyReg.A.get(i));
 				objF.getFirstBlock().addInstrHead(objMove);
 			}
 
@@ -231,10 +232,17 @@ public class IrParser {
 		for (int i = 8; i < args_num; i++) {
 			Value arg = args.get(i);
 			ObjOperand operand = parseOperand(arg, 0, f, b);
+			if (arg.getType() instanceof FloatType) {
+				ObjImm12 Imm = new ObjImm12(off + (i - 8) * 4);
+				ObjLoad objLoad = new ObjLoad(operand, SP, Imm, "flw");
+				objF.getFirstBlock().addInstrHead(objLoad);
+			} else {
+				ObjImm12 Imm = new ObjImm12(off + (i - 8) * 4);
+				ObjLoad objLoad = new ObjLoad(operand, SP, Imm, "lw");
+				objF.getFirstBlock().addInstrHead(objLoad);
+			}
 
-			ObjImm12 Imm = new ObjImm12(off + (i - 8) * 4);
-			ObjLoad objLoad = new ObjLoad(operand, SP, Imm, "lw");
-			objF.getFirstBlock().addInstrHead(objLoad);
+
 		}
 
 
@@ -242,7 +250,6 @@ public class IrParser {
 			ObjImm12 Imm = new ObjImm12(objF.getStackSize() - 8);
 			ObjStore objStore = new ObjStore(RA, SP, Imm, "sd");
 			objF.getFirstBlock().addInstrHead(objStore);
-
 
 
 			ObjLoad objLoad = new ObjLoad(RA, SP, Imm, "ld");
@@ -316,8 +323,7 @@ public class IrParser {
 				parseShl((BinaryInst) irInst, irBlock, irFunction);
 			if (irInst.getOp() == OP.Shr)
 				parseShr((BinaryInst) irInst, irBlock, irFunction);
-		}
-		else if (irInst instanceof BrInst)
+		} else if (irInst instanceof BrInst)
 			parseBr((BrInst) irInst, irBlock, irFunction);
 		else if (irInst instanceof CallInst)
 			parseCall((CallInst) irInst, irBlock, irFunction);
@@ -350,6 +356,7 @@ public class IrParser {
 	}
 
 	private void parseMove(Move inst, BasicBlock irBlock, Function irFunction) {
+
 		ObjBlock objBlock = bMap.get(irBlock);
 		ObjOperand src = parseOperand(inst.getOperand(0), 12, irFunction, irBlock);
 		ObjOperand dst = parseOperand(inst, 0, irFunction, irBlock);
@@ -416,16 +423,39 @@ public class IrParser {
 		for (int i = 0; i < num_A; i++) {
 			Value arg = operands.get(i);
 			ObjOperand objOperand = parseOperand(arg, 12, irFunction, irBlock);
-			ObjMove objMove = new ObjMove(A.get(i), objOperand);
-			objBlock.addInstr(objMove);
+			if (arg.getType() instanceof FloatType) {
+				ObjMove objMove = new ObjMove(ObjFPhyReg.A.get(i), objOperand);
+				objBlock.addInstr(objMove);
+			} else {
+				ObjMove objMove = new ObjMove(ObjPhyReg.A.get(i), objOperand);
+				objBlock.addInstr(objMove);
+			}
+
 		}
 		for (int i = 8; i < arg_nums; i++) {
 			Value arg = operands.get(i);
 			ObjOperand objOperand = parseOperand(arg, 12, irFunction, irBlock);
+			if(objOperand instanceof ObjImm12)
+			{
+				ObjOperand tmp=null;
+				if(arg.getType().isFloatTy())
+				{
+					tmp=genFTmpReg(irFunction);
+				}else tmp=genTmpReg(irFunction);
+				ObjMove mv=new ObjMove(tmp,objOperand);
+				objBlock.addInstr(mv);
+				objOperand=tmp;
+			}
 
 			ObjImm12 offset = new ObjImm12((i - 8) * 4);
-			ObjStore objStore = new ObjStore(objOperand, SP, offset, "sw");
-			objBlock.addInstr(objStore);
+			if (arg.getType() instanceof FloatType) {
+				ObjStore objStore = new ObjStore(objOperand, SP, offset, "fsw");
+				objBlock.addInstr(objStore);
+			} else {
+				ObjStore objStore = new ObjStore(objOperand, SP, offset, "sw");
+				objBlock.addInstr(objStore);
+			}
+
 		}
 
 		ObjCall objCall = new ObjCall(tarFunction);
@@ -434,11 +464,13 @@ public class IrParser {
 		if (!(inst.getType() instanceof VoidType)) {
 			ObjOperand dst = parseOperand(inst, 0, irFunction, irBlock);
 			if (inst.getType() instanceof IntegerType) {
-				ObjMove objMove = new ObjMove(dst, A.get(0));
+				ObjMove objMove = new ObjMove(dst, ObjPhyReg.A.get(0));
 				objBlock.addInstr(objMove);
 			} else if (inst.getType() instanceof FloatType) {
-				ObjConversion objCov = ObjConversion.getItof(dst, A.get(0));
-				objBlock.addInstr(objCov);
+//				ObjConversion objCov = ObjConversion.getItof(dst,ObjFPhyReg. A.get(0));
+//				objBlock.addInstr(objCov);
+				ObjMove objMove = new ObjMove(dst, ObjFPhyReg.A.get(0));
+				objBlock.addInstr(objMove);
 			}
 		}
 	}
@@ -450,8 +482,6 @@ public class IrParser {
 		ObjBlock objBlock = bMap.get(irBlock);
 		ObjFunction objFunction = fMap.get(irFunction);
 
-//        System.out.println(left.getType());
-//        System.out.println(right.getType());
 
 		// ne eq lt le gt ge
 		if (op == OP.Ne) {
@@ -839,27 +869,30 @@ public class IrParser {
 
 	private void parseStore(StoreInst inst, BasicBlock irBlock, Function irFunction) {
 		ObjBlock objBlock = bMap.get(irBlock);
-
+//store float 1.0, float* %16
 		Value irAddr = inst.getPointer();
-		if(irAddr instanceof GlobalVar)
-		{
-			ObjOperand tmp=genTmpReg(irFunction);
+		if (irAddr instanceof GlobalVar) {//TODO
+			ObjOperand tmp =genTmpReg(irFunction);
 			ObjOperand addr = parseOperand(irAddr, 0, irFunction, irBlock);
-			ObjLoad objLoad = new ObjLoad(tmp, addr, "lw");
+			String type="lw";
+			ObjLoad objLoad = new ObjLoad(tmp, addr, type);//la
 			objBlock.addInstr(objLoad);
 
 			ObjOperand src = parseOperand(inst.getValue(), 0, irFunction, irBlock);
 			ObjOperand offset = new ObjImm12(0);
-			ObjStore objStore = new ObjStore(src, tmp, offset, "sw");
+			String type1="sw";
+			if(src instanceof ObjFVirReg) type1="fsw";
+			ObjStore objStore = new ObjStore(src, tmp, offset, type1);
 			objBlock.addInstr(objStore);
-		}
-		else
-		{
+		} else {
 			ObjOperand src = parseOperand(inst.getValue(), 0, irFunction, irBlock);
 
 			ObjOperand addr = parseOperand(irAddr, 0, irFunction, irBlock);
 			ObjOperand offset = new ObjImm12(0);
-			ObjStore objStore = new ObjStore(src, addr, offset, "sw");
+			String type="sw";
+			if(src instanceof ObjFVirReg) type="fsw";
+
+			ObjStore objStore = new ObjStore(src, addr, offset, type);
 			objBlock.addInstr(objStore);
 		}
 
@@ -867,25 +900,29 @@ public class IrParser {
 
 	private void parseLoad(LoadInst inst, BasicBlock irBlock, Function irFunction) {
 		ObjBlock objBlock = bMap.get(irBlock);
-
+//%4 = load float, float* @g       la s0,g     ;  lw s1,0(s0)
+//dst                    addr
 		Value irAddr = inst.getPointer();
-		if(irAddr instanceof GlobalVar)
-		{
-			ObjOperand tmp=genTmpReg(irFunction);
+		if (irAddr instanceof GlobalVar) {
+			ObjOperand tmp =genTmpReg(irFunction);
 			ObjOperand dst = parseOperand(inst, 0, irFunction, irBlock);
 			ObjOperand addr = parseOperand(irAddr, 0, irFunction, irBlock);
-			ObjLoad objLoad = new ObjLoad(tmp, addr, "lw");
+			String type="lw";
+			ObjLoad objLoad = new ObjLoad(tmp, addr, type);//la:tmpÊÇ¸öµØÖ·
 			objBlock.addInstr(objLoad);
+			String type1="lw";
+			if(dst instanceof ObjFVirReg) type1="flw";
 
 			ObjOperand offset = new ObjImm12(0);
-			ObjLoad objLoad1 = new ObjLoad(dst, tmp, offset,  "lw");
+			ObjLoad objLoad1 = new ObjLoad(dst, tmp, offset, type1);
 			objBlock.addInstr(objLoad1);
-		}else
-		{
+		} else {
 			ObjOperand dst = parseOperand(inst, 0, irFunction, irBlock);
 			ObjOperand addr = parseOperand(irAddr, 0, irFunction, irBlock);
 			ObjOperand offset = new ObjImm12(0);
-			ObjLoad objLoad = new ObjLoad(dst, addr, offset, "lw");
+			String type="lw";
+			if(dst instanceof ObjFVirReg) type="flw";
+			ObjLoad objLoad = new ObjLoad(dst, addr, offset, type);
 			objBlock.addInstr(objLoad);
 		}
 
@@ -914,9 +951,16 @@ public class IrParser {
 		ObjFunction objFunction = fMap.get(irFunction);
 		Value irRetValue = inst.getValue();
 		if (irRetValue != null) {
-			ObjOperand objRet = parseOperand(irRetValue, 32, irFunction, irBlock);
-			ObjMove objMove = new ObjMove(ObjPhyReg.A.get(0), objRet);
-			objBlock.addInstr(objMove);
+			if (irFunction.getType().isFloatTy()) {
+				ObjOperand objRet = parseOperand(irRetValue, 32, irFunction, irBlock);
+				ObjMove objMove = new ObjMove(ObjFPhyReg.A.get(0), objRet);
+				objBlock.addInstr(objMove);
+			} else {
+				ObjOperand objRet = parseOperand(irRetValue, 32, irFunction, irBlock);
+				ObjMove objMove = new ObjMove(ObjPhyReg.A.get(0), objRet);
+				objBlock.addInstr(objMove);
+			}
+
 		}
 		objBlock.addInstr(new ObjRet());
 	}
@@ -928,6 +972,12 @@ public class IrParser {
 		return tmpReg;
 	}
 
+	private ObjOperand genFTmpReg(Function irFunction) {
+		ObjFunction objFunction = fMap.get(irFunction);
+		ObjFVirReg tmpReg = new ObjFVirReg();
+		objFunction.addUsedVirReg(tmpReg);
+		return tmpReg;
+	}
 	private ObjOperand genDstOperand(Value irValue, Function irFunction) {
 		ObjFunction objFunction = fMap.get(irFunction);
 
@@ -965,21 +1015,18 @@ public class IrParser {
 		}
 
 
-		if ((irValue instanceof Move) && (((Move) irValue).pair .size()!=0) ) {
-			boolean contains=false;
-			Value ir=null;
-			for(Move x : ((Move) irValue).pair )
-			{
-				if(operandMap.containsKey(x))
-				{
-					contains=true;
-					ir=x;
+		if ((irValue instanceof Move) && (((Move) irValue).pair.size() != 0)) {
+			boolean contains = false;
+			Value ir = null;
+			for (Move x : ((Move) irValue).pair) {
+				if (operandMap.containsKey(x)) {
+					contains = true;
+					ir = x;
 					break;
 				}
 
 			}
-			if(contains)
-			{
+			if (contains) {
 				ObjOperand objOperand = operandMap.get(ir);
 				if (((objOperand instanceof ObjImm) && canImm < 32)
 						|| ((objOperand instanceof ObjImm12) && canImm < 12)) {
@@ -1010,8 +1057,13 @@ public class IrParser {
 //			System.out.println(hexString);
 
 			ObjOperand src = genDstOperand(irValue, irFunction);
-			ObjOperand initValue = parseConstIntOperand(intValue, 32, irFunction, irBlock);
-			ObjMove objMove = new ObjMove(src, initValue);
+
+			ObjOperand initValue = parseConstFloatOperand(intValue, 32, irFunction, irBlock);
+			ObjOperand tmp=genTmpReg(irFunction);
+			ObjLoad l1= new ObjLoad(tmp,initValue,"la");
+			bMap.get(irBlock).addInstr(l1);
+			ObjLoad objMove = new ObjLoad(src, tmp,new ObjImm12(0),"flw");
+
 			bMap.get(irBlock).addInstr(objMove);
 			return src;
 		}
@@ -1027,6 +1079,14 @@ public class IrParser {
 		ObjGlobalVariable objG = gMap.get(g);
 
 		ObjLabel label = new ObjLabel(objG.getName());
+		return label;
+	}
+
+	private ObjOperand parseConstFloatOperand(int immediate, int canImm, Function irFunction, BasicBlock irBlock) {
+		ObjBlock objBlock = bMap.get(irBlock);
+		ObjGlobalVariable objGlobalVariable = new ObjGlobalVariable(immediate);
+		objModule.addGlobalVariable(objGlobalVariable);
+		ObjLabel label = new ObjLabel(objGlobalVariable.getName());
 		return label;
 	}
 

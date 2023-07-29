@@ -1,5 +1,6 @@
 package Backend.instruction;
 
+import Backend.component.ObjGlobalVariable;
 import Backend.operand.*;
 
 public class ObjMove extends ObjInstr{
@@ -8,6 +9,7 @@ public class ObjMove extends ObjInstr{
         setDst(dst);
         setSrc(src);
     }
+
     public void setDst(ObjOperand dst) {
         addDefReg(this.dst, dst);
         this.dst = dst;
@@ -40,6 +42,12 @@ public class ObjMove extends ObjInstr{
 
     @Override
     public String toString() {
+
+        if(src instanceof ObjFPhyReg || src instanceof ObjFVirReg)
+        {
+            return "fmv.s\t" + dst + ",\t" + src;
+        }
+
         if(src instanceof ObjLabel)
             return "la\t" + dst + ",\t" + src;
         else if ((src instanceof ObjImm) || (src instanceof ObjImm12)) {
