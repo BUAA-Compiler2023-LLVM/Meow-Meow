@@ -31,6 +31,7 @@ public class RegAllo {
 	//放需要放在局部寄存器里的变量（上述以外）
 	private HashSet<ObjOperand> T = new HashSet<>();
 	private int procedure;
+	private int floatOrInt;
 	/**
 	 * 根据一个节点查询与之相关的节点组
 	 **/
@@ -97,7 +98,7 @@ public class RegAllo {
 	/**
 	 * 新的虚拟寄存器，用来处理溢出解决时引入的新的虚拟寄存器
 	 */
-	ObjVirReg vReg = null;
+//	ObjVirReg vReg = null;
 	/**
 	 * 存储操作数和所在的基本块对应的循环深度
 	 */
@@ -109,12 +110,18 @@ public class RegAllo {
 	}
 
 	public void run() {
+		floatOrInt=1;
 		for (ObjFunction func : objModule.getFunctions()) {
 			process(func);
 			finalallocate(func);
 			savestage(func);
 		}
-
+//		floatOrInt=2;
+//		for (ObjFunction func : objModule.getFunctions()) {
+//			process(func);
+//			finalallocate(func);
+//			savestage(func);
+//		}
 	}
 	private boolean isS(int i)
 	{
@@ -169,10 +176,10 @@ public class RegAllo {
 			ObjImm12 Imm = new ObjImm12(func.getStackSize() );
 			x.spillPlace=func.getStackSize();
 			ObjStore objStore = new ObjStore(x, SP, Imm, "sd");
-			objStore.getNode().insertAfter(func.getFirstBlock().getInstrs().getHead().getNext());
+			objStore.getNode().insertAfter(func.getFirstBlock().getInstrs().getHead());
 
 			ObjLoad objLoad = new ObjLoad(x, SP, Imm,"ld");
-			objLoad.getNode().insertBefore(func.getBbExit().getInstrs().getTail().getPrev().getPrev());
+			objLoad.getNode().insertBefore(func.getBbExit().getInstrs().getTail().getPrev());
 
 			func.addAllocaSize(8);
 
@@ -233,14 +240,10 @@ public class RegAllo {
 			bb.getValue().LocalInterfere.clear();
 			for (IList.INode<ObjInstr, ObjBlock> inst : bb.getValue().getInstrs()) {
 				for (ObjReg r : inst.getValue().regUse) {
+
 					if (r instanceof ObjVirReg)
-					//if (!r.isPrecolored())
 					{
 						all.add(r);
-//						loopDepths.put(r, 0);
-//						degree.put(r, 0);
-//						adjList.put(r, new HashSet<>());
-//						moveList.put(r, new HashSet<>());
 					}
 
 					if (!bb.getValue().Use.contains(r) && r instanceof ObjVirReg) {//
@@ -638,8 +641,8 @@ public class RegAllo {
 						if (x.spillPlace == -1) {
 							System.out.println("SPILL " + x);
 							x.spillPlace = nowoffset;
-							nowoffset += 4;
-							func.addAllocaSize(4);
+							nowoffset += 8;
+							func.addAllocaSize(8);
 							ObjInstr spplus = func.getFirstBlock().getInstrs().getHead().getValue();
 							ObjInstr spplus1 = func.getBbExit().getInstrs().getTail().getPrev().getValue();
 							assert spplus instanceof ObjBinary;
