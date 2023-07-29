@@ -962,7 +962,7 @@ public class IrParser {
 		}
 
 
-		if ((irValue instanceof Move) && (((Move) irValue).pair .size()!=0) && operandMap.containsKey(((Move) irValue).pair)) {
+		if ((irValue instanceof Move) && (((Move) irValue).pair .size()!=0) ) {
 			boolean contains=false;
 			Value ir=null;
 			for(Move x : ((Move) irValue).pair )
