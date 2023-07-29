@@ -19,89 +19,65 @@ import static Utils.RISC_Dump.DumpObjModle;
 
 public class RegAllo {
 	private final ObjModule objModule;
-	private static int rewritetime=0;
+	private static int rewritetime = 0;
 
-	private int K = 19;
-	//t0-t6 && s0-s11 一共19个能分配的
+	private int K;
+
 	private boolean printLiveVar = false;
+
 	private HashSet<ObjOperand> all = new HashSet<>();
+
 	private HashSet<ObjOperand> initials = new HashSet<>();
+
 	//放需要放在全局寄存器里的变量（每个objblock的livein，以及call语句的下一句的livein）
 	private HashSet<ObjOperand> S = new HashSet<>();
 	//放需要放在局部寄存器里的变量（上述以外）
 	private HashSet<ObjOperand> T = new HashSet<>();
+
 	private int procedure;
+
 	private int floatOrInt;
-	/**
-	 * 根据一个节点查询与之相关的节点组
-	 **/
+
 	private HashMap<ObjOperand, HashSet<ObjOperand>> adjList = new HashMap<>();
-	/**
-	 * 边的集合
-	 */
+
 	private HashSet<Pair<ObjOperand, ObjOperand>> adjSet = new HashSet<>();
-	/**
-	 * 从一个节点到与该节点相关的 mov 指令之间的映射
-	 */
+
 	private HashMap<ObjOperand, HashSet<ObjMove>> moveList = new HashMap<>();
+
 	private HashSet<ObjOperand> simplifyWorklist = new HashSet<>();
-	/**
-	 * 低度数的，传送有关的节点表
-	 */
+
 	private HashSet<ObjOperand> freezeWorklist = new HashSet<>();
-	/**
-	 * 高度数的节点表
-	 */
+
 	private HashSet<ObjOperand> spillWorklist = new HashSet<>();
-	/**
-	 * 当一条传送指令 (u,v) 被合并，且 v 已经被放入 coalescedNodes 中，alias(v) = u
-	 */
+
 	private HashMap<ObjOperand, ObjOperand> alias = new HashMap<>();
-	/**
-	 * 本轮中要被溢出的节点的集合
-	 */
+
 	private HashSet<ObjOperand> spilledNodes = new HashSet<>();
+
 	private HashSet<ObjOperand> coloredNodes = new HashSet<>();
-	/**
-	 * 已合并的节点的集合，比如将 u 合并到 v，那么将 u 加入这里，然后 v 加入其他集合
-	 */
+
 	private HashSet<ObjOperand> coalescedNodes = new HashSet<>();
-	/**
-	 * 包含删除的点
-	 */
+
 	private Stack<ObjOperand> selectStack = new Stack<>();
-	/**
-	 * 有可能合并的传送指令集合
-	 */
+
 	private HashSet<ObjMove> worklistMoves = new HashSet<>();
-	/**
-	 * 还未做好合并准备的传送指令集合
-	 */
+
 	private HashSet<ObjMove> activeMoves = new HashSet<>();
-	/**
-	 * 已经合并的传送指令集合
-	 */
+
 	private HashSet<ObjInstr> coalescedMoves = new HashSet<>();
-	/**
-	 * 源操作数和目标操作数冲突的传送指令集合
-	 */
+
 	private HashSet<ObjMove> constrainedMoves = new HashSet<>();
-	/**
-	 * 不考虑合并的传送指令集合
-	 */
+
 	private HashSet<ObjMove> frozenMoves = new HashSet<>();
-	/**
-	 * 节点的度
-	 */
+
 	private HashMap<ObjOperand, Integer> degree = new HashMap<>();
+
 	private HashMap<ObjOperand, Integer> color = new HashMap<>();
 	/**
 	 * 新的虚拟寄存器，用来处理溢出解决时引入的新的虚拟寄存器
 	 */
 //	ObjVirReg vReg = null;
-	/**
-	 * 存储操作数和所在的基本块对应的循环深度
-	 */
+
 	HashMap<ObjOperand, Integer> loopDepths = new HashMap<>();
 
 
@@ -110,29 +86,32 @@ public class RegAllo {
 	}
 
 	public void run() {
-		floatOrInt=1;
+		floatOrInt = 1;
+		//先分配整形寄存器
 		for (ObjFunction func : objModule.getFunctions()) {
 			process(func);
 			finalallocate(func);
 			savestage(func);
 		}
-//		floatOrInt=2;
+//		floatOrInt = 2;
+//		//分配浮点寄存器
 //		for (ObjFunction func : objModule.getFunctions()) {
 //			process(func);
 //			finalallocate(func);
 //			savestage(func);
 //		}
 	}
-	private boolean isS(int i)
-	{
-		return i==8 || i==9 || i>=18 && i<=27;
+
+	private boolean isS(int i) {
+		return i == 8 || i == 9 || i >= 18 && i <= 27;
 	}
-	private boolean isT(int i)
-	{
-		return i>=5 && i <= 7|| i>=28 && i<=31;
+
+	private boolean isT(int i) {
+		return i >= 5 && i <= 7 || i >= 28 && i <= 31;
 	}
+
 	private void savestage(ObjFunction func) {
-		HashSet<ObjPhyReg> changed=new HashSet<>();
+		HashSet<ObjPhyReg> changed = new HashSet<>();
 		for (IList.INode<ObjBlock, ObjFunction> bb : func.getObjBlocks()) {
 
 			for (IList.INode<ObjInstr, ObjBlock> inst : bb.getValue().getInstrs()) {
@@ -143,42 +122,34 @@ public class RegAllo {
 				2.lw, la
 				3.move
 				 */
-				//TODO:a寄存器怎么保存来着
-				if(inst.getValue() instanceof ObjBinary)
-				{
-					ObjPhyReg dst=(ObjPhyReg)((ObjBinary) inst.getValue()).getDst();
-					if(isS(dst.getIndex()))
-					{
+				if (inst.getValue() instanceof ObjBinary) {
+					ObjPhyReg dst = (ObjPhyReg) ((ObjBinary) inst.getValue()).getDst();
+					if (isS(dst.getIndex())) {
 						changed.add(dst);
 					}
 				}
-				if(inst.getValue() instanceof ObjLoad)
-				{
-					ObjPhyReg dst=(ObjPhyReg)((ObjLoad) inst.getValue()).getDst();
-					if(isS(dst.getIndex()))
-					{
+				if (inst.getValue() instanceof ObjLoad) {
+					ObjPhyReg dst = (ObjPhyReg) ((ObjLoad) inst.getValue()).getDst();
+					if (isS(dst.getIndex())) {
 						changed.add(dst);
 					}
 				}
-				if(inst.getValue() instanceof ObjMove)
-				{
-					ObjPhyReg dst=(ObjPhyReg)((ObjMove) inst.getValue()).getDst();
-					if(isS(dst.getIndex()))
-					{
+				if (inst.getValue() instanceof ObjMove) {
+					ObjPhyReg dst = (ObjPhyReg) ((ObjMove) inst.getValue()).getDst();
+					if (isS(dst.getIndex())) {
 						changed.add(dst);
 					}
 				}
 
 			}
 		}
-		for(ObjPhyReg x : changed)
-		{
-			ObjImm12 Imm = new ObjImm12(func.getStackSize() );
-			x.spillPlace=func.getStackSize();
+		for (ObjPhyReg x : changed) {
+			ObjImm12 Imm = new ObjImm12(func.getStackSize());
+			x.spillPlace = func.getStackSize();
 			ObjStore objStore = new ObjStore(x, SP, Imm, "sd");
 			objStore.getNode().insertAfter(func.getFirstBlock().getInstrs().getHead());
 
-			ObjLoad objLoad = new ObjLoad(x, SP, Imm,"ld");
+			ObjLoad objLoad = new ObjLoad(x, SP, Imm, "ld");
 			objLoad.getNode().insertBefore(func.getBbExit().getInstrs().getTail().getPrev());
 
 			func.addAllocaSize(8);
@@ -214,6 +185,7 @@ public class RegAllo {
 		color = new HashMap<>();
 		alias = new HashMap<>();
 	}
+
 	private void init_() {
 		simplifyWorklist = new HashSet<>();
 		freezeWorklist = new HashSet<>();
@@ -241,24 +213,19 @@ public class RegAllo {
 			for (IList.INode<ObjInstr, ObjBlock> inst : bb.getValue().getInstrs()) {
 				for (ObjReg r : inst.getValue().regUse) {
 
-					if (r instanceof ObjVirReg)
-					{
+					if (floatOrInt == 1 && r instanceof ObjVirReg || floatOrInt == 2 && r instanceof ObjFVirReg) {
 						all.add(r);
 					}
 
-					if (!bb.getValue().Use.contains(r) && r instanceof ObjVirReg) {//
+					if (!bb.getValue().Use.contains(r) && ((floatOrInt == 1 && r instanceof ObjVirReg || floatOrInt == 2 && r instanceof ObjFVirReg))) {//
 						bb.getValue().Use.add(r);
 					}
 				}
 				for (ObjReg r : inst.getValue().regDef) {
-					if (r instanceof ObjVirReg) {
+					if (floatOrInt == 1 && r instanceof ObjVirReg || floatOrInt == 2 && r instanceof ObjFVirReg) {
 						all.add(r);
-//						loopDepths.put(r, 0);
-//						degree.put(r, 0);
-//						adjList.put(r, new HashSet<>());
-//						moveList.put(r, new HashSet<>());
 					}
-					if (!bb.getValue().Use.contains(r) && !bb.getValue().Def.contains(r) && r instanceof ObjVirReg) {
+					if (!bb.getValue().Use.contains(r) && !bb.getValue().Def.contains(r) && ((floatOrInt == 1 && r instanceof ObjVirReg || floatOrInt == 2 && r instanceof ObjFVirReg))) {
 						bb.getValue().Def.add(r);
 					}
 				}
@@ -282,8 +249,7 @@ public class RegAllo {
 		bb.liveIns.clear();
 		bb.liveIns.addAll(bb.Use);
 		for (ObjReg v : bb.liveOuts) {
-			if (!bb.liveIns.contains(v))
-				bb.liveIns.add(v);
+			if (!bb.liveIns.contains(v)) bb.liveIns.add(v);
 		}
 		bb.liveIns.removeIf(bb.Def::contains);
 		if (InBackup.equals(bb.liveIns)) {
@@ -301,8 +267,7 @@ public class RegAllo {
 		hasbeendfs.add(bb);
 		int changed = GetInOut(bb);
 		for (ObjBlock bbb : bb.getPreBlocks()) {
-			if (dfs(bbb) == 1)
-				changed = 1;
+			if (dfs(bbb) == 1) changed = 1;
 		}
 		return changed;
 	}
@@ -334,7 +299,7 @@ public class RegAllo {
 				tmpin.removeIf(ins.regDef::contains);
 				//tmpin.addAll(ins.regUse);
 				for (ObjReg x : ins.regUse) {
-					if (x instanceof ObjVirReg)
+					if ((floatOrInt == 1 && x instanceof ObjVirReg || floatOrInt == 2 && x instanceof ObjFVirReg))
 						tmpin.add(x);
 				}
 				bb.getValue().LocalInterfere.add(tmpin);
@@ -384,34 +349,27 @@ public class RegAllo {
 	}
 
 	private void Build(ObjFunction func) {
-		for (IList.INode<ObjBlock, ObjFunction> bb : func.getObjBlocks())
-		{
-			for (IList.INode<ObjInstr, ObjBlock> tmpinst : bb.getValue().getInstrs())
-			{
-					for (ObjReg r : tmpinst.getValue().regUse)
-					{
-						if (r instanceof ObjVirReg)
-						{
-							degree.put(r,0);
-							adjList.put(r,new HashSet<>());
-							moveList.put(r,new HashSet<>());
-						}
+		for (IList.INode<ObjBlock, ObjFunction> bb : func.getObjBlocks()) {
+			for (IList.INode<ObjInstr, ObjBlock> tmpinst : bb.getValue().getInstrs()) {
+				for (ObjReg r : tmpinst.getValue().regUse) {
+					if ((floatOrInt == 1 && r instanceof ObjVirReg || floatOrInt == 2 && r instanceof ObjFVirReg)) {
+						degree.put(r, 0);
+						adjList.put(r, new HashSet<>());
+						moveList.put(r, new HashSet<>());
 					}
-				for (ObjReg r : tmpinst.getValue().regDef)
-				{
-					if (r instanceof ObjVirReg)
-					{
-						degree.put(r,0);
-						adjList.put(r,new HashSet<>());
-						moveList.put(r,new HashSet<>());
+				}
+				for (ObjReg r : tmpinst.getValue().regDef) {
+					if ((floatOrInt == 1 && r instanceof ObjVirReg || floatOrInt == 2 && r instanceof ObjFVirReg)) {
+						degree.put(r, 0);
+						adjList.put(r, new HashSet<>());
+						moveList.put(r, new HashSet<>());
 					}
 				}
 
 				if (tmpinst.getValue() instanceof ObjMove) {
 					//只有双方都不是物理寄存器的，才放move里
-					if (((ObjMove) tmpinst.getValue()).getDst() instanceof ObjVirReg && ((ObjMove) tmpinst.getValue()).getSrc() instanceof ObjVirReg) {
-						if (procedure == 1 && S.contains(((ObjMove) tmpinst.getValue()).getDst())&& S.contains(((ObjMove) tmpinst.getValue()).getSrc()))
-						{
+					if (floatOrInt == 1 && ((ObjMove) tmpinst.getValue()).getDst() instanceof ObjVirReg && ((ObjMove) tmpinst.getValue()).getSrc() instanceof ObjVirReg || floatOrInt == 2 && ((ObjMove) tmpinst.getValue()).getDst() instanceof ObjFVirReg && ((ObjMove) tmpinst.getValue()).getSrc() instanceof ObjFVirReg) {
+						if (procedure == 1 && S.contains(((ObjMove) tmpinst.getValue()).getDst()) && S.contains(((ObjMove) tmpinst.getValue()).getSrc())) {
 							worklistMoves.add((ObjMove) tmpinst.getValue());
 
 							for (ObjReg o : tmpinst.getValue().regDef) {
@@ -420,8 +378,8 @@ public class RegAllo {
 							for (ObjReg o : tmpinst.getValue().regUse) {
 								moveList.get(o).add((ObjMove) tmpinst.getValue());
 							}
-						}if (procedure == 2 && T.contains(((ObjMove) tmpinst.getValue()).getDst())&& T.contains(((ObjMove) tmpinst.getValue()).getSrc()))
-						{
+						}
+						if (procedure == 2 && T.contains(((ObjMove) tmpinst.getValue()).getDst()) && T.contains(((ObjMove) tmpinst.getValue()).getSrc())) {
 							worklistMoves.add((ObjMove) tmpinst.getValue());
 
 							for (ObjReg o : tmpinst.getValue().regDef) {
@@ -443,11 +401,9 @@ public class RegAllo {
 			for (int i = 0; i < len; i++) {
 				for (int j = i + 1; j < len; j++) {
 					if (procedure == 1) {
-						if (S.contains(ins.get(i)) && S.contains(ins.get(j)))
-							AddEdge(ins.get(i), ins.get(j));
+						if (S.contains(ins.get(i)) && S.contains(ins.get(j))) AddEdge(ins.get(i), ins.get(j));
 					} else {
-						if (T.contains(ins.get(i)) && T.contains(ins.get(j)))
-							AddEdge(ins.get(i), ins.get(j));
+						if (T.contains(ins.get(i)) && T.contains(ins.get(j))) AddEdge(ins.get(i), ins.get(j));
 					}
 
 				}
@@ -457,11 +413,9 @@ public class RegAllo {
 				for (int i = 0; i < len1; i++) {
 					for (int j = i + 1; j < len1; j++) {
 						if (procedure == 1) {
-							if (S.contains(x.get(i)) && S.contains(x.get(j)))
-								AddEdge(x.get(i), x.get(j));
+							if (S.contains(x.get(i)) && S.contains(x.get(j))) AddEdge(x.get(i), x.get(j));
 						} else {
-							if (T.contains(x.get(i)) && T.contains(x.get(j)))
-								AddEdge(x.get(i), x.get(j));
+							if (T.contains(x.get(i)) && T.contains(x.get(j))) AddEdge(x.get(i), x.get(j));
 						}
 					}
 				}
@@ -536,13 +490,12 @@ public class RegAllo {
 	public void process(ObjFunction func) {
 		init();
 		LivenessAnalysis(func);
-		if (printLiveVar)
-			for (IList.INode<ObjBlock, ObjFunction> bb : func.getObjBlocks()) {
-				bb.getValue().printBbDetail();
-			}
+		if (printLiveVar) for (IList.INode<ObjBlock, ObjFunction> bb : func.getObjBlocks()) {
+			bb.getValue().printBbDetail();
+		}
 		procedure = 1;//分配S寄存器
 		K = 12;
-		initials=S;
+		initials = S;
 		Build(func);
 		MakeWorkList();
 		while (!(simplifyWorklist.isEmpty() && worklistMoves.isEmpty() && freezeWorklist.isEmpty() && spillWorklist.isEmpty())) {
@@ -559,9 +512,10 @@ public class RegAllo {
 		}
 		allocate();
 		procedure = 2;
-		K = 7;
+		if (floatOrInt == 1) K = 7;
+		if (floatOrInt == 2) K = 12;
 		init_();
-		initials=T;
+		initials = T;
 		Build(func);
 		MakeWorkList();
 		while (!(simplifyWorklist.isEmpty() && worklistMoves.isEmpty() && freezeWorklist.isEmpty() && spillWorklist.isEmpty())) {
@@ -592,24 +546,22 @@ public class RegAllo {
 	public void finalallocate(ObjFunction func) {
 		for (IList.INode<ObjBlock, ObjFunction> bb : func.getObjBlocks()) {
 			for (IList.INode<ObjInstr, ObjBlock> inst : bb.getValue().getInstrs()) {
-				ArrayList<ObjReg>xx=new ArrayList<>();
+				ArrayList<ObjReg> xx = new ArrayList<>();
 				xx.addAll(inst.getValue().regUse);
-				for(ObjReg x : xx)
-				{
-					if(x instanceof ObjVirReg)
-					{
-						assert x.color!=-1;
-						inst.getValue().replaceReg(x, AllRegs.get(x.color));
+				for (ObjReg x : xx) {
+					if ((floatOrInt == 1 && x instanceof ObjVirReg || floatOrInt == 2 && x instanceof ObjFVirReg)) {
+						assert x.color != -1;
+						if (floatOrInt == 1) inst.getValue().replaceReg(x, ObjPhyReg.AllRegs.get(x.color));
+						if (floatOrInt == 2) inst.getValue().replaceReg(x, ObjFPhyReg.AllRegs.get(x.color));
 					}
 				}
 				xx.clear();
 				xx.addAll(inst.getValue().regDef);
-				for(ObjReg x :xx)
-				{
-					if(x instanceof ObjVirReg)
-					{
-						assert x.color!=-1;
-						inst.getValue().replaceReg(x, AllRegs.get(x.color));
+				for (ObjReg x : xx) {
+					if ((floatOrInt == 1 && x instanceof ObjVirReg || floatOrInt == 2 && x instanceof ObjFVirReg)) {
+						assert x.color != -1;
+						if (floatOrInt == 1) inst.getValue().replaceReg(x, ObjPhyReg.AllRegs.get(x.color));
+						if (floatOrInt == 2) inst.getValue().replaceReg(x, ObjFPhyReg.AllRegs.get(x.color));
 					}
 				}
 			}
@@ -675,14 +627,6 @@ public class RegAllo {
 		}
 
 
-//		initials.clear();
-//		initials.addAll(coloredNodes);
-//		initials.addAll(coalescedNodes);
-//		initials.addAll(spilledNodes);
-//		spilledNodes.clear();
-//		coloredNodes.clear();
-//		coalescedNodes.clear();
-//		color.clear();
 //		try{
 //			//DumpObjModle(objModule,"rewrite_"+rewritetime+".asm");
 //			rewritetime+=1;
@@ -698,27 +642,46 @@ public class RegAllo {
 		while (!selectStack.empty()) {
 			ObjOperand n = selectStack.pop();
 			HashSet<Integer> okColors = new HashSet<>();
-			if (procedure == 1)//S
-			{
-				okColors.add(8);
-				okColors.add(9);
-				for (int i = 18; i <= 27; i++) {
-					okColors.add(i);
+			if (floatOrInt == 1) {
+				if (procedure == 1)//S
+				{
+					okColors.add(8);
+					okColors.add(9);
+					for (int i = 18; i <= 27; i++) {
+						okColors.add(i);
+					}
+				} else//T
+				{
+					okColors.add(5);
+					okColors.add(6);
+					okColors.add(7);
+					for (int i = 28; i <= 31; i++) {
+						okColors.add(i);
+					}
 				}
-			} else//T
-			{
-				okColors.add(5);
-				okColors.add(6);
-				okColors.add(7);
-				for (int i = 28; i <= 31; i++) {
-					okColors.add(i);
+			}
+			if (floatOrInt == 2) {
+				if (procedure == 1)//S
+				{
+					okColors.add(8);
+					okColors.add(9);
+					for (int i = 18; i <= 27; i++) {
+						okColors.add(i);
+					}
+				} else//T
+				{
+					for (int i = 0; i <= 7; i++) {
+						okColors.add(i);
+					}
+					for (int i = 28; i <= 31; i++) {
+						okColors.add(i);
+					}
 				}
 			}
 			for (ObjOperand w : adjList.get(n)) {
 				if (GetAlias(w).isPrecolored() || coloredNodes.contains(GetAlias(w))) {
 					okColors.remove(color.get(GetAlias(w)));
 				}
-
 			}
 			if (okColors.isEmpty()) {
 				spilledNodes.add(n);
