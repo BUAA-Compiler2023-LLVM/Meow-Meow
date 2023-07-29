@@ -15,34 +15,58 @@ public class ObjFPhyReg extends ObjReg {
 		for(int i = 0; i <= 7; i ++)
 		{
 			indexToName.put(i, "ft" + i);
-			AllRegs.add(new ObjFPhyReg("ft" + i));
 		}
 
 		indexToName.put(8, "fs0");
-		AllRegs.add(new ObjFPhyReg("fs0"));
 		indexToName.put(9, "fs1");
+
+		for(int i = 10; i <= 17; i ++)
+		{
+			indexToName.put(i, "fa" + String.valueOf(i - 10));
+		}
+		for(int i = 18; i <= 27; i ++)
+		{
+			indexToName.put(i, "fs" + String.valueOf(i - 16));
+
+		}
+		for(int i = 28; i <= 31; i ++)
+		{
+			indexToName.put(i, "ft" + String.valueOf(i - 20));
+
+		}
+
+		for (Map.Entry<Integer, String> entry : indexToName.entrySet())
+			nameToIndex.put(entry.getValue(), entry.getKey());
+
+		for(int i = 0; i <= 7; i ++)
+		{
+
+			AllRegs.add(new ObjFPhyReg("ft" + i));
+		}
+
+
+		AllRegs.add(new ObjFPhyReg("fs0"));
+
 		AllRegs.add(new ObjFPhyReg("fs1"));
 
 		for(int i = 10; i <= 17; i ++)
 		{
+
 			ObjFPhyReg opr= new ObjFPhyReg("fa" + String.valueOf(i - 10));
-			indexToName.put(i, "fa" + String.valueOf(i - 10));
 			AllRegs.add(opr);
 			A.add(opr);
 		}
 		for(int i = 18; i <= 27; i ++)
 		{
-			indexToName.put(i, "fs" + String.valueOf(i - 16));
+
 			AllRegs.add(new ObjFPhyReg("fs" + String.valueOf(i - 16)));
 		}
 		for(int i = 28; i <= 31; i ++)
 		{
-			indexToName.put(i, "ft" + String.valueOf(i - 20));
+
 			AllRegs.add(new ObjFPhyReg("ft" + String.valueOf(i - 20)));
 		}
 
-		for (Map.Entry<Integer, String> entry : indexToName.entrySet())
-			nameToIndex.put(entry.getValue(), entry.getKey());
 	}
 
 	private final int index;

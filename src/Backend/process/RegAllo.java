@@ -15,6 +15,7 @@ import java.util.HashSet;
 import java.util.Stack;
 
 import static Backend.operand.ObjPhyReg.*;
+import static Backend.operand.ObjFPhyReg.*;
 import static Utils.RISC_Dump.DumpObjModle;
 
 public class RegAllo {
@@ -88,30 +89,32 @@ public class RegAllo {
 	public void run() {
 		floatOrInt = 1;
 		//先分配整形寄存器
+
 		for (ObjFunction func : objModule.getFunctions()) {
 			process(func);
 			finalallocate(func);
 			savestage(func);
 		}
-//		floatOrInt = 2;
-//		//分配浮点寄存器
-//		for (ObjFunction func : objModule.getFunctions()) {
-//			process(func);
-//			finalallocate(func);
-//			savestage(func);
-//		}
+		floatOrInt = 2;
+
+		//分配浮点寄存器
+		for (ObjFunction func : objModule.getFunctions()) {
+			process(func);
+			finalallocate(func);
+			savestage(func);
+		}
 	}
 
 	private boolean isS(int i) {
 		return i == 8 || i == 9 || i >= 18 && i <= 27;
 	}
 
-	private boolean isT(int i) {
-		return i >= 5 && i <= 7 || i >= 28 && i <= 31;
-	}
+
+
 
 	private void savestage(ObjFunction func) {
 		HashSet<ObjPhyReg> changed = new HashSet<>();
+		HashSet<ObjFPhyReg> changedf = new HashSet<>();
 		for (IList.INode<ObjBlock, ObjFunction> bb : func.getObjBlocks()) {
 
 			for (IList.INode<ObjInstr, ObjBlock> inst : bb.getValue().getInstrs()) {
@@ -123,26 +126,58 @@ public class RegAllo {
 				3.move
 				 */
 				if (inst.getValue() instanceof ObjBinary) {
-					ObjPhyReg dst = (ObjPhyReg) ((ObjBinary) inst.getValue()).getDst();
-					if (isS(dst.getIndex())) {
-						changed.add(dst);
+					if(((ObjBinary) inst.getValue()).getDst() instanceof  ObjPhyReg && floatOrInt==1)
+					{
+						ObjPhyReg dst = (ObjPhyReg) ((ObjBinary) inst.getValue()).getDst();
+						if (isS(dst.getIndex())) {
+							changed.add(dst);
+						}
 					}
+					if(((ObjBinary) inst.getValue()).getDst() instanceof  ObjFPhyReg && floatOrInt==2)
+					{
+						ObjFPhyReg dst = (ObjFPhyReg) ((ObjBinary) inst.getValue()).getDst();
+						if (isS(dst.getIndex())) {
+							changedf.add(dst);
+						}
+					}
+
 				}
 				if (inst.getValue() instanceof ObjLoad) {
-					ObjPhyReg dst = (ObjPhyReg) ((ObjLoad) inst.getValue()).getDst();
-					if (isS(dst.getIndex())) {
-						changed.add(dst);
+					if(((ObjLoad) inst.getValue()).getDst() instanceof  ObjPhyReg && floatOrInt==1)
+					{
+						ObjPhyReg dst = (ObjPhyReg) ((ObjLoad) inst.getValue()).getDst();
+						if (isS(dst.getIndex())) {
+							changed.add(dst);
+						}
+					}
+					if(((ObjLoad) inst.getValue()).getDst() instanceof  ObjFPhyReg && floatOrInt==2)
+					{
+						ObjFPhyReg dst = (ObjFPhyReg) ((ObjLoad) inst.getValue()).getDst();
+						if (isS(dst.getIndex())) {
+							changedf.add(dst);
+						}
 					}
 				}
 				if (inst.getValue() instanceof ObjMove) {
-					ObjPhyReg dst = (ObjPhyReg) ((ObjMove) inst.getValue()).getDst();
-					if (isS(dst.getIndex())) {
-						changed.add(dst);
+					if(((ObjMove) inst.getValue()).getDst() instanceof  ObjPhyReg && floatOrInt==1)
+					{
+						ObjPhyReg dst = (ObjPhyReg) ((ObjMove) inst.getValue()).getDst();
+						if (isS(dst.getIndex())) {
+							changed.add(dst);
+						}
+					}
+					if(((ObjMove) inst.getValue()).getDst() instanceof  ObjFPhyReg && floatOrInt==2)
+					{
+						ObjFPhyReg dst = (ObjFPhyReg) ((ObjMove) inst.getValue()).getDst();
+						if (isS(dst.getIndex())) {
+							changedf.add(dst);
+						}
 					}
 				}
 
 			}
 		}
+		if(floatOrInt ==1)
 		for (ObjPhyReg x : changed) {
 			ObjImm12 Imm = new ObjImm12(func.getStackSize());
 			x.spillPlace = func.getStackSize();
@@ -161,9 +196,30 @@ public class RegAllo {
 			((ObjBinary) spplus).setSrc2(new ObjImm12(-func.getStackSize()));
 			((ObjBinary) spplus1).setSrc2(new ObjImm12(func.getStackSize()));
 		}
+		if(floatOrInt ==2)
+		for (ObjFPhyReg x : changedf) {
+			ObjImm12 Imm = new ObjImm12(func.getStackSize());
+			x.spillPlace = func.getStackSize();
+			ObjStore objStore = new ObjStore(x, SP, Imm, "fsd");
+			objStore.getNode().insertAfter(func.getFirstBlock().getInstrs().getHead());
+
+			ObjLoad objLoad = new ObjLoad(x, SP, Imm, "fld");
+			objLoad.getNode().insertBefore(func.getBbExit().getInstrs().getTail().getPrev());
+
+			func.addAllocaSize(8);
+
+			ObjInstr spplus = func.getFirstBlock().getInstrs().getHead().getValue();
+			ObjInstr spplus1 = func.getBbExit().getInstrs().getTail().getPrev().getValue();
+			assert spplus instanceof ObjBinary;
+			assert spplus1 instanceof ObjBinary;
+			((ObjBinary) spplus).setSrc2(new ObjImm12(-func.getStackSize()));
+			((ObjBinary) spplus1).setSrc2(new ObjImm12(func.getStackSize()));
+		}
 	}
 
 	private void init() {
+		S=new HashSet<>();
+		T=new HashSet<>();
 		all = new HashSet<>();
 		initials = new HashSet<>();
 		adjList = new HashMap<>();
@@ -303,6 +359,7 @@ public class RegAllo {
 						tmpin.add(x);
 				}
 				bb.getValue().LocalInterfere.add(tmpin);
+				ins.livein.clear();
 				ins.livein.addAll(tmpin);
 				tmpout = tmpin;
 				tmpinst = tmpinst.getPrev();
@@ -446,6 +503,7 @@ public class RegAllo {
 
 	private void MakeWorkList() {
 		for (ObjOperand o : initials) {
+
 			if (degree.get(o) >= K) {
 				//高度数节点，潜在溢出，先删了
 				spillWorklist.add(o);
@@ -494,6 +552,7 @@ public class RegAllo {
 			bb.getValue().printBbDetail();
 		}
 		procedure = 1;//分配S寄存器
+
 		K = 12;
 		initials = S;
 		Build(func);
@@ -512,6 +571,7 @@ public class RegAllo {
 		}
 		allocate();
 		procedure = 2;
+
 		if (floatOrInt == 1) K = 7;
 		if (floatOrInt == 2) K = 12;
 		init_();
@@ -539,7 +599,10 @@ public class RegAllo {
 			ObjOperand key = entry.getKey();
 			int val = entry.getValue();
 			key.color = val;
-			//System.out.println(key+" -> "+ObjPhyReg.indexToName.get(val));
+//			if(key instanceof ObjVirReg)
+//			System.out.println(key+" -> "+ObjPhyReg.indexToName.get(val));
+//			if(key instanceof ObjFVirReg)
+//				System.out.println(key+" -> "+ObjFPhyReg.indexToName.get(val));
 		}
 	}
 
@@ -549,6 +612,7 @@ public class RegAllo {
 				ArrayList<ObjReg> xx = new ArrayList<>();
 				xx.addAll(inst.getValue().regUse);
 				for (ObjReg x : xx) {
+
 					if ((floatOrInt == 1 && x instanceof ObjVirReg || floatOrInt == 2 && x instanceof ObjFVirReg)) {
 						assert x.color != -1;
 						if (floatOrInt == 1) inst.getValue().replaceReg(x, ObjPhyReg.AllRegs.get(x.color));
@@ -558,6 +622,7 @@ public class RegAllo {
 				xx.clear();
 				xx.addAll(inst.getValue().regDef);
 				for (ObjReg x : xx) {
+
 					if ((floatOrInt == 1 && x instanceof ObjVirReg || floatOrInt == 2 && x instanceof ObjFVirReg)) {
 						assert x.color != -1;
 						if (floatOrInt == 1) inst.getValue().replaceReg(x, ObjPhyReg.AllRegs.get(x.color));
@@ -612,7 +677,9 @@ public class RegAllo {
 		for (ObjInstr i : needrewrite) {
 			for (ObjOperand x : i.regUse) {
 				if (spilledNodes.contains(x)) {
-					ObjLoad lw = new ObjLoad(x, SP, new ObjImm12(x.spillPlace), "ld");
+					ObjLoad lw=new ObjLoad(x, SP, new ObjImm12(x.spillPlace), "ld");
+					if(x instanceof ObjFVirReg)
+						lw=new ObjLoad(x, SP, new ObjImm12(x.spillPlace), "fld");
 					lw.getNode().insertBefore(i.getNode());
 				}
 			}
@@ -620,6 +687,8 @@ public class RegAllo {
 				if (i.regUse.contains(x)) continue;
 				if (spilledNodes.contains(x)) {
 					ObjStore sw = new ObjStore(x, SP, new ObjImm12(x.spillPlace), "sd");
+					if(x instanceof ObjFVirReg)
+						sw=new ObjStore(x, SP, new ObjImm12(x.spillPlace), "fsd");
 					sw.getNode().insertAfter(i.getNode());
 				}
 			}

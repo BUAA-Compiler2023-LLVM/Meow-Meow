@@ -7,6 +7,7 @@ import IR.Value.Instructions.*;
 import Utils.DataStruct.IList;
 import java.util.ArrayList;
 import java.util.HashMap;
+import java.util.HashSet;
 
 public class Visitor {
     private IRModule module;
@@ -681,7 +682,7 @@ public class Visitor {
                         isTerminal = true;
                         if(inst instanceof RetInst)
                         {
-                            CurFunction.setBbExit(CurBasicBlock);
+//                            CurFunction.setBbExit(bb);
                         }
                     }
                 }
@@ -689,7 +690,7 @@ public class Visitor {
 
             // 如果没有ret语句，构建一个ret void
             if(!isTerminal){
-                CurFunction.setBbExit(CurBasicBlock);
+//                CurFunction.setBbExit(CurBasicBlock);
                 if(CurFunction.getType().isVoidTy()){
                     f.buildRetInst(CurBasicBlock);
                 }

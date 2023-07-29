@@ -1,9 +1,6 @@
 package Backend.instruction;
 
-import Backend.operand.ObjImm;
-import Backend.operand.ObjImm12;
-import Backend.operand.ObjLabel;
-import Backend.operand.ObjOperand;
+import Backend.operand.*;
 
 public class ObjMove extends ObjInstr{
     private ObjOperand dst, src;
@@ -45,8 +42,9 @@ public class ObjMove extends ObjInstr{
     public String toString() {
         if(src instanceof ObjLabel)
             return "la\t" + dst + ",\t" + src;
-        else if ((src instanceof ObjImm) || (src instanceof ObjImm12))
+        else if ((src instanceof ObjImm) || (src instanceof ObjImm12)) {
             return "li\t" + dst + ",\t" + src;
+        }
         return "move\t" + dst + ",\t" + src;
     }
 }

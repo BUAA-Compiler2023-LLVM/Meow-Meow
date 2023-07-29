@@ -17,6 +17,7 @@ import Utils.DataStruct.IList;
 import java.awt.*;
 import java.util.ArrayList;
 import java.util.HashMap;
+import java.util.HashSet;
 import java.util.Optional;
 
 import static Backend.operand.ObjPhyReg.*;
@@ -203,6 +204,8 @@ public class IrParser {
 			BasicBlock irBlock = b.getValue();
 			parseBlock(irBlock, f);
 		}
+
+
 		ObjBlock tmpb = bMap.get(f.getBbExit());
 		objF.setBbExit(tmpb);
 		BasicBlock b = f.getBbs().getHead().getValue();
@@ -327,13 +330,13 @@ public class IrParser {
 	}
 
 	private void parseConversionInst(ConversionInst inst, BasicBlock irBlock, Function irFunction) {
-		System.out.println(inst);
+//		System.out.println(inst);
 		ObjOperand dst = parseOperand(inst, 0, irFunction, irBlock);
 		ObjOperand src = parseOperand(inst.getOperand(0), 0, irFunction, irBlock);
 		ObjBlock objBlock = bMap.get(irBlock);
 		if (inst.getOp() == OP.Ftoi) { // float to I32
 			ObjConversion Ftoi = ObjConversion.getFtoi(dst, src);
-			System.out.println(Ftoi);
+//			System.out.println(Ftoi);
 			objBlock.addInstr(Ftoi);
 		} else if (inst.getOp() == OP.Itof) { // I32 to float
 			ObjConversion Itof = ObjConversion.getItof(dst, src);
@@ -1002,9 +1005,9 @@ public class IrParser {
 			int intValue = Float.floatToRawIntBits(floatValue);
 			String hexString = Integer.toHexString(intValue);
 
-			System.out.println(floatValue);
-			System.out.println(intValue);
-			System.out.println(hexString);
+//			System.out.println(floatValue);
+//			System.out.println(intValue);
+//			System.out.println(hexString);
 
 			ObjOperand src = genDstOperand(irValue, irFunction);
 			ObjOperand initValue = parseConstIntOperand(intValue, 32, irFunction, irBlock);
