@@ -5,6 +5,7 @@ import IR.Type.IntegerType;
 import IR.Type.Type;
 import IR.Value.Instructions.Instruction;
 import IR.Value.Instructions.Phi;
+import Pass.IR.Utils.IRLoop;
 import Utils.DataStruct.IList;
 
 import java.util.ArrayList;
@@ -33,6 +34,9 @@ public class Function extends Value{
     private final ArrayList<Function> calleeList;
     private BasicBlock Entry;
     private BasicBlock Exit;
+
+    private HashMap<BasicBlock, IRLoop> loopInfo;
+
 
     //  Function的Type就是它返回值的type
     public Function(String name, Type type){
@@ -78,6 +82,10 @@ public class Function extends Value{
 
     public HashMap<BasicBlock, ArrayList<BasicBlock>> getIdoms() {
         return idoms;
+    }
+
+    public HashMap<BasicBlock, HashSet<BasicBlock>> getDom(){
+        return dom;
     }
 
     public void setDom(HashMap<BasicBlock, HashSet<BasicBlock>> dom){
@@ -167,5 +175,14 @@ public class Function extends Value{
 
     public HashSet<GlobalVar> getStoreGVs(){
         return storeGVs;
+    }
+
+    public void setLoopInfo(HashMap<BasicBlock, IRLoop> loopMap){
+        this.loopInfo = loopMap;
+    }
+
+    public int getLoopDepth(BasicBlock bb){
+        IRLoop loop = loopInfo.get(bb);
+        return loop.getLoopDepth();
     }
 }

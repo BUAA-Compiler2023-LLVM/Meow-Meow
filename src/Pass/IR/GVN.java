@@ -31,7 +31,7 @@ public class GVN implements Pass.IRPass {
         ArrayList<BasicBlock> RPOrder = new ArrayList<>();
 
         BasicBlock entry = function.getBbEntry();
-        RPOSearch(entry, visited, RPOrder);
+        POSearch(entry, visited, RPOrder);
         Collections.reverse(RPOrder);
 
         for(BasicBlock bb : RPOrder){
@@ -39,11 +39,12 @@ public class GVN implements Pass.IRPass {
         }
     }
 
-    private void RPOSearch(BasicBlock bb, HashSet<BasicBlock> visited, ArrayList<BasicBlock> RPOrder){
+    //  do post-order traversal
+    private void POSearch(BasicBlock bb, HashSet<BasicBlock> visited, ArrayList<BasicBlock> RPOrder){
         visited.add(bb);
         for(BasicBlock nxtBb : bb.getNxtBlocks()){
             if(!visited.contains(nxtBb)) {
-                RPOSearch(bb, visited, RPOrder);
+                POSearch(nxtBb, visited, RPOrder);
             }
         }
         RPOrder.add(bb);

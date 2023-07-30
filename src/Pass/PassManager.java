@@ -40,6 +40,8 @@ public class PassManager {
         irPasses.add(new DCE());
         irPasses.add(new RemoveUselessStore());
         irPasses.add(new PeepHole());
+        //  循环相关优化
+        irPasses.add(new LCSSA());
 
 //        irPasses.add(new GVN());
 

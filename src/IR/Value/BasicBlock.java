@@ -156,6 +156,12 @@ public class BasicBlock extends Value{
     public Function getParentFunc() {
         return node.getParent().getValue();
     }
+
+    public int getLoopDepth() {
+        return getParentFunc().getLoopDepth(this);
+    }
+
+
     public void printBbDetail()
     {
         System.out.println("===========");
