@@ -24,9 +24,9 @@ public class RemoveUselessStore implements Pass.IRPass {
     public void run(IRModule module) {
         for(Function function : module.getFunctions()){
             ArrayList<Instruction> deleteInsts = new ArrayList<>();
-            HashMap<Value, StoreInst> storePtrMap = new HashMap<>();
             for(IList.INode<BasicBlock, Function> bbNode : function.getBbs()){
                 BasicBlock bb = bbNode.getValue();
+                HashMap<Value, StoreInst> storePtrMap = new HashMap<>();
                 for(IList.INode<Instruction, BasicBlock> instNode : bb.getInsts()){
                     Instruction inst = instNode.getValue();
                     if(inst instanceof StoreInst storeInst){
