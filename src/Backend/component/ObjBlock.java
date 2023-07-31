@@ -22,6 +22,7 @@ public class ObjBlock {
     public final ArrayList<ObjReg> Use=new ArrayList<>();
     public final ArrayList<ObjReg> Def=new ArrayList<>();
     public final ArrayList<ArrayList<ObjReg>> LocalInterfere = new ArrayList<>();
+    public int depth;
 
     private ArrayList<ObjBlock> preBlocks, nxtBlocks;
     public ObjBlock(String name) {
@@ -70,19 +71,19 @@ public class ObjBlock {
             System.out.print(o.getName()+", ");
         }
         System.out.println("]");
-        for( IList.INode<ObjInstr, ObjBlock> inst : this.instrs)
-        {
-            System.out.println(inst.getValue().toString());
-        }
+//        for( IList.INode<ObjInstr, ObjBlock> inst : this.instrs)
+//        {
+//            System.out.println(inst.getValue().toString());
+//        }
         System.out.println("DEF:    "+Def);
         System.out.println("USE:    "+Use);
         System.out.println("IN:    "+liveIns);
         System.out.println("OUT:    "+liveOuts);
-        System.out.println("LOCAL INTERF");
-        for(ArrayList<ObjReg> x : LocalInterfere)
-        {
-            System.out.println(x);
-        }
+//        System.out.println("LOCAL INTERF");
+//        for(ArrayList<ObjReg> x : LocalInterfere)
+//        {
+//            System.out.println(x);
+//        }
         System.out.println("===========");
     }
     public void setTrueBlock(ObjBlock trueBlock) {

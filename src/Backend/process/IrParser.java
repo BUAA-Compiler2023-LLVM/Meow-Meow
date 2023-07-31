@@ -168,6 +168,8 @@ public class IrParser {
 			for (IList.INode<BasicBlock, Function> b : f.getBbs()) {
 				BasicBlock irBlock = b.getValue();
 				ObjBlock objBlock = bMap.get(irBlock);
+//				System.out.println(irBlock.getLoopDepth());
+//				objBlock.depth=irBlock.getLoopDepth();
 				ArrayList<BasicBlock> preBlocks = irBlock.getPreBlocks();
 				for (BasicBlock preB : preBlocks)
 					objBlock.addPreBlock(bMap.get(preB));
@@ -275,6 +277,7 @@ public class IrParser {
 	}
 
 	private void parseInstruction(Instruction irInst, BasicBlock irBlock, Function irFunction) {
+
 		// System.out.println(irInst instanceof  CmpInst);
 		if (irInst instanceof RetInst)
 			parseRet((RetInst) irInst, irBlock, irFunction);
@@ -333,6 +336,7 @@ public class IrParser {
 			parseMove((Move) irInst, irBlock, irFunction);
 		else if (irInst instanceof ConversionInst)
 			parseConversionInst((ConversionInst) irInst, irBlock, irFunction);
+
 	}
 
 	private void parseConversionInst(ConversionInst inst, BasicBlock irBlock, Function irFunction) {
@@ -367,7 +371,8 @@ public class IrParser {
 	private void parseGep(GepInst inst, BasicBlock irBlock, Function irFunction) {
 		ObjFunction objFunction = fMap.get(irFunction);
 		ObjBlock objBlock = bMap.get(irBlock);
-//		System.out.println(inst.getInstString());
+
+
 
 		ArrayList<Value> values = inst.getUseValues();
 		ArrayList<Value> indexs = inst.getIndexs();
@@ -438,7 +443,6 @@ public class IrParser {
 			}
 
 		}
-
 
 	}
 

@@ -7,6 +7,7 @@ import Backend.instruction.*;
 import Backend.operand.*;
 import Utils.DataStruct.IList;
 import Utils.DataStruct.Pair;
+import jdk.swing.interop.SwingInterOpUtils;
 
 import java.io.IOException;
 import java.util.ArrayList;
@@ -89,8 +90,8 @@ public class RegAllo {
 	public void run() {
 		floatOrInt = 1;
 		//ÏÈ·ÖÅäÕûÐÎ¼Ä´æÆ÷
-
 		for (ObjFunction func : objModule.getFunctions()) {
+
 			process(func);
 			finalallocate(func);
 			savestage(func);
@@ -99,6 +100,7 @@ public class RegAllo {
 
 		//·ÖÅä¸¡µã¼Ä´æÆ÷
 		for (ObjFunction func : objModule.getFunctions()) {
+
 			process(func);
 			finalallocate(func);
 			savestage(func);
@@ -261,6 +263,7 @@ public class RegAllo {
 	private void GetDefUse(ObjFunction func) {
 
 		for (IList.INode<ObjBlock, ObjFunction> bb : func.getObjBlocks()) {
+			//System.out.println(bb.getValue().getName()+" has "+bb.getValue().getInstrs().getSize()+" instrs");
 			bb.getValue().Use.clear();
 			bb.getValue().Def.clear();
 			bb.getValue().liveIns.clear();
@@ -273,7 +276,7 @@ public class RegAllo {
 						all.add(r);
 					}
 
-					if (!bb.getValue().Use.contains(r) && ((floatOrInt == 1 && r instanceof ObjVirReg || floatOrInt == 2 && r instanceof ObjFVirReg))) {//
+					if (!(bb.getValue().Use.contains(r) )&& !(bb.getValue().Def.contains(r) )&&((floatOrInt == 1 && r instanceof ObjVirReg || floatOrInt == 2 && r instanceof ObjFVirReg))) {//
 						bb.getValue().Use.add(r);
 					}
 				}
@@ -281,12 +284,13 @@ public class RegAllo {
 					if (floatOrInt == 1 && r instanceof ObjVirReg || floatOrInt == 2 && r instanceof ObjFVirReg) {
 						all.add(r);
 					}
-					if (!bb.getValue().Use.contains(r) && !bb.getValue().Def.contains(r) && ((floatOrInt == 1 && r instanceof ObjVirReg || floatOrInt == 2 && r instanceof ObjFVirReg))) {
+					if (!(bb.getValue().Use.contains(r)) && !bb.getValue().Def.contains(r) && ((floatOrInt == 1 && r instanceof ObjVirReg || floatOrInt == 2 && r instanceof ObjFVirReg))) {
 						bb.getValue().Def.add(r);
 					}
 				}
 
 			}
+
 		}
 	}
 
@@ -345,7 +349,9 @@ public class RegAllo {
 			IList.INode<ObjInstr, ObjBlock> tmpinst = bb.getValue().getInstrs().getTail();
 			ArrayList<ObjReg> tmpout = bb.getValue().liveOuts;
 			while (tmpinst != null) {
+
 				if (tmpinst.getPrev() == null) {
+					tmpinst.getValue().livein.clear();
 					tmpinst.getValue().livein.addAll(bb.getValue().liveIns);
 					break;
 				}
@@ -361,6 +367,8 @@ public class RegAllo {
 				bb.getValue().LocalInterfere.add(tmpin);
 				ins.livein.clear();
 				ins.livein.addAll(tmpin);
+//				System.out.println(ins.toString());
+//				System.out.println(ins.livein);
 				tmpout = tmpin;
 				tmpinst = tmpinst.getPrev();
 
@@ -409,6 +417,7 @@ public class RegAllo {
 		for (IList.INode<ObjBlock, ObjFunction> bb : func.getObjBlocks()) {
 			for (IList.INode<ObjInstr, ObjBlock> tmpinst : bb.getValue().getInstrs()) {
 				for (ObjReg r : tmpinst.getValue().regUse) {
+					loopDepths.put(r, bb.getValue().depth + 1);
 					if ((floatOrInt == 1 && r instanceof ObjVirReg || floatOrInt == 2 && r instanceof ObjFVirReg)) {
 						degree.put(r, 0);
 						adjList.put(r, new HashSet<>());
@@ -416,6 +425,7 @@ public class RegAllo {
 					}
 				}
 				for (ObjReg r : tmpinst.getValue().regDef) {
+					loopDepths.put(r, bb.getValue().depth + 1);
 					if ((floatOrInt == 1 && r instanceof ObjVirReg || floatOrInt == 2 && r instanceof ObjFVirReg)) {
 						degree.put(r, 0);
 						adjList.put(r, new HashSet<>());
@@ -547,30 +557,51 @@ public class RegAllo {
 
 	public void process(ObjFunction func) {
 		init();
+
 		LivenessAnalysis(func);
+
 		if (printLiveVar) for (IList.INode<ObjBlock, ObjFunction> bb : func.getObjBlocks()) {
+//			bb.getValue().Def.removeIf(bb.getValue().Use::contains);
 			bb.getValue().printBbDetail();
 		}
 		procedure = 1;//·ÖÅäS¼Ä´æÆ÷
 
 		K = 12;
 		initials = S;
+
 		Build(func);
+
 		MakeWorkList();
 		while (!(simplifyWorklist.isEmpty() && worklistMoves.isEmpty() && freezeWorklist.isEmpty() && spillWorklist.isEmpty())) {
-			if (!simplifyWorklist.isEmpty()) Simplify();
-			else if (!worklistMoves.isEmpty()) Coalesce();
-			else if (!freezeWorklist.isEmpty()) Freeze();
-			else if (!spillWorklist.isEmpty()) SelectSpill();
+			if (!simplifyWorklist.isEmpty()) {
+
+				Simplify();
+			}
+			else if (!worklistMoves.isEmpty()) {
+
+				Coalesce();
+			}
+			else if (!freezeWorklist.isEmpty()) {
+
+				Freeze();
+			}
+			else if (!spillWorklist.isEmpty()) {
+
+				SelectSpill();
+
+			}
 		}
+
 		AssignColors();
 		if (spilledNodes.size() != 0) {
-			//System.out.println("**REAL SPILL**");
+
 			RewriteProgram(func);
 			process(func);
 		}
+
 		allocate();
 		procedure = 2;
+
 
 		if (floatOrInt == 1) K = 7;
 		if (floatOrInt == 2) K = 12;
@@ -586,7 +617,8 @@ public class RegAllo {
 		}
 		AssignColors();
 		if (spilledNodes.size() != 0) {
-			//System.out.println("**REAL SPILL**");
+//			System.out.println("**REAL SPILL FOR T**");
+//			System.out.println(spilledNodes);
 			RewriteProgram(func);
 			process(func);
 		}
@@ -697,11 +729,11 @@ public class RegAllo {
 
 
 //		try{
-//			//DumpObjModle(objModule,"rewrite_"+rewritetime+".asm");
+//			DumpObjModle(objModule,"rewrite_"+rewritetime+".asm");
 //			rewritetime+=1;
 //		}catch (IOException e)
 //		{
-//			//System.out.println(e);
+////			System.out.println(e);
 //		}
 
 
@@ -767,7 +799,16 @@ public class RegAllo {
 	}
 
 	private void SelectSpill() {
-		ObjOperand m = spillWorklist.iterator().next();
+
+//		double magicNum =0.02;
+		ObjOperand m = spillWorklist.stream().max((l, r) ->
+		{
+			double value1 = degree.getOrDefault(l, 0).doubleValue() ;
+			double value2 = degree.getOrDefault(r, 0).doubleValue() ;
+
+			return Double.compare(value1, value2);
+		}).get();
+//		System.out.println(m);
 		simplifyWorklist.add(m);
 		FreezeMoves(m);
 		spillWorklist.remove(m);
@@ -801,8 +842,9 @@ public class RegAllo {
 	}
 
 	private void Coalesce() {
-		HashSet<ObjMove> toberemoved = new HashSet<>();
-		for (ObjMove m : worklistMoves) {
+
+		ObjMove m = worklistMoves.iterator().next();
+
 
 			ObjOperand x = GetAlias(m.getSrc());
 			ObjOperand y = GetAlias(m.getDst());//
@@ -814,8 +856,8 @@ public class RegAllo {
 				u = x;
 				v = y;
 			}
-//			worklistMoves.remove(m);
-			toberemoved.add(m);
+			worklistMoves.remove(m);
+
 			if (u.equals(v)) {
 				coalescedMoves.add(m);
 				AddWorkList(u);
@@ -842,10 +884,10 @@ public class RegAllo {
 				}
 			}
 
-		}
-		for (ObjMove m : toberemoved) {
-			worklistMoves.remove(m);
-		}
+
+//		for (ObjMove m : toberemoved) {
+//			worklistMoves.remove(m);
+//		}
 
 	}
 

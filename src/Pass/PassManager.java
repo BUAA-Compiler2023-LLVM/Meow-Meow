@@ -34,14 +34,14 @@ public class PassManager {
         irPasses.add(new GlobalValueLocalize());
         irPasses.add(new MergeBB());
         irPasses.add(new Mem2Reg());
-        irPasses.add(new FuncInLine());
+//        irPasses.add(new FuncInLine());
         irPasses.add(new ConstFold());
 //        irPasses.add(new InstComb());
 //        irPasses.add(new DCE());
 //        irPasses.add(new RemoveUselessStore());
 //        irPasses.add(new PeepHole());
         //  循环相关优化
-//        irPasses.add(new LCSSA());
+        irPasses.add(new LCSSA());
 
         //  GVNGCM本身不是循环优化，但需要用到loopDepth
 //        irPasses.add(new GVN());
