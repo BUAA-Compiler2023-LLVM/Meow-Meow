@@ -367,6 +367,7 @@ public class IrParser {
 	private void parseGep(GepInst inst, BasicBlock irBlock, Function irFunction) {
 		ObjFunction objFunction = fMap.get(irFunction);
 		ObjBlock objBlock = bMap.get(irBlock);
+//		System.out.println(inst.getInstString());
 
 		ArrayList<Value> values = inst.getUseValues();
 		ArrayList<Value> indexs = inst.getIndexs();
@@ -377,28 +378,68 @@ public class IrParser {
 		ObjMove objMove = new ObjMove(dst, baseOperand);
 		objBlock.addInstr(objMove);
 
-		Type baseType = ((PointerType) values.get(0).getType()).getEleType();
-		for (int i = 1; i < indexs.size(); i++) {
-//            System.out.println(baseType);
-//            System.out.println(indexs.get(i));
-			Type pointeeType = ((ArrayType) baseType).getEleType();
-			int pointeeSize = 4;
-			if (pointeeType instanceof ArrayType)
-				pointeeSize = 4 * ((ArrayType) pointeeType).getTotalSize();
-			ObjOperand offset = parseOperand(new ConstInteger(pointeeSize, IntegerType.I32), 0, irFunction, irBlock);
+		PointerType imsb = (PointerType)(values.get(0).getType());
+		ArrayList<Integer> dims=new ArrayList<>();
+		ArrayList<Integer> sizes=new ArrayList<>();
+		if(imsb.getEleType().isArrayType())//多维
+		{
+			ArrayType imsb1 =(ArrayType)(imsb.getEleType());
+			int dim=imsb1.getDim();
+			for(int i=0;i<dim-1;i++)
+			{
+//				System.out.println(imsb1);
+				dims.add(imsb1.getNum());
+				imsb1=(ArrayType)(imsb1.getEleType());
+			}
+			dims.add(imsb1.getNum());
 
-			Value index = indexs.get(i);
-			ObjOperand indexOperand = parseOperand(index, 0, irFunction, irBlock);
-			ObjOperand tmp = genTmpReg(irFunction);
 
-			ObjBinary objMul = ObjBinary.getMul(tmp, indexOperand, offset);
-			objBlock.addInstr(objMul);
+			for(int i=dim-1;i>=0;i--)
+			{
+				if(sizes.isEmpty()) sizes.add(4);
+				else
+				{
+					sizes.add(0,sizes.get(0)*dims.get(i+1));
+				}
+			}
 
-			ObjBinary objAdd = ObjBinary.getAdd(dst, dst, tmp);
-			objBlock.addInstr(objAdd);
-
-			baseType = pointeeType;
 		}
+		if(indexs.size()>1)
+			indexs.remove(0);
+
+
+		if(sizes.isEmpty())
+			sizes.add(4);
+//		System.out.println("原数组维度："+dims.size());
+//		System.out.println("原数组各维长度"+dims);
+//		System.out.println("原数组各维大小"+sizes);
+//		System.out.println("我要取的维度："+(indexs.size()));
+//		System.out.println("我要取的下标："+indexs);
+		assert sizes.size()==indexs.size();
+		for(int i=indexs.size()-1;i>=0;i--)
+		{
+			if(indexs.get(i) instanceof  ConstInteger)//如果下标是常数
+			{
+				int offset=sizes.get(i) * ((ConstInteger)(indexs.get(i))).getValue();
+				ObjBinary bin= ObjBinary.getAddi(dst,dst,new ObjImm12(offset));
+				objBlock.addInstr(bin);
+			}else
+			{
+				ObjOperand mul1 = parseOperand(indexs.get(i),32,irFunction,irBlock);
+				ObjOperand mul2 = parseConstIntOperand(sizes.get(i),32,irFunction,irBlock);
+				ObjOperand tmpconst=genTmpReg(irFunction);
+				ObjMove mv= new ObjMove(tmpconst,mul2);  // li t0,114514
+				objBlock.addInstr(mv);
+				ObjOperand tmp=genTmpReg(irFunction);
+				ObjBinary bin= ObjBinary.getMul(tmp,mul1,tmpconst);
+				objBlock.addInstr(bin);
+				ObjBinary bin1= ObjBinary.getAdd(dst,dst,tmp);
+				objBlock.addInstr(bin1);
+			}
+
+		}
+
+
 	}
 
 	private void parseCall(CallInst inst, BasicBlock irBlock, Function irFunction) {
