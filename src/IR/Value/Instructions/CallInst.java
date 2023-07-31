@@ -23,6 +23,10 @@ public class CallInst extends Instruction{
         return function;
     }
 
+    public ArrayList<Value> getParams(){
+        return getUseValues();
+    }
+
     @Override
     public boolean hasName(){
         return this.hasName;

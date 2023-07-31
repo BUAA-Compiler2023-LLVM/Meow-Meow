@@ -55,6 +55,14 @@ public enum OP {
         };
     }
 
+    public boolean isFloat(){
+        String name = name();
+        return switch (name) {
+            case "Fadd", "FNe", "Fsub", "FEq", "Fmul", "Fdiv", "FLt", "Fmod", "FLe", "FGt", "FGe" -> true;
+            default -> false;
+        };
+    }
+
     public static OP turnToFloat(OP op){
         return switch (op){
             case Add, Fadd -> OP.Fadd;

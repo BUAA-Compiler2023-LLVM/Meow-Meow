@@ -154,7 +154,35 @@ public class ConstFold implements Pass.IRPass {
         else if(op == OP.Mod || op == OP.Fmod){
             return simplifyModInst(binaryInst, rec);
         }
+        else if(op == OP.Eq || op == OP.FEq
+                || op == OP.Ne || op == OP.FNe
+                || op == OP.Le || op == OP.FLe
+                || op == OP.Lt || op == OP.FLt
+                || op == OP.Ge || op == OP.FGe
+                || op == OP.Gt || op == OP.FGt){
+            return simplifyCmpInst(binaryInst);
+        }
         else return binaryInst;
+    }
+
+    private Value simplifyCmpInst(BinaryInst cmpInst){
+        //  1. fold常量
+        Value tmp = foldConstant(cmpInst);
+        if (tmp != null) {
+            return tmp;
+        }
+
+        if(cmpInst.getOp() == OP.Eq) {
+            Value left = cmpInst.getLeftVal();
+            Value right = cmpInst.getRightVal();
+
+            //  2. a == a
+            if (left.equals(right)) {
+                return ConstInteger.const0_1;
+            }
+        }
+
+        return cmpInst;
     }
 
     private Value simplifyAddInst(BinaryInst addInst, int rec){
@@ -470,6 +498,10 @@ public class ConstFold implements Pass.IRPass {
         else if(left instanceof ConstFloat && right instanceof ConstFloat){
             float leftVal = ((ConstFloat) left).getValue();
             float rightVal = ((ConstFloat) right).getValue();
+            //  特例：fcmp等返回的是整数值
+            if(inst instanceof CmpInst){
+                return new ConstInteger((int) calculate(leftVal, rightVal, op), inst.getType());
+            }
             return new ConstFloat(calculate(leftVal, rightVal, op));
         }
         return null;
