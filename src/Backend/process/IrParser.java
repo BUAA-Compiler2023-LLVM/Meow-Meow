@@ -390,6 +390,7 @@ public class IrParser {
 		{
 			ArrayType imsb1 =(ArrayType)(imsb.getEleType());
 			int dim=imsb1.getDim();
+			dims.add(1);
 			for(int i=0;i<dim-1;i++)
 			{
 //				System.out.println(imsb1);
@@ -399,7 +400,7 @@ public class IrParser {
 			dims.add(imsb1.getNum());
 
 
-			for(int i=dim-1;i>=0;i--)
+			for(int i=dim;i>=0;i--)
 			{
 				if(sizes.isEmpty()) sizes.add(4);
 				else
@@ -409,12 +410,13 @@ public class IrParser {
 			}
 
 		}
-		if(indexs.size()>1)
-			indexs.remove(0);
+//		if(indexs.size()>1)
+//			indexs.remove(0);
 
 
 		if(sizes.isEmpty())
 			sizes.add(4);
+//		System.out.println(inst.getInstString());
 //		System.out.println("原数组维度："+dims.size());
 //		System.out.println("原数组各维长度"+dims);
 //		System.out.println("原数组各维大小"+sizes);
