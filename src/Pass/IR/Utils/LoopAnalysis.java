@@ -15,7 +15,7 @@ public class LoopAnalysis {
         //  idoms是该基本块直接支配的基本块
         HashMap<BasicBlock, ArrayList<BasicBlock>> idoms =  function.getIdoms();
         //  dom是该基本块被哪些基本块支配
-        HashMap<BasicBlock, HashSet<BasicBlock>> dom = function.getDom();
+        HashMap<BasicBlock, HashSet<BasicBlock>> domer = function.getDomer();
         loopMap.clear();
         loops.clear();
         topLevelLoops.clear();
@@ -40,7 +40,7 @@ public class LoopAnalysis {
 
             // 如果一个结点支配其前继，则将这个边识别为backedge
             for (BasicBlock backEdge : headBb.getPreBlocks()) {
-                if (dom.getOrDefault(backEdge, new HashSet<>()).contains(headBb)) {
+                if (domer.getOrDefault(backEdge, new HashSet<>()).contains(headBb)) {
                     backEdges.push(backEdge);
                 }
             }

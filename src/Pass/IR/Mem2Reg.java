@@ -30,9 +30,9 @@ public class Mem2Reg implements Pass.IRPass {
             IList<BasicBlock, Function> basicBlocks = function.getBbs();
             visited = new HashMap<>();
             //  df为该函数的支配边界信息，记录了每个节点的支配边界
-            DomAnalysis.DomAnalysisRes res = DomAnalysis.run(function);
-            HashMap<BasicBlock, ArrayList<BasicBlock>> df = res.getDf();
-            domTree = res.getDomTree();
+            DomAnalysis.run(function);
+            HashMap<BasicBlock, ArrayList<BasicBlock>> df = function.getDF();
+            domTree = function.getIdoms();
             //  defMap记录一个allocInst的值被哪些基本块使用
             defMap = new HashMap<>();
             //  defs记录需要mem2reg的所有alloc指令

@@ -1,29 +1,19 @@
 package IR.Value;
 
-import IR.IRBuildFactory;
-import IR.Type.IntegerType;
 import IR.Type.Type;
-import IR.Value.Instructions.Instruction;
-import IR.Value.Instructions.Phi;
 import Pass.IR.Utils.IRLoop;
 import Utils.DataStruct.IList;
 
-import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.HashSet;
-import java.util.Stack;
+import java.util.*;
 
 public class Function extends Value{
-    private IRBuildFactory f = IRBuildFactory.getInstance();
     private final IList<BasicBlock, Function> bbs;
     private final ArrayList<Argument> args;
     private HashMap<BasicBlock, ArrayList<BasicBlock>> idoms;
-    private HashMap<BasicBlock, ArrayList<BasicBlock>> pidoms;
-    private HashMap<BasicBlock, HashSet<BasicBlock>> dom;
-    private HashMap<BasicBlock, HashSet<BasicBlock>> pdom;
+    private HashMap<BasicBlock, HashSet<BasicBlock>> domer;
+    private HashMap<BasicBlock, ArrayList<BasicBlock>> df;
     private boolean mayHasSideEffect;
     private boolean useGV;
-    private boolean canGVN = false;
     private boolean isLibFunc = false;
     private final HashSet<GlobalVar> loadGVs;
     private final HashSet<GlobalVar> storeGVs;
@@ -32,7 +22,6 @@ public class Function extends Value{
     private final ArrayList<Function> callerList;
     //  calleeList记录这个function调用的其他函数
     private final ArrayList<Function> calleeList;
-    private BasicBlock Entry;
     private BasicBlock Exit;
 
     private HashMap<BasicBlock, IRLoop> loopInfo;
@@ -69,31 +58,24 @@ public class Function extends Value{
         }
     }
 
-    public void setPIdoms(HashMap<BasicBlock, ArrayList<BasicBlock>> pidoms){
-        this.pidoms = pidoms;
-        for(IList.INode<BasicBlock, Function> bbNode : bbs){
-            BasicBlock bb = bbNode.getValue();
-            bb.setPIdoms(pidoms.get(bb));
-            for(BasicBlock pidomBb : pidoms.get(bb)){
-                pidomBb.setPIdominator(bb);
-            }
-        }
+    public void setDF(HashMap<BasicBlock, ArrayList<BasicBlock>> df){
+        this.df = df;
     }
 
     public HashMap<BasicBlock, ArrayList<BasicBlock>> getIdoms() {
         return idoms;
     }
 
-    public HashMap<BasicBlock, HashSet<BasicBlock>> getDom(){
-        return dom;
+    public HashMap<BasicBlock, HashSet<BasicBlock>> getDomer(){
+        return domer;
     }
 
-    public void setDom(HashMap<BasicBlock, HashSet<BasicBlock>> dom){
-        this.dom = dom;
+    public HashMap<BasicBlock, ArrayList<BasicBlock>> getDF(){
+        return df;
     }
 
-    public void setPDom(HashMap<BasicBlock, HashSet<BasicBlock>> pdom){
-        this.pdom = pdom;
+    public void setDomer(HashMap<BasicBlock, HashSet<BasicBlock>> domer){
+        this.domer = domer;
     }
 
     public void addCaller(Function function){
