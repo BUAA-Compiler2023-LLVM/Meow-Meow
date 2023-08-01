@@ -83,9 +83,6 @@ public class ObjBinary extends ObjInstr {
     public static ObjBinary getAdd(ObjOperand dst, ObjOperand src1, ObjOperand src2) {
         return new ObjBinary("add", dst, src1, src2);
     }
-    public static ObjBinary getAddi(ObjOperand dst, ObjOperand src1, ObjOperand src2) {
-        return new ObjBinary("addi", dst, src1, src2);
-    }
     public static ObjBinary getSub(ObjOperand dst, ObjOperand src1, ObjOperand src2) {
         return new ObjBinary("sub", dst, src1, src2);
     }
@@ -110,32 +107,17 @@ public class ObjBinary extends ObjInstr {
     public static ObjBinary getXor(ObjOperand dst, ObjOperand src1, ObjOperand src2) {
         return new ObjBinary("xor", dst, src1, src2);
     }
-    public static ObjBinary getXori(ObjOperand dst, ObjOperand src1, ObjOperand src2) {
-        return new ObjBinary("xori", dst, src1, src2);
-    }
     public static ObjBinary getOr(ObjOperand dst, ObjOperand src1, ObjOperand src2) {
         return new ObjBinary("or", dst, src1, src2);
-    }
-    public static ObjBinary getOri(ObjOperand dst, ObjOperand src1, ObjOperand src2) {
-        return new ObjBinary("ori", dst, src1, src2);
     }
     public static ObjBinary getAnd(ObjOperand dst, ObjOperand src1, ObjOperand src2) {
         return new ObjBinary("and", dst, src1, src2);
     }
-    public static ObjBinary getAndi(ObjOperand dst, ObjOperand src1, ObjOperand src2) {
-        return new ObjBinary("andi", dst, src1, src2);
-    }
     public static ObjBinary getSll(ObjOperand dst, ObjOperand src1, ObjOperand src2) {
         return new ObjBinary("sll", dst, src1, src2);
     }
-    public static ObjBinary getSlli(ObjOperand dst, ObjOperand src1, ObjOperand src2) {
-        return new ObjBinary("slli", dst, src1, src2);
-    }
     public static ObjBinary getSrl(ObjOperand dst, ObjOperand src1, ObjOperand src2) {
         return new ObjBinary("srl", dst, src1, src2);
-    }
-    public static ObjBinary getSrli(ObjOperand dst, ObjOperand src1, ObjOperand src2) {
-        return new ObjBinary("srli", dst, src1, src2);
     }
     public static ObjBinary getSra(ObjOperand dst, ObjOperand src1, ObjOperand src2) {
         return new ObjBinary("sra", dst, src1, src2);
@@ -160,7 +142,7 @@ public class ObjBinary extends ObjInstr {
                int x=( (ObjImm12)getSrc2()).getImmediate12();
                setSrc2(new ObjImm12(-1*x));
             }
-            if (type.equals("add") || type.equals("xor") || type.equals("or") || type.equals("and"))
+            if (type.equals("add") || type.equals("xor") || type.equals("or") || type.equals("and") || type.equals("sll") || type.equals("srl"))
                 s = type + "i";
         }
         while(s.length() < 6)
