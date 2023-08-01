@@ -169,7 +169,7 @@ public class IrParser {
 				BasicBlock irBlock = b.getValue();
 				ObjBlock objBlock = bMap.get(irBlock);
 //				System.out.println(irBlock.getLoopDepth());
-//				objBlock.depth=irBlock.getLoopDepth();
+				objBlock.depth=irBlock.getLoopDepth();
 				ArrayList<BasicBlock> preBlocks = irBlock.getPreBlocks();
 				for (BasicBlock preB : preBlocks)
 					objBlock.addPreBlock(bMap.get(preB));

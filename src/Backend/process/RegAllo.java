@@ -29,7 +29,7 @@ public class RegAllo {
 
 	private boolean printLiveVar = false;
 
-	private boolean printdebug = true;
+	private boolean printdebug = false;
 
 	private HashSet<ObjOperand> all = new HashSet<>();
 
@@ -157,6 +157,14 @@ public class RegAllo {
 			ObjBinary objAdd = ObjBinary.getAdd(addr2, addr, tmp);
 
 			ObjStore objStore = new ObjStore(src, addr2, new ObjImm12(0), ty);
+
+			{
+				objMove.replaceReg(tmp,ObjPhyReg.AllRegs.get(5));
+				objAdd.replaceReg(tmp,ObjPhyReg.AllRegs.get(5));
+				objAdd.replaceReg(addr2,ObjPhyReg.AllRegs.get(6));
+				objStore.replaceReg(tmp,ObjPhyReg.AllRegs.get(5));
+				objStore.replaceReg(addr2,ObjPhyReg.AllRegs.get(6));
+			}
 			if(insertpos) {
 				objMove.getNode().insertAfter(instr.getNode());
 				objAdd.getNode().insertAfter(objMove.getNode());
@@ -193,6 +201,13 @@ public class RegAllo {
 
 			ObjLoad objLoad = new ObjLoad(dst, addr2, new ObjImm12(0), ty);
 
+			{
+				objMove.replaceReg(tmp,ObjPhyReg.AllRegs.get(5));
+				objAdd.replaceReg(tmp,ObjPhyReg.AllRegs.get(5));
+				objAdd.replaceReg(addr2,ObjPhyReg.AllRegs.get(6));
+				objLoad.replaceReg(tmp,ObjPhyReg.AllRegs.get(5));
+				objLoad.replaceReg(addr2,ObjPhyReg.AllRegs.get(6));
+			}
 			if(insertpos) {
 //				instr.getNode().insertAfter(objMove.getNode());
 //				objMove.getNode().insertAfter(objAdd.getNode());
@@ -282,13 +297,13 @@ public class RegAllo {
 		for (ObjPhyReg x : changed) {
 			ObjImm12 Imm = new ObjImm12(func.getStackSize());
 			x.spillPlace = func.getStackSize();
-			// ObjStore objStore = new ObjStore(x, SP, Imm, "sd");
-			// objStore.getNode().insertAfter(func.getFirstBlock().getInstrs().getHead());
+//			 ObjStore objStore = new ObjStore(x, SP, Imm, "sd");
+//			 objStore.getNode().insertAfter(func.getFirstBlock().getInstrs().getHead());
 			getStore(x, SP, func.getStackSize(), "sd", true, func,
 					func.getFirstBlock().getInstrs().getHeadValue());
 
-			// ObjLoad objLoad = new ObjLoad(x, SP, Imm, "ld");
-			// objLoad.getNode().insertBefore(func.getBbExit().getInstrs().getTail().getPrev());
+//			 ObjLoad objLoad = new ObjLoad(x, SP, Imm, "ld");
+//			 objLoad.getNode().insertBefore(func.getBbExit().getInstrs().getTail().getPrev());
 			getLoad(x, SP, func.getStackSize(), "ld", false, func,
 					func.getBbExit().getInstrs().getTail().getPrev().getValue());
 
@@ -313,11 +328,11 @@ public class RegAllo {
 		for (ObjFPhyReg x : changedf) {
 			ObjImm12 Imm = new ObjImm12(func.getStackSize());
 			x.spillPlace = func.getStackSize();
-			// ObjStore objStore = new ObjStore(x, SP, Imm, "fsd");
-			// objStore.getNode().insertAfter(func.getFirstBlock().getInstrs().getHead());
-
-			// ObjLoad objLoad = new ObjLoad(x, SP, Imm, "fld");
-			// objLoad.getNode().insertBefore(func.getBbExit().getInstrs().getTail().getPrev());
+//			 ObjStore objStore = new ObjStore(x, SP, Imm, "fsd");
+//			 objStore.getNode().insertAfter(func.getFirstBlock().getInstrs().getHead());
+//
+//			 ObjLoad objLoad = new ObjLoad(x, SP, Imm, "fld");
+//			 objLoad.getNode().insertBefore(func.getBbExit().getInstrs().getTail().getPrev());
 			getStore(x, SP, func.getStackSize(), "fsd", true, func,
 					func.getFirstBlock().getInstrs().getHeadValue());
 
