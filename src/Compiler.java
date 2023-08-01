@@ -24,18 +24,18 @@ public class Compiler {
         passManager.runIRPasses(irModule);
 
         IRDump.DumpModule(irModule, "llvm.ll");
-//
-//        RemovePhi rmp=new RemovePhi();
-//        rmp.run(irModule);
-//
-//        IRDump.DumpModule(irModule,"removed_phi.ll");
-//
-//        Backend backend = new Backend(irModule);
-//         passManager.runObjPasses(backend.getModule());
-//        RISC_Dump.DumpBackend(backend,"riscv_withno_alloc.s");
-//
-//        RegAllo ar=new RegAllo(backend.getModule());
-//        ar.run();
-//        RISC_Dump.DumpBackend(backend,"riscv.s");
+
+        RemovePhi rmp=new RemovePhi();
+        rmp.run(irModule);
+
+        IRDump.DumpModule(irModule,"removed_phi.ll");
+
+        Backend backend = new Backend(irModule);
+         passManager.runObjPasses(backend.getModule());
+        RISC_Dump.DumpBackend(backend,"riscv_withno_alloc.s");
+
+        RegAllo ar=new RegAllo(backend.getModule());
+        ar.run();
+        RISC_Dump.DumpBackend(backend,"riscv.s");
     }
 }
