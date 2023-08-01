@@ -16,6 +16,7 @@ import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.HashSet;
 import java.util.Stack;
+import java.util.stream.Collectors;
 
 import static Backend.operand.ObjPhyReg.*;
 import static Backend.operand.ObjFPhyReg.*;
@@ -105,6 +106,9 @@ public class RegAllo {
 			savestage(func);
 		}
 		floatOrInt = 2;
+
+		printdebug=false;
+		printLiveVar=false;
 		if(printdebug)
 		System.out.println("allocate float");
 
@@ -503,17 +507,29 @@ if(needallo==1)
 				if (tmpinst.getPrev() == null) {
 					tmpinst.getValue().livein.clear();
 					tmpinst.getValue().livein.addAll(bb.getValue().liveIns);
+					bb.getValue().LocalInterfere.add(bb.getValue().liveIns);
 					break;
 				}
 				ArrayList<ObjReg> tmpin = new ArrayList<>();
 				ObjInstr ins = tmpinst.getValue();
 				tmpin.addAll(tmpout);
+//				System.out.println(ins);
+//				System.out.println(ins.regDef);
+//				System.out.println(ins.regUse);
 				tmpin.removeIf(ins.regDef::contains);
 				//tmpin.addAll(ins.regUse);
 				for (ObjReg x : ins.regUse) {
 					if ((floatOrInt == 1 && x instanceof ObjVirReg || floatOrInt == 2 && x instanceof ObjFVirReg) &&!tmpin.contains(x))
 						tmpin.add(x);
 				}
+				int contains=0;
+				for(ArrayList<ObjReg> x :bb.getValue().LocalInterfere)
+				{
+					ArrayList<ObjReg> xx=new ArrayList<>(x);
+					xx.removeIf(tmpin::contains);
+					if(xx.isEmpty()) contains=1;
+				}
+				if(!(contains==1))
 				bb.getValue().LocalInterfere.add(tmpin);
 				ins.livein.clear();
 				ins.livein.addAll(tmpin);
@@ -590,6 +606,7 @@ if(needallo==1)
 							worklistMoves.add((ObjMove) tmpinst.getValue());
 
 							for (ObjReg o : tmpinst.getValue().regDef) {
+
 								moveList.get(o).add((ObjMove) tmpinst.getValue());
 							}
 							for (ObjReg o : tmpinst.getValue().regUse) {
@@ -641,7 +658,7 @@ if(needallo==1)
 //		System.out.println("ADJSET");
 //		for (Pair<ObjOperand,ObjOperand> p : adjSet) {
 //			System.out.println(p.getFirst()+" "+p.getSecond());
-//			if(p.getFirst().toString().equals("vr42")||p.getFirst().toString().equals("vr43"))
+//			if(p.getFirst().toString().equals("vr8"))
 //			{
 //				System.out.println(p.getFirst());
 //				System.out.println(adjList.get(p.getFirst()));
@@ -653,6 +670,8 @@ if(needallo==1)
 
 	private void AddEdge(ObjOperand x, ObjOperand y) {
 		if (!adjSet.contains(new Pair<>(x, y)) && !x.equals(y)) {
+			if(printdebug)
+			System.out.println("ADD EDGE "+ x +" "+y);
 			adjSet.add(new Pair<>(x, y));
 			adjSet.add(new Pair<>(y, x));
 			if (!x.isPrecolored()) {
@@ -702,6 +721,7 @@ if(needallo==1)
 		}
 		return ret;
 
+
 	}
 
 	private HashSet<ObjMove> NodeMoves(ObjOperand x) {
@@ -739,6 +759,8 @@ if(needallo==1)
 		if(printdebug)
 			System.out.println(func.getName()+" MakeWorkList"+loop);
 		MakeWorkList();
+
+
 
 		while (!(simplifyWorklist.isEmpty() && worklistMoves.isEmpty() && freezeWorklist.isEmpty() && spillWorklist.isEmpty())) {
 			if (!simplifyWorklist.isEmpty()) {
@@ -841,11 +863,12 @@ if(needallo==1)
 			ObjOperand key = entry.getKey();
 			int val = entry.getValue();
 			key.color = val;
-			if(printdebug) {
-//				if (key instanceof ObjVirReg)
-//					System.out.println(key + " -> " + ObjPhyReg.indexToName.get(val));
-//				if (key instanceof ObjFVirReg)
-//					System.out.println(key + " -> " + ObjFPhyReg.indexToName.get(val));
+			if(printdebug)
+			{
+				if (key instanceof ObjVirReg)
+					System.out.println(key + " -> " + ObjPhyReg.indexToName.get(val));
+				if (key instanceof ObjFVirReg)
+					System.out.println(key + " -> " + ObjFPhyReg.indexToName.get(val));
 			}
 		}
 	}
@@ -883,9 +906,9 @@ if(needallo==1)
 				}
 			}
 		}
-		for (ObjInstr i : toberemoved) {
-			i.getNode().removeFromList();
-		}
+//		for (ObjInstr i : toberemoved) {
+//			i.getNode().removeFromList();
+//		}
 	}
 
 	private void RewriteProgram(ObjFunction func) {
@@ -969,6 +992,8 @@ if(needallo==1)
 	}
 
 	private void AssignColors() {
+//		System.out.println("selectStack");
+//		System.out.println(selectStack);
 		while (!selectStack.empty()) {
 			ObjOperand n = selectStack.pop();
 			HashSet<Integer> okColors = new HashSet<>();
@@ -1008,8 +1033,15 @@ if(needallo==1)
 					}
 				}
 			}
+//			System.out.println("assigning color");
+//			System.out.println(n);
+//			System.out.println("adj and all its alias");
+//			System.out.println(adjList.get(n));
 			for (ObjOperand w : adjList.get(n)) {
+//				System.out.print(w);
+//				System.out.println(": "+GetAlias(w));
 				if (GetAlias(w).isPrecolored() || coloredNodes.contains(GetAlias(w))) {
+					//System.out.println("remove its color : "+color.get(GetAlias(w)));
 					okColors.remove(color.get(GetAlias(w)));
 				}
 			}
@@ -1018,11 +1050,14 @@ if(needallo==1)
 			} else {
 				coloredNodes.add(n);
 				int c = okColors.iterator().next();
-				okColors.remove(c);
+//				okColors.remove(c);
+//				System.out.println("give "+n+" "+c);
 				color.put(n, c);
 			}
 		}
+//		System.out.println("give coalescedNodes color");
 		for (ObjOperand n : coalescedNodes) {
+			//System.out.println(n+" : "+GetAlias(n)+": "+color.get(GetAlias(n)));
 			color.put(n, color.get(GetAlias(n)));
 		}
 	}
@@ -1054,8 +1089,8 @@ if(needallo==1)
 	private void FreezeMoves(ObjOperand u) {
 		for (ObjMove m : NodeMoves(u)) {
 			ObjOperand v;
-			ObjOperand x = GetAlias(m.getSrc());
-			ObjOperand y = GetAlias(m.getDst());//
+			ObjOperand x = m.getSrc();
+			ObjOperand y = m.getDst();//
 			if (GetAlias(y).equals(GetAlias(u))) {
 				v = GetAlias(x);
 			} else {
@@ -1076,8 +1111,8 @@ if(needallo==1)
 		ObjMove m = worklistMoves.iterator().next();
 
 
-			ObjOperand x = GetAlias(m.getSrc());
-			ObjOperand y = GetAlias(m.getDst());//
+			ObjOperand y = GetAlias(m.getSrc());
+			ObjOperand x = GetAlias(m.getDst());//
 			ObjOperand u, v;
 			if (y.isPrecolored()) {
 				u = y;
@@ -1122,20 +1157,21 @@ if(needallo==1)
 	}
 
 	private void Combine(ObjOperand u, ObjOperand v) {
+
 		if (freezeWorklist.contains(v)) {
 			freezeWorklist.remove(v);
 		} else {
 			spillWorklist.remove(v);
 		}
 		coalescedNodes.add(v);
-		alias.put(v, u);
+		alias.put(v, u);  // 7的别名是5  13的别名是10
 		HashSet<ObjMove> tmp = new HashSet<>(moveList.get(u));
 		tmp.addAll(moveList.get(v));
 		moveList.put(u, tmp);
 		HashSet<ObjOperand> tmpp = new HashSet<>();
 		tmpp.add(v);
 		EnableMoves(tmpp);
-		for (ObjOperand t : Adjacent(v)) {
+		for (ObjOperand t : Adjacent(v)) {  //5的敌人+=7的敌人
 			AddEdge(t, u);
 			DecrementDegree(t);
 		}
@@ -1144,6 +1180,8 @@ if(needallo==1)
 			freezeWorklist.remove(u);
 			spillWorklist.add(u);
 		}
+
+
 
 	}
 
@@ -1175,6 +1213,8 @@ if(needallo==1)
 	}
 
 	private void Simplify() {
+//		System.out.println("simplify");
+//		System.out.println(simplifyWorklist);
 		//冲突图里全是低度数传送无关点，需要一个个放到栈里删掉
 
 		ObjOperand n = simplifyWorklist.iterator().next();
@@ -1200,6 +1240,7 @@ if(needallo==1)
 				simplifyWorklist.add(m);
 			}
 		}
+
 	}
 
 	private void EnableMoves(HashSet<ObjOperand> tmp) {
