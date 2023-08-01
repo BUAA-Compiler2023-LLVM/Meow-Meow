@@ -248,7 +248,7 @@ public class IrParser {
 			if (arg.getType() instanceof FloatType)
 				ty = "flw";
 			int immediate = off + (i - 8) * 4;
-			getLoad(operand, SP, immediate, ty, false, f, objF.getFirstBlock().getInstrs().getHead().getValue());
+			getLoad(operand, SP, immediate, ty, false, objF, objF.getFirstBlock().getInstrs().getHead().getValue());
 		}
 
 
@@ -257,12 +257,12 @@ public class IrParser {
 			// ObjStore objStore = new ObjStore(RA, SP, Imm, "sd");
 			// objF.getFirstBlock().addInstrHead(objStore);
 			getStore(RA, SP, objF.getStackSize() - 8, "sd", false,
-					f, objF.getFirstBlock().getInstrs().getHeadValue());
+					objF, objF.getFirstBlock().getInstrs().getHeadValue());
 
 			// ObjLoad objLoad = new ObjLoad(RA, SP, Imm, "ld");
 			// objLoad.getNode().insertBefore(objF.getBbExit().getInstrs().getTail());
 			getLoad(RA, SP, objF.getStackSize() - 8, "ld", false,
-					f, objF.getBbExit().getInstrs().getTail().getValue());
+					objF, objF.getBbExit().getInstrs().getTail().getValue());
 		}
 
 		ObjOperand alloc = parseConstIntOperand(-objF.getStackSize(), 12, f, b);
@@ -511,10 +511,10 @@ public class IrParser {
 //			}
 			int immediate = (i - 8) * 4;
 			if (arg.getType() instanceof FloatType)
-				getStore(objOperand, SP, immediate, "fsw", true, irFunction,
+				getStore(objOperand, SP, immediate, "fsw", true, objFunction,
 						objBlock.getInstrs().getTailValue());
 			else
-				getStore(objOperand, SP, immediate, "sw", true, irFunction,
+				getStore(objOperand, SP, immediate, "sw", true, objFunction,
 						objBlock.getInstrs().getTailValue());
 		}
 
@@ -958,8 +958,8 @@ public class IrParser {
 
 	}
 
-	private void getStore(ObjOperand src, ObjOperand addr, int immediate, String ty,
-						  boolean insertpos, Function irFunction, ObjInstr instr) {
+	public void getStore(ObjOperand src, ObjOperand addr, int immediate, String ty,
+						  boolean insertpos, ObjFunction objFunction, ObjInstr instr) {
 		// insertpos false: ???????, true: ???????
 		if (immediate >= -2048 && immediate <= 2047) {
 			ObjImm12 Imm = new ObjImm12(immediate);
@@ -970,11 +970,11 @@ public class IrParser {
 				instr.getNode().insertBefore(objStore.getNode());
 		}
 		else {
-			ObjOperand tmp = genTmpReg(irFunction);
+			ObjOperand tmp = genTmpReg(objFunction);
 			ObjImm tmpimm = new ObjImm(immediate);
 			ObjMove objMove = new ObjMove(tmp, tmpimm);
 
-			ObjOperand addr2 = genTmpReg(irFunction);
+			ObjOperand addr2 = genTmpReg(objFunction);
 			ObjBinary objAdd = ObjBinary.getAdd(addr2, addr, tmp);
 
 			ObjStore objStore = new ObjStore(src, addr2, new ObjImm12(0), ty);
@@ -992,8 +992,8 @@ public class IrParser {
 
 	}
 
-	private void getLoad(ObjOperand dst, ObjOperand addr, int immediate, String ty,
-						 boolean insertpos, Function irFunction, ObjInstr instr) {
+	public void getLoad(ObjOperand dst, ObjOperand addr, int immediate, String ty,
+						 boolean insertpos, ObjFunction objFunction, ObjInstr instr) {
 
 		// insertpos false: ???????, true: ???????
 		if (immediate >= -2048 && immediate <= 2047) {
@@ -1007,11 +1007,11 @@ public class IrParser {
 				instr.getNode().insertBefore(objLoad.getNode());
 		}
 		else {
-			ObjOperand tmp = genTmpReg(irFunction);
+			ObjOperand tmp = genTmpReg(objFunction);
 			ObjImm tmpimm = new ObjImm(immediate);
 			ObjMove objMove = new ObjMove(tmp, tmpimm);
 
-			ObjOperand addr2 = genTmpReg(irFunction);
+			ObjOperand addr2 = genTmpReg(objFunction);
 			ObjBinary objAdd = ObjBinary.getAdd(addr2, addr, tmp);
 
 			ObjLoad objLoad = new ObjLoad(dst, addr2, new ObjImm12(0), ty);
@@ -1104,6 +1104,12 @@ public class IrParser {
 
 	private ObjOperand genTmpReg(Function irFunction) {
 		ObjFunction objFunction = fMap.get(irFunction);
+		ObjVirReg tmpReg = new ObjVirReg();
+		objFunction.addUsedVirReg(tmpReg);
+		return tmpReg;
+	}
+
+	private ObjOperand genTmpReg(ObjFunction objFunction) {
 		ObjVirReg tmpReg = new ObjVirReg();
 		objFunction.addUsedVirReg(tmpReg);
 		return tmpReg;
