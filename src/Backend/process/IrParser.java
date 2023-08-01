@@ -965,9 +965,9 @@ public class IrParser {
 			ObjImm12 Imm = new ObjImm12(immediate);
 			ObjStore objStore = new ObjStore(src, addr, Imm, ty);
 			if (insertpos)
-				instr.getNode().insertAfter(objStore.getNode());
+				objStore.getNode().insertAfter(instr.getNode());
 			else
-				instr.getNode().insertBefore(objStore.getNode());
+				objStore.getNode().insertBefore(instr.getNode());
 		}
 		else {
 			ObjOperand tmp = genTmpReg(objFunction);
@@ -979,14 +979,14 @@ public class IrParser {
 
 			ObjStore objStore = new ObjStore(src, addr2, new ObjImm12(0), ty);
 			if(insertpos) {
-				instr.getNode().insertAfter(objMove.getNode());
-				objMove.getNode().insertAfter(objAdd.getNode());
-				objAdd.getNode().insertAfter(objStore.getNode());
+				objMove.getNode().insertAfter(instr.getNode());
+				objAdd.getNode().insertAfter(objMove.getNode());
+				objStore.getNode().insertAfter(objAdd.getNode());
 			}
 			else {
-				instr.getNode().insertBefore(objStore.getNode());
-				objStore.getNode().insertBefore(objAdd.getNode());
-				objAdd.getNode().insertBefore(objMove.getNode());
+				objStore.getNode().insertBefore(instr.getNode());
+				objAdd.getNode().insertBefore(objStore.getNode());
+				objMove.getNode().insertBefore(objAdd.getNode());
 			}
 		}
 
@@ -1000,11 +1000,9 @@ public class IrParser {
 			ObjImm12 Imm = new ObjImm12(immediate);
 			ObjLoad objLoad = new ObjLoad(dst, addr, Imm, ty);
 			if(insertpos)
-				// objBlock.addInstr(objLoad);
-				instr.getNode().insertAfter(objLoad.getNode());
+				objLoad.getNode().insertAfter(instr.getNode());
 			else
-				// objBlock.addInstr(objLoad);
-				instr.getNode().insertBefore(objLoad.getNode());
+				objLoad.getNode().insertBefore(instr.getNode());
 		}
 		else {
 			ObjOperand tmp = genTmpReg(objFunction);
@@ -1017,20 +1015,20 @@ public class IrParser {
 			ObjLoad objLoad = new ObjLoad(dst, addr2, new ObjImm12(0), ty);
 
 			if(insertpos) {
-				// objBlock.addInstr(objMove);
-				// objBlock.addInstr(objAdd);
-				// objBlock.addInstr(objLoad);
-				instr.getNode().insertAfter(objMove.getNode());
-				objMove.getNode().insertAfter(objAdd.getNode());
-				objAdd.getNode().insertAfter(objLoad.getNode());
+//				instr.getNode().insertAfter(objMove.getNode());
+//				objMove.getNode().insertAfter(objAdd.getNode());
+//				objAdd.getNode().insertAfter(objLoad.getNode());
+				objMove.getNode().insertAfter(instr.getNode());
+				objAdd.getNode().insertAfter(objMove.getNode());
+				objLoad.getNode().insertAfter(objAdd.getNode());
 			}
 			else {
-				// objBlock.addInstrHead(objLoad);
-				// objBlock.addInstrHead(objAdd);
-				// objBlock.addInstrHead(objMove);
-				instr.getNode().insertBefore(objLoad.getNode());
-				objLoad.getNode().insertBefore(objAdd.getNode());
-				objAdd.getNode().insertBefore(objMove.getNode());
+//				instr.getNode().insertBefore(objLoad.getNode());
+//				objLoad.getNode().insertBefore(objAdd.getNode());
+//				objAdd.getNode().insertBefore(objMove.getNode());
+				objLoad.getNode().insertBefore(instr.getNode());
+				objAdd.getNode().insertBefore(objLoad.getNode());
+				objMove.getNode().insertBefore(objAdd.getNode());
 			}
 		}
 	}
