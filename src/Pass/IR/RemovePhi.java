@@ -6,6 +6,7 @@ import IR.Type.Type;
 import IR.Value.*;
 import IR.Value.Instructions.*;
 import Pass.IR.Utils.DomAnalysis;
+import Pass.IR.Utils.IRLoop;
 import Pass.Pass;
 import Utils.DataStruct.IList;
 import Utils.DataStruct.Pair;
@@ -48,6 +49,7 @@ public class RemovePhi implements Pass.IRPass {
 								} else {
 									BasicBlock new2 = new BasicBlock(function);
 									new2.meow = true;
+									new2.depth=src.getLoopDepth();
 									new2.addInst(mv);
 									new2.addInst(new BrInst(curbb));
 									new2.insertAfter(src);
@@ -103,6 +105,7 @@ public class RemovePhi implements Pass.IRPass {
 			ArrayList<Instruction> tobeRemoved = new ArrayList<>();
 			ArrayList<Move> pairlist = new ArrayList<>();
 			BasicBlock newbb = new BasicBlock(function);
+			newbb.depth=0;
 
 			for (IList.INode<BasicBlock, Function> b : function.getBbs()) {
 				BasicBlock curbb = b.getValue();

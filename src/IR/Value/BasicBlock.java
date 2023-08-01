@@ -146,8 +146,15 @@ public class BasicBlock extends Value{
         return node.getParent().getValue();
     }
 
+    public int depth=0;
+
     public int getLoopDepth() {
-        return getParentFunc().getLoopDepth(this);
+        try {
+            return getParentFunc().getLoopDepth(this);
+        }catch (NullPointerException n )
+        {
+            return depth;//removephi中新增的bb，手动添加loop
+        }
     }
 
 
