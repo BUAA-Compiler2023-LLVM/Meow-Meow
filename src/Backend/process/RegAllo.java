@@ -89,6 +89,7 @@ public class RegAllo {
 
 	public void run() {
 		floatOrInt = 1;
+//		System.out.println("allocate int");
 		//先分配整形寄存器
 		for (ObjFunction func : objModule.getFunctions()) {
 
@@ -97,6 +98,7 @@ public class RegAllo {
 			savestage(func);
 		}
 		floatOrInt = 2;
+//		System.out.println("allocate float");
 
 		//分配浮点寄存器
 		for (ObjFunction func : objModule.getFunctions()) {
@@ -361,13 +363,13 @@ public class RegAllo {
 				tmpin.removeIf(ins.regDef::contains);
 				//tmpin.addAll(ins.regUse);
 				for (ObjReg x : ins.regUse) {
-					if ((floatOrInt == 1 && x instanceof ObjVirReg || floatOrInt == 2 && x instanceof ObjFVirReg))
+					if ((floatOrInt == 1 && x instanceof ObjVirReg || floatOrInt == 2 && x instanceof ObjFVirReg) &&!tmpin.contains(x))
 						tmpin.add(x);
 				}
 				bb.getValue().LocalInterfere.add(tmpin);
 				ins.livein.clear();
 				ins.livein.addAll(tmpin);
-//				System.out.println(ins.toString());
+//				System.out.println(ins);
 //				System.out.println(ins.livein);
 				tmpout = tmpin;
 				tmpinst = tmpinst.getPrev();
@@ -488,6 +490,15 @@ public class RegAllo {
 				}
 			}
 		}
+//		System.out.println("ADJSET");
+//		for (Pair<ObjOperand,ObjOperand> p : adjSet) {
+//			System.out.println(p.getFirst()+" "+p.getSecond());
+//			if(p.getFirst().toString().equals("vr42")||p.getFirst().toString().equals("vr43"))
+//			{
+//				System.out.println(p.getFirst());
+//				System.out.println(adjList.get(p.getFirst()));
+//			}
+//		}
 
 	}
 
@@ -556,6 +567,7 @@ public class RegAllo {
 	}
 
 	public void process(ObjFunction func) {
+		int enough=0;
 		init();
 
 		LivenessAnalysis(func);
@@ -594,10 +606,13 @@ public class RegAllo {
 
 		AssignColors();
 		if (spilledNodes.size() != 0) {
-
+			System.out.println("**REAL SPILL FOR S**");
+//			System.out.println(spilledNodes);
 			RewriteProgram(func);
+			enough=1;
 			process(func);
 		}
+		if(enough==1) return;
 
 		allocate();
 		procedure = 2;
@@ -617,11 +632,13 @@ public class RegAllo {
 		}
 		AssignColors();
 		if (spilledNodes.size() != 0) {
-//			System.out.println("**REAL SPILL FOR T**");
+			System.out.println("**REAL SPILL FOR T**");
 //			System.out.println(spilledNodes);
+			enough=1;
 			RewriteProgram(func);
 			process(func);
 		}
+		if(enough==1) return;
 		allocate();
 
 	}
@@ -728,13 +745,13 @@ public class RegAllo {
 		}
 
 
-//		try{
-//			DumpObjModle(objModule,"rewrite_"+rewritetime+".asm");
-//			rewritetime+=1;
-//		}catch (IOException e)
-//		{
-////			System.out.println(e);
-//		}
+		try{
+			DumpObjModle(objModule,"rewrite_"+rewritetime+".asm");
+			rewritetime+=1;
+		}catch (IOException e)
+		{
+			System.out.println(e);
+		}
 
 
 	}
