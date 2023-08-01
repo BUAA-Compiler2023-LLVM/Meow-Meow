@@ -27,6 +27,8 @@ public class RegAllo {
 
 	private boolean printLiveVar = false;
 
+	private boolean printdebug = true;
+
 	private HashSet<ObjOperand> all = new HashSet<>();
 
 	private HashSet<ObjOperand> initials = new HashSet<>();
@@ -89,20 +91,23 @@ public class RegAllo {
 
 	public void run() {
 		floatOrInt = 1;
-//		System.out.println("allocate int");
+		if(printdebug)
+		System.out.println("allocate int");
 		//先分配整形寄存器
 		for (ObjFunction func : objModule.getFunctions()) {
+			loop=0;
 
 			process(func);
 			finalallocate(func);
 			savestage(func);
 		}
 		floatOrInt = 2;
-//		System.out.println("allocate float");
+		if(printdebug)
+		System.out.println("allocate float");
 
 		//分配浮点寄存器
 		for (ObjFunction func : objModule.getFunctions()) {
-
+			loop=0;
 			process(func);
 			finalallocate(func);
 			savestage(func);
@@ -401,18 +406,18 @@ public class RegAllo {
 		for (ObjOperand x : all) {
 			if (!S.contains(x)) T.add(x);
 		}
-//		System.out.print("S: [");
-//		for(ObjOperand x : S)
-//		{
-//			System.out.print(x+", ");
-//		}
-//		System.out.println("]");
-//		System.out.print("T: [");
-//		for(ObjOperand x : T)
-//		{
-//			System.out.print(x+", ");
-//		}
-//		System.out.println("]");
+		if(printdebug) {
+			System.out.print("S: [");
+			for (ObjOperand x : S) {
+				System.out.print(x + ", ");
+			}
+			System.out.println("]");
+			System.out.print("T: [");
+			for (ObjOperand x : T) {
+				System.out.print(x + ", ");
+			}
+			System.out.println("]");
+		}
 	}
 
 	private void Build(ObjFunction func) {
@@ -565,10 +570,13 @@ public class RegAllo {
 	private boolean MoveRelated(ObjOperand x) {
 		return NodeMoves(x).size() != 0;
 	}
-
+	private static int loop=1;
 	public void process(ObjFunction func) {
+
 		int enough=0;
 		init();
+		if(printdebug)
+		System.out.println(func.getName()+" LivenessAnalysis"+loop);
 
 		LivenessAnalysis(func);
 
@@ -580,36 +588,50 @@ public class RegAllo {
 
 		K = 12;
 		initials = S;
-
+		if(printdebug)
+			System.out.println(func.getName()+" allocate s"+loop);
+		if(printdebug)
+			System.out.println(func.getName()+" build"+loop);
 		Build(func);
-
+		if(printdebug)
+			System.out.println(func.getName()+" MakeWorkList"+loop);
 		MakeWorkList();
+
 		while (!(simplifyWorklist.isEmpty() && worklistMoves.isEmpty() && freezeWorklist.isEmpty() && spillWorklist.isEmpty())) {
 			if (!simplifyWorklist.isEmpty()) {
-
+				if(printdebug)
+					System.out.println(func.getName()+" Simplify"+loop);
 				Simplify();
 			}
 			else if (!worklistMoves.isEmpty()) {
-
+				if(printdebug)
+					System.out.println(func.getName()+" Coalesce"+loop);
 				Coalesce();
 			}
 			else if (!freezeWorklist.isEmpty()) {
-
+				if(printdebug)
+					System.out.println(func.getName()+" Freeze"+loop);
 				Freeze();
 			}
 			else if (!spillWorklist.isEmpty()) {
-
+				if(printdebug)
+					System.out.println(func.getName()+" SelectSpill"+loop);
 				SelectSpill();
 
 			}
 		}
-
+		if(printdebug)
+			System.out.println(func.getName()+" AssignColors"+loop);
 		AssignColors();
 		if (spilledNodes.size() != 0) {
-			System.out.println("**REAL SPILL FOR S**");
-//			System.out.println(spilledNodes);
+			System.out.println("**REAL SPILL FOR S**"+loop);
+			if(printdebug) {
+
+				System.out.println(spilledNodes);
+			}
 			RewriteProgram(func);
 			enough=1;
+			loop+=1;
 			process(func);
 		}
 		if(enough==1) return;
@@ -617,29 +639,57 @@ public class RegAllo {
 		allocate();
 		procedure = 2;
 
-
 		if (floatOrInt == 1) K = 7;
 		if (floatOrInt == 2) K = 12;
 		init_();
 		initials = T;
+		if(printdebug)
+			System.out.println(func.getName()+" allocate t"+loop);
+		if(printdebug)
+			System.out.println(func.getName()+" build"+loop);
 		Build(func);
+		if(printdebug)
+			System.out.println(func.getName()+" MakeWorkList"+loop);
 		MakeWorkList();
+
 		while (!(simplifyWorklist.isEmpty() && worklistMoves.isEmpty() && freezeWorklist.isEmpty() && spillWorklist.isEmpty())) {
-			if (!simplifyWorklist.isEmpty()) Simplify();
-			else if (!worklistMoves.isEmpty()) Coalesce();
-			else if (!freezeWorklist.isEmpty()) Freeze();
-			else if (!spillWorklist.isEmpty()) SelectSpill();
+			if (!simplifyWorklist.isEmpty()) {
+				if(printdebug)
+					System.out.println(func.getName()+" Simplify"+loop);
+				Simplify();
+			}
+			else if (!worklistMoves.isEmpty()) {
+				if(printdebug)
+					System.out.println(func.getName()+" Coalesce"+loop);
+				Coalesce();
+			}
+			else if (!freezeWorklist.isEmpty()) {
+				if(printdebug)
+					System.out.println(func.getName()+" Freeze"+loop);
+				Freeze();
+			}
+			else if (!spillWorklist.isEmpty()) {
+				if(printdebug)
+					System.out.println(func.getName()+" SelectSpill"+loop);
+				SelectSpill();
+
+			}
 		}
+		if(printdebug)
+			System.out.println(func.getName()+" AssignColors"+loop);
 		AssignColors();
 		if (spilledNodes.size() != 0) {
-			System.out.println("**REAL SPILL FOR T**");
-//			System.out.println(spilledNodes);
+			System.out.println("**REAL SPILL FOR T**"+loop);
+			if(printdebug)
+			System.out.println(spilledNodes);
 			enough=1;
 			RewriteProgram(func);
+			loop+=1;
 			process(func);
 		}
 		if(enough==1) return;
 		allocate();
+
 
 	}
 
@@ -648,10 +698,12 @@ public class RegAllo {
 			ObjOperand key = entry.getKey();
 			int val = entry.getValue();
 			key.color = val;
-//			if(key instanceof ObjVirReg)
-//			System.out.println(key+" -> "+ObjPhyReg.indexToName.get(val));
-//			if(key instanceof ObjFVirReg)
-//				System.out.println(key+" -> "+ObjFPhyReg.indexToName.get(val));
+			if(printdebug) {
+//				if (key instanceof ObjVirReg)
+//					System.out.println(key + " -> " + ObjPhyReg.indexToName.get(val));
+//				if (key instanceof ObjFVirReg)
+//					System.out.println(key + " -> " + ObjFPhyReg.indexToName.get(val));
+			}
 		}
 	}
 
@@ -705,7 +757,7 @@ public class RegAllo {
 					if (spilledNodes.contains(x)) {
 						needrewrite.add(inst.getValue());
 						if (x.spillPlace == -1) {
-							//System.out.println("SPILL " + x);
+
 							x.spillPlace = nowoffset;
 							nowoffset += 8;
 							func.addAllocaSize(8);
@@ -724,6 +776,7 @@ public class RegAllo {
 
 		}
 		for (ObjInstr i : needrewrite) {
+
 			for (ObjOperand x : i.regUse) {
 				if (spilledNodes.contains(x)) {
 					ObjLoad lw=new ObjLoad(x, SP, new ObjImm12(x.spillPlace), "ld");
@@ -733,7 +786,7 @@ public class RegAllo {
 				}
 			}
 			for (ObjOperand x : i.regDef) {
-				if (i.regUse.contains(x)) continue;
+//				if (i.regUse.contains(x)) continue;
 				if (spilledNodes.contains(x)) {
 					ObjStore sw = new ObjStore(x, SP, new ObjImm12(x.spillPlace), "sd");
 					if(x instanceof ObjFVirReg)
@@ -745,14 +798,14 @@ public class RegAllo {
 		}
 
 
-		try{
-			DumpObjModle(objModule,"rewrite_"+rewritetime+".asm");
-			rewritetime+=1;
-		}catch (IOException e)
-		{
-			System.out.println(e);
+		if(printdebug && rewritetime<3) {
+			try {
+				DumpObjModle(objModule, "rewrite_" + rewritetime + ".asm");
+				rewritetime += 1;
+			} catch (IOException e) {
+				System.out.println(e);
+			}
 		}
-
 
 	}
 
@@ -817,11 +870,12 @@ public class RegAllo {
 
 	private void SelectSpill() {
 
-//		double magicNum =0.02;
+		double magicNum = 1.414;
+		// TODO 这里太慢了，要不然直接挑第一个吧，似乎可以维护一个堆
 		ObjOperand m = spillWorklist.stream().max((l, r) ->
 		{
-			double value1 = degree.getOrDefault(l, 0).doubleValue() ;
-			double value2 = degree.getOrDefault(r, 0).doubleValue() ;
+			double value1 = degree.getOrDefault(l, 0).doubleValue() / Math.pow(magicNum, loopDepths.getOrDefault(l, 0));
+			double value2 = degree.getOrDefault(r, 0).doubleValue() / Math.pow(magicNum, loopDepths.getOrDefault(r, 0));
 
 			return Double.compare(value1, value2);
 		}).get();
