@@ -439,8 +439,8 @@ public class IrParser {
 				objBlock.addInstr(bin);
 			}else
 			{
-				ObjOperand mul1 = parseOperand(indexs.get(i),32,irFunction,irBlock);
-				ObjOperand mul2 = parseConstIntOperand(sizes.get(i),32,irFunction,irBlock);
+				ObjOperand mul1 = parseOperand(indexs.get(i),12,irFunction,irBlock);
+				ObjOperand mul2 = parseConstIntOperand(sizes.get(i),12,irFunction,irBlock);
 				ObjOperand tmpconst=genTmpReg(irFunction);
 				ObjMove mv= new ObjMove(tmpconst,mul2);  // li t0,114514
 				objBlock.addInstr(mv);
