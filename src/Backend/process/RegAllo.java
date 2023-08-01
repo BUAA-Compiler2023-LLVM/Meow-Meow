@@ -5,6 +5,8 @@ import Backend.component.ObjFunction;
 import Backend.component.ObjModule;
 import Backend.instruction.*;
 import Backend.operand.*;
+import IR.Value.BasicBlock;
+import IR.Value.Function;
 import Utils.DataStruct.IList;
 import Utils.DataStruct.Pair;
 import jdk.swing.interop.SwingInterOpUtils;
@@ -88,6 +90,7 @@ public class RegAllo {
 	}
 
 	public void run() {
+
 		floatOrInt = 1;
 		//先分配整形寄存器
 		for (ObjFunction func : objModule.getFunctions()) {
@@ -104,6 +107,16 @@ public class RegAllo {
 			process(func);
 			finalallocate(func);
 			savestage(func);
+		}
+
+		for (ObjFunction func : objModule.getFunctions()) {
+			ObjInstr spplus = func.getFirstBlock().getInstrs().getHead().getValue();
+			ObjInstr spplus1 = func.getBbExit().getInstrs().getTail().getPrev().getValue();
+
+			ObjOperand offset = getConstIntOperand(-func.getStackSize(), 12, func, spplus);
+			((ObjBinary) spplus).setSrc2(offset);
+			ObjOperand offset2 = getConstIntOperand(func.getStackSize(), 12, func, spplus1);
+			((ObjBinary) spplus1).setSrc2(offset2);
 		}
 	}
 
@@ -191,12 +204,20 @@ public class RegAllo {
 
 			func.addAllocaSize(8);
 
-			ObjInstr spplus = func.getFirstBlock().getInstrs().getHead().getValue();
-			ObjInstr spplus1 = func.getBbExit().getInstrs().getTail().getPrev().getValue();
-			assert spplus instanceof ObjBinary;
-			assert spplus1 instanceof ObjBinary;
-			((ObjBinary) spplus).setSrc2(new ObjImm12(-func.getStackSize()));
-			((ObjBinary) spplus1).setSrc2(new ObjImm12(func.getStackSize()));
+//			ObjInstr spplus = func.getFirstBlock().getInstrs().getHead().getValue();
+//			ObjInstr spplus1 = func.getBbExit().getInstrs().getTail().getPrev().getValue();
+//
+//			while(!(spplus instanceof ObjBinary))
+//				spplus = spplus.getNode().getNext().getValue();
+//
+//			assert spplus instanceof ObjBinary;
+//			assert spplus1 instanceof ObjBinary;
+//
+//			System.out.println(spplus);
+//			ObjOperand offset = getConstIntOperand(-func.getStackSize(), 12, func, spplus);
+//			((ObjBinary) spplus).setSrc2(offset);
+//			ObjOperand offset2 = getConstIntOperand(func.getStackSize(), 12, func, spplus1);
+//			((ObjBinary) spplus1).setSrc2(offset2);
 		}
 		if(floatOrInt ==2)
 		for (ObjFPhyReg x : changedf) {
@@ -210,12 +231,31 @@ public class RegAllo {
 
 			func.addAllocaSize(8);
 
-			ObjInstr spplus = func.getFirstBlock().getInstrs().getHead().getValue();
-			ObjInstr spplus1 = func.getBbExit().getInstrs().getTail().getPrev().getValue();
-			assert spplus instanceof ObjBinary;
-			assert spplus1 instanceof ObjBinary;
-			((ObjBinary) spplus).setSrc2(new ObjImm12(-func.getStackSize()));
-			((ObjBinary) spplus1).setSrc2(new ObjImm12(func.getStackSize()));
+//			ObjInstr spplus = func.getFirstBlock().getInstrs().getHead().getValue();
+//			ObjInstr spplus1 = func.getBbExit().getInstrs().getTail().getPrev().getValue();
+//
+//
+//			ObjOperand offset = getConstIntOperand(-func.getStackSize(), 12, func, spplus);
+//			((ObjBinary) spplus).setSrc2(offset);
+//			ObjOperand offset2 = getConstIntOperand(func.getStackSize(), 12, func, spplus1);
+//			((ObjBinary) spplus1).setSrc2(offset2);
+		}
+	}
+
+	private ObjOperand getConstIntOperand(int immediate, int canImm, ObjFunction objFunction,
+										  ObjInstr nxt_instr) {
+		ObjImm imm = new ObjImm(immediate);
+		ObjImm12 imm12 = new ObjImm12(immediate);
+		if (canImm == 32)
+			return imm;
+		else if (canImm == 12 && (immediate >= -2048 && immediate <= 2047))
+			return imm12;
+		else {
+			ObjPhyReg dst = ObjPhyReg.AllRegs.get(5);
+			objFunction.addUsedVirReg(dst);
+			ObjMove objMove = new ObjMove(dst, imm);
+			objMove.getNode().insertBefore(nxt_instr.getNode());
+			return dst;
 		}
 	}
 
@@ -692,12 +732,19 @@ public class RegAllo {
 							x.spillPlace = nowoffset;
 							nowoffset += 8;
 							func.addAllocaSize(8);
-							ObjInstr spplus = func.getFirstBlock().getInstrs().getHead().getValue();
-							ObjInstr spplus1 = func.getBbExit().getInstrs().getTail().getPrev().getValue();
-							assert spplus instanceof ObjBinary;
-							assert spplus1 instanceof ObjBinary;
-							((ObjBinary) spplus).setSrc2(new ObjImm12(-nowoffset));
-							((ObjBinary) spplus1).setSrc2(new ObjImm12(nowoffset));
+//							ObjInstr spplus = func.getFirstBlock().getInstrs().getHead().getValue();
+//							ObjInstr spplus1 = func.getBbExit().getInstrs().getTail().getPrev().getValue();
+//
+//							while(!(spplus instanceof ObjBinary))
+//								spplus = spplus.getNode().getNext().getValue();
+//
+//							assert spplus instanceof ObjBinary;
+//							assert spplus1 instanceof ObjBinary;
+//							// System.out.println(spplus);
+//							ObjOperand offset = getConstIntOperand(-func.getStackSize(), 12, func, spplus);
+//							((ObjBinary) spplus).setSrc2(offset);
+//							ObjOperand offset2 = getConstIntOperand(func.getStackSize(), 12, func, spplus1);
+//							((ObjBinary) spplus1).setSrc2(offset2);
 						}
 					}
 				}
