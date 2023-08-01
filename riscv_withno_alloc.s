@@ -2,162 +2,474 @@
 func:
 func_b0:
 	  addi	sp,	sp,	0
-	lw	vr1074,	2668(sp)
-	lw	vr1073,	2664(sp)
-	lw	vr659,	2660(sp)
-	lw	vr1072,	2656(sp)
-	lw	vr305,	2652(sp)
-	lw	vr262,	2648(sp)
-	lw	vr634,	2644(sp)
-	lw	vr177,	2640(sp)
-	lw	vr1071,	2636(sp)
-	lw	vr1070,	2632(sp)
-	lw	vr1069,	2628(sp)
-	lw	vr1068,	2624(sp)
-	lw	vr1067,	2620(sp)
-	lw	vr1066,	2616(sp)
-	lw	vr5,	2612(sp)
-	lw	vr1065,	2608(sp)
-	lw	vr484,	2604(sp)
-	lw	vr0,	2600(sp)
-	lw	vr1064,	2596(sp)
-	lw	vr68,	2592(sp)
-	lw	vr329,	2588(sp)
-	lw	vr630,	2584(sp)
-	lw	vr1063,	2580(sp)
-	lw	vr1062,	2576(sp)
-	lw	vr333,	2572(sp)
-	lw	vr229,	2568(sp)
-	lw	vr285,	2564(sp)
-	lw	vr1061,	2560(sp)
-	lw	vr164,	2556(sp)
-	lw	vr1060,	2552(sp)
-	lw	vr384,	2548(sp)
-	lw	vr686,	2544(sp)
-	lw	vr448,	2540(sp)
-	lw	vr1059,	2536(sp)
-	lw	vr1058,	2532(sp)
-	lw	vr1057,	2528(sp)
-	lw	vr1056,	2524(sp)
-	lw	vr496,	2520(sp)
-	lw	vr427,	2516(sp)
-	lw	vr246,	2512(sp)
-	lw	vr1055,	2508(sp)
-	lw	vr590,	2504(sp)
-	lw	vr153,	2500(sp)
-	lw	vr1054,	2496(sp)
-	lw	vr1053,	2492(sp)
-	lw	vr615,	2488(sp)
-	lw	vr1052,	2484(sp)
-	lw	vr1051,	2480(sp)
-	lw	vr1050,	2476(sp)
-	lw	vr1049,	2472(sp)
-	lw	vr257,	2468(sp)
-	lw	vr1048,	2464(sp)
-	lw	vr157,	2460(sp)
-	lw	vr1,	2456(sp)
-	lw	vr1047,	2452(sp)
-	lw	vr1046,	2448(sp)
-	lw	vr1045,	2444(sp)
-	lw	vr1044,	2440(sp)
-	lw	vr432,	2436(sp)
-	lw	vr1043,	2432(sp)
-	lw	vr1042,	2428(sp)
-	lw	vr1041,	2424(sp)
-	lw	vr637,	2420(sp)
-	lw	vr1040,	2416(sp)
-	lw	vr1039,	2412(sp)
-	lw	vr1038,	2408(sp)
-	lw	vr1037,	2404(sp)
-	lw	vr468,	2400(sp)
-	lw	vr22,	2396(sp)
-	lw	vr1036,	2392(sp)
-	lw	vr1035,	2388(sp)
-	lw	vr388,	2384(sp)
-	lw	vr607,	2380(sp)
-	lw	vr112,	2376(sp)
-	lw	vr1034,	2372(sp)
-	lw	vr1033,	2368(sp)
-	lw	vr1032,	2364(sp)
-	lw	vr522,	2360(sp)
-	lw	vr1031,	2356(sp)
-	lw	vr1030,	2352(sp)
-	lw	vr293,	2348(sp)
-	lw	vr582,	2344(sp)
-	lw	vr1029,	2340(sp)
-	lw	vr1028,	2336(sp)
-	lw	vr217,	2332(sp)
-	lw	vr203,	2328(sp)
-	lw	vr308,	2324(sp)
-	lw	vr1027,	2320(sp)
-	lw	vr669,	2316(sp)
-	lw	vr609,	2312(sp)
-	lw	vr1026,	2308(sp)
-	lw	vr215,	2304(sp)
-	lw	vr25,	2300(sp)
-	lw	vr1025,	2296(sp)
-	lw	vr72,	2292(sp)
-	lw	vr1024,	2288(sp)
-	lw	vr603,	2284(sp)
-	lw	vr26,	2280(sp)
-	lw	vr1023,	2276(sp)
-	lw	vr664,	2272(sp)
-	lw	vr1022,	2268(sp)
-	lw	vr1021,	2264(sp)
-	lw	vr1020,	2260(sp)
-	lw	vr1019,	2256(sp)
-	lw	vr248,	2252(sp)
-	lw	vr1018,	2248(sp)
-	lw	vr1017,	2244(sp)
-	lw	vr397,	2240(sp)
-	lw	vr312,	2236(sp)
-	lw	vr599,	2232(sp)
-	lw	vr1016,	2228(sp)
-	lw	vr78,	2224(sp)
-	lw	vr529,	2220(sp)
-	lw	vr1015,	2216(sp)
-	lw	vr1014,	2212(sp)
-	lw	vr1013,	2208(sp)
-	lw	vr1012,	2204(sp)
-	lw	vr1011,	2200(sp)
-	lw	vr1010,	2196(sp)
-	lw	vr543,	2192(sp)
-	lw	vr32,	2188(sp)
-	lw	vr1009,	2184(sp)
-	lw	vr424,	2180(sp)
-	lw	vr1008,	2176(sp)
-	lw	vr612,	2172(sp)
-	lw	vr3,	2168(sp)
-	lw	vr385,	2164(sp)
-	lw	vr1007,	2160(sp)
-	lw	vr93,	2156(sp)
-	lw	vr569,	2152(sp)
-	lw	vr646,	2148(sp)
-	lw	vr1006,	2144(sp)
-	lw	vr1005,	2140(sp)
-	lw	vr1004,	2136(sp)
-	lw	vr320,	2132(sp)
-	lw	vr518,	2128(sp)
-	lw	vr340,	2124(sp)
-	lw	vr1003,	2120(sp)
-	lw	vr1002,	2116(sp)
-	lw	vr1001,	2112(sp)
-	lw	vr146,	2108(sp)
-	lw	vr436,	2104(sp)
-	lw	vr1000,	2100(sp)
-	lw	vr999,	2096(sp)
-	lw	vr135,	2092(sp)
-	lw	vr998,	2088(sp)
-	lw	vr147,	2084(sp)
-	lw	vr10,	2080(sp)
-	lw	vr997,	2076(sp)
-	lw	vr289,	2072(sp)
-	lw	vr996,	2068(sp)
-	lw	vr495,	2064(sp)
-	lw	vr995,	2060(sp)
-	lw	vr382,	2056(sp)
-	lw	vr994,	2052(sp)
-	lw	vr531,	2048(sp)
+	li	vr1385,	2668
+	   add	vr1386,	sp,	vr1385
+	lw	vr1384,	0(vr1386)
+	li	vr1382,	2664
+	   add	vr1383,	sp,	vr1382
+	lw	vr1381,	0(vr1383)
+	li	vr1379,	2660
+	   add	vr1380,	sp,	vr1379
+	lw	vr659,	0(vr1380)
+	li	vr1377,	2656
+	   add	vr1378,	sp,	vr1377
+	lw	vr1376,	0(vr1378)
+	li	vr1374,	2652
+	   add	vr1375,	sp,	vr1374
+	lw	vr305,	0(vr1375)
+	li	vr1372,	2648
+	   add	vr1373,	sp,	vr1372
+	lw	vr262,	0(vr1373)
+	li	vr1370,	2644
+	   add	vr1371,	sp,	vr1370
+	lw	vr634,	0(vr1371)
+	li	vr1368,	2640
+	   add	vr1369,	sp,	vr1368
+	lw	vr177,	0(vr1369)
+	li	vr1366,	2636
+	   add	vr1367,	sp,	vr1366
+	lw	vr1365,	0(vr1367)
+	li	vr1363,	2632
+	   add	vr1364,	sp,	vr1363
+	lw	vr1362,	0(vr1364)
+	li	vr1360,	2628
+	   add	vr1361,	sp,	vr1360
+	lw	vr1359,	0(vr1361)
+	li	vr1357,	2624
+	   add	vr1358,	sp,	vr1357
+	lw	vr1356,	0(vr1358)
+	li	vr1354,	2620
+	   add	vr1355,	sp,	vr1354
+	lw	vr1353,	0(vr1355)
+	li	vr1351,	2616
+	   add	vr1352,	sp,	vr1351
+	lw	vr1350,	0(vr1352)
+	li	vr1348,	2612
+	   add	vr1349,	sp,	vr1348
+	lw	vr5,	0(vr1349)
+	li	vr1346,	2608
+	   add	vr1347,	sp,	vr1346
+	lw	vr1345,	0(vr1347)
+	li	vr1343,	2604
+	   add	vr1344,	sp,	vr1343
+	lw	vr484,	0(vr1344)
+	li	vr1341,	2600
+	   add	vr1342,	sp,	vr1341
+	lw	vr0,	0(vr1342)
+	li	vr1339,	2596
+	   add	vr1340,	sp,	vr1339
+	lw	vr1338,	0(vr1340)
+	li	vr1336,	2592
+	   add	vr1337,	sp,	vr1336
+	lw	vr68,	0(vr1337)
+	li	vr1334,	2588
+	   add	vr1335,	sp,	vr1334
+	lw	vr329,	0(vr1335)
+	li	vr1332,	2584
+	   add	vr1333,	sp,	vr1332
+	lw	vr630,	0(vr1333)
+	li	vr1330,	2580
+	   add	vr1331,	sp,	vr1330
+	lw	vr1329,	0(vr1331)
+	li	vr1327,	2576
+	   add	vr1328,	sp,	vr1327
+	lw	vr1326,	0(vr1328)
+	li	vr1324,	2572
+	   add	vr1325,	sp,	vr1324
+	lw	vr333,	0(vr1325)
+	li	vr1322,	2568
+	   add	vr1323,	sp,	vr1322
+	lw	vr229,	0(vr1323)
+	li	vr1320,	2564
+	   add	vr1321,	sp,	vr1320
+	lw	vr285,	0(vr1321)
+	li	vr1318,	2560
+	   add	vr1319,	sp,	vr1318
+	lw	vr1317,	0(vr1319)
+	li	vr1315,	2556
+	   add	vr1316,	sp,	vr1315
+	lw	vr164,	0(vr1316)
+	li	vr1313,	2552
+	   add	vr1314,	sp,	vr1313
+	lw	vr1312,	0(vr1314)
+	li	vr1310,	2548
+	   add	vr1311,	sp,	vr1310
+	lw	vr384,	0(vr1311)
+	li	vr1308,	2544
+	   add	vr1309,	sp,	vr1308
+	lw	vr686,	0(vr1309)
+	li	vr1306,	2540
+	   add	vr1307,	sp,	vr1306
+	lw	vr448,	0(vr1307)
+	li	vr1304,	2536
+	   add	vr1305,	sp,	vr1304
+	lw	vr1303,	0(vr1305)
+	li	vr1301,	2532
+	   add	vr1302,	sp,	vr1301
+	lw	vr1300,	0(vr1302)
+	li	vr1298,	2528
+	   add	vr1299,	sp,	vr1298
+	lw	vr1297,	0(vr1299)
+	li	vr1295,	2524
+	   add	vr1296,	sp,	vr1295
+	lw	vr1294,	0(vr1296)
+	li	vr1292,	2520
+	   add	vr1293,	sp,	vr1292
+	lw	vr496,	0(vr1293)
+	li	vr1290,	2516
+	   add	vr1291,	sp,	vr1290
+	lw	vr427,	0(vr1291)
+	li	vr1288,	2512
+	   add	vr1289,	sp,	vr1288
+	lw	vr246,	0(vr1289)
+	li	vr1286,	2508
+	   add	vr1287,	sp,	vr1286
+	lw	vr1285,	0(vr1287)
+	li	vr1283,	2504
+	   add	vr1284,	sp,	vr1283
+	lw	vr590,	0(vr1284)
+	li	vr1281,	2500
+	   add	vr1282,	sp,	vr1281
+	lw	vr153,	0(vr1282)
+	li	vr1279,	2496
+	   add	vr1280,	sp,	vr1279
+	lw	vr1278,	0(vr1280)
+	li	vr1276,	2492
+	   add	vr1277,	sp,	vr1276
+	lw	vr1275,	0(vr1277)
+	li	vr1273,	2488
+	   add	vr1274,	sp,	vr1273
+	lw	vr615,	0(vr1274)
+	li	vr1271,	2484
+	   add	vr1272,	sp,	vr1271
+	lw	vr1270,	0(vr1272)
+	li	vr1268,	2480
+	   add	vr1269,	sp,	vr1268
+	lw	vr1267,	0(vr1269)
+	li	vr1265,	2476
+	   add	vr1266,	sp,	vr1265
+	lw	vr1264,	0(vr1266)
+	li	vr1262,	2472
+	   add	vr1263,	sp,	vr1262
+	lw	vr1261,	0(vr1263)
+	li	vr1259,	2468
+	   add	vr1260,	sp,	vr1259
+	lw	vr257,	0(vr1260)
+	li	vr1257,	2464
+	   add	vr1258,	sp,	vr1257
+	lw	vr1256,	0(vr1258)
+	li	vr1254,	2460
+	   add	vr1255,	sp,	vr1254
+	lw	vr157,	0(vr1255)
+	li	vr1252,	2456
+	   add	vr1253,	sp,	vr1252
+	lw	vr1,	0(vr1253)
+	li	vr1250,	2452
+	   add	vr1251,	sp,	vr1250
+	lw	vr1249,	0(vr1251)
+	li	vr1247,	2448
+	   add	vr1248,	sp,	vr1247
+	lw	vr1246,	0(vr1248)
+	li	vr1244,	2444
+	   add	vr1245,	sp,	vr1244
+	lw	vr1243,	0(vr1245)
+	li	vr1241,	2440
+	   add	vr1242,	sp,	vr1241
+	lw	vr1240,	0(vr1242)
+	li	vr1238,	2436
+	   add	vr1239,	sp,	vr1238
+	lw	vr432,	0(vr1239)
+	li	vr1236,	2432
+	   add	vr1237,	sp,	vr1236
+	lw	vr1235,	0(vr1237)
+	li	vr1233,	2428
+	   add	vr1234,	sp,	vr1233
+	lw	vr1232,	0(vr1234)
+	li	vr1230,	2424
+	   add	vr1231,	sp,	vr1230
+	lw	vr1229,	0(vr1231)
+	li	vr1227,	2420
+	   add	vr1228,	sp,	vr1227
+	lw	vr637,	0(vr1228)
+	li	vr1225,	2416
+	   add	vr1226,	sp,	vr1225
+	lw	vr1224,	0(vr1226)
+	li	vr1222,	2412
+	   add	vr1223,	sp,	vr1222
+	lw	vr1221,	0(vr1223)
+	li	vr1219,	2408
+	   add	vr1220,	sp,	vr1219
+	lw	vr1218,	0(vr1220)
+	li	vr1216,	2404
+	   add	vr1217,	sp,	vr1216
+	lw	vr1215,	0(vr1217)
+	li	vr1213,	2400
+	   add	vr1214,	sp,	vr1213
+	lw	vr468,	0(vr1214)
+	li	vr1211,	2396
+	   add	vr1212,	sp,	vr1211
+	lw	vr22,	0(vr1212)
+	li	vr1209,	2392
+	   add	vr1210,	sp,	vr1209
+	lw	vr1208,	0(vr1210)
+	li	vr1206,	2388
+	   add	vr1207,	sp,	vr1206
+	lw	vr1205,	0(vr1207)
+	li	vr1203,	2384
+	   add	vr1204,	sp,	vr1203
+	lw	vr388,	0(vr1204)
+	li	vr1201,	2380
+	   add	vr1202,	sp,	vr1201
+	lw	vr607,	0(vr1202)
+	li	vr1199,	2376
+	   add	vr1200,	sp,	vr1199
+	lw	vr112,	0(vr1200)
+	li	vr1197,	2372
+	   add	vr1198,	sp,	vr1197
+	lw	vr1196,	0(vr1198)
+	li	vr1194,	2368
+	   add	vr1195,	sp,	vr1194
+	lw	vr1193,	0(vr1195)
+	li	vr1191,	2364
+	   add	vr1192,	sp,	vr1191
+	lw	vr1190,	0(vr1192)
+	li	vr1188,	2360
+	   add	vr1189,	sp,	vr1188
+	lw	vr522,	0(vr1189)
+	li	vr1186,	2356
+	   add	vr1187,	sp,	vr1186
+	lw	vr1185,	0(vr1187)
+	li	vr1183,	2352
+	   add	vr1184,	sp,	vr1183
+	lw	vr1182,	0(vr1184)
+	li	vr1180,	2348
+	   add	vr1181,	sp,	vr1180
+	lw	vr293,	0(vr1181)
+	li	vr1178,	2344
+	   add	vr1179,	sp,	vr1178
+	lw	vr582,	0(vr1179)
+	li	vr1176,	2340
+	   add	vr1177,	sp,	vr1176
+	lw	vr1175,	0(vr1177)
+	li	vr1173,	2336
+	   add	vr1174,	sp,	vr1173
+	lw	vr1172,	0(vr1174)
+	li	vr1170,	2332
+	   add	vr1171,	sp,	vr1170
+	lw	vr217,	0(vr1171)
+	li	vr1168,	2328
+	   add	vr1169,	sp,	vr1168
+	lw	vr203,	0(vr1169)
+	li	vr1166,	2324
+	   add	vr1167,	sp,	vr1166
+	lw	vr308,	0(vr1167)
+	li	vr1164,	2320
+	   add	vr1165,	sp,	vr1164
+	lw	vr1163,	0(vr1165)
+	li	vr1161,	2316
+	   add	vr1162,	sp,	vr1161
+	lw	vr669,	0(vr1162)
+	li	vr1159,	2312
+	   add	vr1160,	sp,	vr1159
+	lw	vr609,	0(vr1160)
+	li	vr1157,	2308
+	   add	vr1158,	sp,	vr1157
+	lw	vr1156,	0(vr1158)
+	li	vr1154,	2304
+	   add	vr1155,	sp,	vr1154
+	lw	vr215,	0(vr1155)
+	li	vr1152,	2300
+	   add	vr1153,	sp,	vr1152
+	lw	vr25,	0(vr1153)
+	li	vr1150,	2296
+	   add	vr1151,	sp,	vr1150
+	lw	vr1149,	0(vr1151)
+	li	vr1147,	2292
+	   add	vr1148,	sp,	vr1147
+	lw	vr72,	0(vr1148)
+	li	vr1145,	2288
+	   add	vr1146,	sp,	vr1145
+	lw	vr1144,	0(vr1146)
+	li	vr1142,	2284
+	   add	vr1143,	sp,	vr1142
+	lw	vr603,	0(vr1143)
+	li	vr1140,	2280
+	   add	vr1141,	sp,	vr1140
+	lw	vr26,	0(vr1141)
+	li	vr1138,	2276
+	   add	vr1139,	sp,	vr1138
+	lw	vr1137,	0(vr1139)
+	li	vr1135,	2272
+	   add	vr1136,	sp,	vr1135
+	lw	vr664,	0(vr1136)
+	li	vr1133,	2268
+	   add	vr1134,	sp,	vr1133
+	lw	vr1132,	0(vr1134)
+	li	vr1130,	2264
+	   add	vr1131,	sp,	vr1130
+	lw	vr1129,	0(vr1131)
+	li	vr1127,	2260
+	   add	vr1128,	sp,	vr1127
+	lw	vr1126,	0(vr1128)
+	li	vr1124,	2256
+	   add	vr1125,	sp,	vr1124
+	lw	vr1123,	0(vr1125)
+	li	vr1121,	2252
+	   add	vr1122,	sp,	vr1121
+	lw	vr248,	0(vr1122)
+	li	vr1119,	2248
+	   add	vr1120,	sp,	vr1119
+	lw	vr1118,	0(vr1120)
+	li	vr1116,	2244
+	   add	vr1117,	sp,	vr1116
+	lw	vr1115,	0(vr1117)
+	li	vr1113,	2240
+	   add	vr1114,	sp,	vr1113
+	lw	vr397,	0(vr1114)
+	li	vr1111,	2236
+	   add	vr1112,	sp,	vr1111
+	lw	vr312,	0(vr1112)
+	li	vr1109,	2232
+	   add	vr1110,	sp,	vr1109
+	lw	vr599,	0(vr1110)
+	li	vr1107,	2228
+	   add	vr1108,	sp,	vr1107
+	lw	vr1106,	0(vr1108)
+	li	vr1104,	2224
+	   add	vr1105,	sp,	vr1104
+	lw	vr78,	0(vr1105)
+	li	vr1102,	2220
+	   add	vr1103,	sp,	vr1102
+	lw	vr529,	0(vr1103)
+	li	vr1100,	2216
+	   add	vr1101,	sp,	vr1100
+	lw	vr1099,	0(vr1101)
+	li	vr1097,	2212
+	   add	vr1098,	sp,	vr1097
+	lw	vr1096,	0(vr1098)
+	li	vr1094,	2208
+	   add	vr1095,	sp,	vr1094
+	lw	vr1093,	0(vr1095)
+	li	vr1091,	2204
+	   add	vr1092,	sp,	vr1091
+	lw	vr1090,	0(vr1092)
+	li	vr1088,	2200
+	   add	vr1089,	sp,	vr1088
+	lw	vr1087,	0(vr1089)
+	li	vr1085,	2196
+	   add	vr1086,	sp,	vr1085
+	lw	vr1084,	0(vr1086)
+	li	vr1082,	2192
+	   add	vr1083,	sp,	vr1082
+	lw	vr543,	0(vr1083)
+	li	vr1080,	2188
+	   add	vr1081,	sp,	vr1080
+	lw	vr32,	0(vr1081)
+	li	vr1078,	2184
+	   add	vr1079,	sp,	vr1078
+	lw	vr1077,	0(vr1079)
+	li	vr1075,	2180
+	   add	vr1076,	sp,	vr1075
+	lw	vr424,	0(vr1076)
+	li	vr1073,	2176
+	   add	vr1074,	sp,	vr1073
+	lw	vr1072,	0(vr1074)
+	li	vr1070,	2172
+	   add	vr1071,	sp,	vr1070
+	lw	vr612,	0(vr1071)
+	li	vr1068,	2168
+	   add	vr1069,	sp,	vr1068
+	lw	vr3,	0(vr1069)
+	li	vr1066,	2164
+	   add	vr1067,	sp,	vr1066
+	lw	vr385,	0(vr1067)
+	li	vr1064,	2160
+	   add	vr1065,	sp,	vr1064
+	lw	vr1063,	0(vr1065)
+	li	vr1061,	2156
+	   add	vr1062,	sp,	vr1061
+	lw	vr93,	0(vr1062)
+	li	vr1059,	2152
+	   add	vr1060,	sp,	vr1059
+	lw	vr569,	0(vr1060)
+	li	vr1057,	2148
+	   add	vr1058,	sp,	vr1057
+	lw	vr646,	0(vr1058)
+	li	vr1055,	2144
+	   add	vr1056,	sp,	vr1055
+	lw	vr1054,	0(vr1056)
+	li	vr1052,	2140
+	   add	vr1053,	sp,	vr1052
+	lw	vr1051,	0(vr1053)
+	li	vr1049,	2136
+	   add	vr1050,	sp,	vr1049
+	lw	vr1048,	0(vr1050)
+	li	vr1046,	2132
+	   add	vr1047,	sp,	vr1046
+	lw	vr320,	0(vr1047)
+	li	vr1044,	2128
+	   add	vr1045,	sp,	vr1044
+	lw	vr518,	0(vr1045)
+	li	vr1042,	2124
+	   add	vr1043,	sp,	vr1042
+	lw	vr340,	0(vr1043)
+	li	vr1040,	2120
+	   add	vr1041,	sp,	vr1040
+	lw	vr1039,	0(vr1041)
+	li	vr1037,	2116
+	   add	vr1038,	sp,	vr1037
+	lw	vr1036,	0(vr1038)
+	li	vr1034,	2112
+	   add	vr1035,	sp,	vr1034
+	lw	vr1033,	0(vr1035)
+	li	vr1031,	2108
+	   add	vr1032,	sp,	vr1031
+	lw	vr146,	0(vr1032)
+	li	vr1029,	2104
+	   add	vr1030,	sp,	vr1029
+	lw	vr436,	0(vr1030)
+	li	vr1027,	2100
+	   add	vr1028,	sp,	vr1027
+	lw	vr1026,	0(vr1028)
+	li	vr1024,	2096
+	   add	vr1025,	sp,	vr1024
+	lw	vr1023,	0(vr1025)
+	li	vr1021,	2092
+	   add	vr1022,	sp,	vr1021
+	lw	vr135,	0(vr1022)
+	li	vr1019,	2088
+	   add	vr1020,	sp,	vr1019
+	lw	vr1018,	0(vr1020)
+	li	vr1016,	2084
+	   add	vr1017,	sp,	vr1016
+	lw	vr147,	0(vr1017)
+	li	vr1014,	2080
+	   add	vr1015,	sp,	vr1014
+	lw	vr10,	0(vr1015)
+	li	vr1012,	2076
+	   add	vr1013,	sp,	vr1012
+	lw	vr1011,	0(vr1013)
+	li	vr1009,	2072
+	   add	vr1010,	sp,	vr1009
+	lw	vr289,	0(vr1010)
+	li	vr1007,	2068
+	   add	vr1008,	sp,	vr1007
+	lw	vr1006,	0(vr1008)
+	li	vr1004,	2064
+	   add	vr1005,	sp,	vr1004
+	lw	vr495,	0(vr1005)
+	li	vr1002,	2060
+	   add	vr1003,	sp,	vr1002
+	lw	vr1001,	0(vr1003)
+	li	vr999,	2056
+	   add	vr1000,	sp,	vr999
+	lw	vr382,	0(vr1000)
+	li	vr997,	2052
+	   add	vr998,	sp,	vr997
+	lw	vr996,	0(vr998)
+	li	vr994,	2048
+	   add	vr995,	sp,	vr994
+	lw	vr531,	0(vr995)
 	lw	vr993,	2044(sp)
 	lw	vr207,	2040(sp)
 	lw	vr992,	2036(sp)
@@ -1086,8 +1398,10 @@ func_b1:
 .globl	main
 main:
 main_b0:
-	   add	sp,	sp,	vr1744
-	sd	ra,	2672(sp)
+	   add	sp,	sp,	vr2372
+	li	vr2368,	2672
+	   add	vr2369,	sp,	vr2368
+	sd	ra,	0(vr2369)
 	li	a0,	0
 	li	a1,	1
 	li	a2,	1
@@ -1096,1349 +1410,1663 @@ main_b0:
 	li	a5,	5
 	li	a6,	2
 	li	a7,	0
-	li	vr1075,	6
-	sw	vr1075,	0(sp)
-	li	vr1076,	2
-	sw	vr1076,	4(sp)
-	li	vr1077,	4
-	sw	vr1077,	8(sp)
-	li	vr1078,	7
-	sw	vr1078,	12(sp)
-	li	vr1079,	1
-	sw	vr1079,	16(sp)
-	li	vr1080,	6
-	sw	vr1080,	20(sp)
-	li	vr1081,	9
-	sw	vr1081,	24(sp)
-	li	vr1082,	3
-	sw	vr1082,	28(sp)
-	li	vr1083,	3
-	sw	vr1083,	32(sp)
-	li	vr1084,	5
-	sw	vr1084,	36(sp)
-	li	vr1085,	0
-	sw	vr1085,	40(sp)
-	li	vr1086,	8
-	sw	vr1086,	44(sp)
-	li	vr1087,	9
-	sw	vr1087,	48(sp)
-	li	vr1088,	3
-	sw	vr1088,	52(sp)
-	li	vr1089,	4
-	sw	vr1089,	56(sp)
-	li	vr1090,	5
-	sw	vr1090,	60(sp)
-	li	vr1091,	9
-	sw	vr1091,	64(sp)
-	li	vr1092,	0
-	sw	vr1092,	68(sp)
-	li	vr1093,	8
-	sw	vr1093,	72(sp)
-	li	vr1094,	9
-	sw	vr1094,	76(sp)
-	li	vr1095,	5
-	sw	vr1095,	80(sp)
-	li	vr1096,	5
-	sw	vr1096,	84(sp)
-	li	vr1097,	4
-	sw	vr1097,	88(sp)
-	li	vr1098,	1
-	sw	vr1098,	92(sp)
-	li	vr1099,	4
-	sw	vr1099,	96(sp)
-	li	vr1100,	3
-	sw	vr1100,	100(sp)
-	li	vr1101,	5
-	sw	vr1101,	104(sp)
-	li	vr1102,	9
-	sw	vr1102,	108(sp)
-	li	vr1103,	7
-	sw	vr1103,	112(sp)
-	li	vr1104,	6
-	sw	vr1104,	116(sp)
-	li	vr1105,	1
-	sw	vr1105,	120(sp)
-	li	vr1106,	7
-	sw	vr1106,	124(sp)
-	li	vr1107,	5
-	sw	vr1107,	128(sp)
-	li	vr1108,	4
-	sw	vr1108,	132(sp)
-	li	vr1109,	0
-	sw	vr1109,	136(sp)
-	li	vr1110,	7
-	sw	vr1110,	140(sp)
-	li	vr1111,	5
-	sw	vr1111,	144(sp)
-	li	vr1112,	5
-	sw	vr1112,	148(sp)
-	li	vr1113,	6
-	sw	vr1113,	152(sp)
-	li	vr1114,	4
-	sw	vr1114,	156(sp)
-	li	vr1115,	9
-	sw	vr1115,	160(sp)
-	li	vr1116,	6
-	sw	vr1116,	164(sp)
-	li	vr1117,	6
-	sw	vr1117,	168(sp)
-	li	vr1118,	6
-	sw	vr1118,	172(sp)
-	li	vr1119,	8
-	sw	vr1119,	176(sp)
-	li	vr1120,	0
-	sw	vr1120,	180(sp)
-	li	vr1121,	4
-	sw	vr1121,	184(sp)
-	li	vr1122,	2
-	sw	vr1122,	188(sp)
-	li	vr1123,	3
-	sw	vr1123,	192(sp)
-	li	vr1124,	3
-	sw	vr1124,	196(sp)
-	li	vr1125,	0
-	sw	vr1125,	200(sp)
-	li	vr1126,	5
-	sw	vr1126,	204(sp)
-	li	vr1127,	4
-	sw	vr1127,	208(sp)
-	li	vr1128,	3
-	sw	vr1128,	212(sp)
-	li	vr1129,	9
-	sw	vr1129,	216(sp)
-	li	vr1130,	5
-	sw	vr1130,	220(sp)
-	li	vr1131,	9
-	sw	vr1131,	224(sp)
-	li	vr1132,	3
-	sw	vr1132,	228(sp)
-	li	vr1133,	3
-	sw	vr1133,	232(sp)
-	li	vr1134,	6
-	sw	vr1134,	236(sp)
-	li	vr1135,	4
-	sw	vr1135,	240(sp)
-	li	vr1136,	3
-	sw	vr1136,	244(sp)
-	li	vr1137,	3
-	sw	vr1137,	248(sp)
-	li	vr1138,	0
-	sw	vr1138,	252(sp)
-	li	vr1139,	5
-	sw	vr1139,	256(sp)
-	li	vr1140,	0
-	sw	vr1140,	260(sp)
-	li	vr1141,	2
-	sw	vr1141,	264(sp)
-	li	vr1142,	5
-	sw	vr1142,	268(sp)
-	li	vr1143,	6
-	sw	vr1143,	272(sp)
-	li	vr1144,	6
-	sw	vr1144,	276(sp)
-	li	vr1145,	9
-	sw	vr1145,	280(sp)
-	li	vr1146,	4
-	sw	vr1146,	284(sp)
-	li	vr1147,	0
-	sw	vr1147,	288(sp)
-	li	vr1148,	3
-	sw	vr1148,	292(sp)
-	li	vr1149,	7
-	sw	vr1149,	296(sp)
-	li	vr1150,	2
-	sw	vr1150,	300(sp)
-	li	vr1151,	1
-	sw	vr1151,	304(sp)
-	li	vr1152,	1
-	sw	vr1152,	308(sp)
-	li	vr1153,	9
-	sw	vr1153,	312(sp)
-	li	vr1154,	8
-	sw	vr1154,	316(sp)
-	li	vr1155,	4
-	sw	vr1155,	320(sp)
-	li	vr1156,	8
-	sw	vr1156,	324(sp)
-	li	vr1157,	5
-	sw	vr1157,	328(sp)
-	li	vr1158,	2
-	sw	vr1158,	332(sp)
-	li	vr1159,	5
-	sw	vr1159,	336(sp)
-	li	vr1160,	4
-	sw	vr1160,	340(sp)
-	li	vr1161,	5
-	sw	vr1161,	344(sp)
-	li	vr1162,	0
-	sw	vr1162,	348(sp)
-	li	vr1163,	3
-	sw	vr1163,	352(sp)
-	li	vr1164,	5
-	sw	vr1164,	356(sp)
-	li	vr1165,	0
-	sw	vr1165,	360(sp)
-	li	vr1166,	7
-	sw	vr1166,	364(sp)
-	li	vr1167,	0
-	sw	vr1167,	368(sp)
-	li	vr1168,	7
-	sw	vr1168,	372(sp)
-	li	vr1169,	5
-	sw	vr1169,	376(sp)
-	li	vr1170,	6
-	sw	vr1170,	380(sp)
-	li	vr1171,	7
-	sw	vr1171,	384(sp)
-	li	vr1172,	7
-	sw	vr1172,	388(sp)
-	li	vr1173,	8
-	sw	vr1173,	392(sp)
-	li	vr1174,	2
-	sw	vr1174,	396(sp)
-	li	vr1175,	6
-	sw	vr1175,	400(sp)
-	li	vr1176,	8
-	sw	vr1176,	404(sp)
-	li	vr1177,	9
-	sw	vr1177,	408(sp)
-	li	vr1178,	4
-	sw	vr1178,	412(sp)
-	li	vr1179,	6
-	sw	vr1179,	416(sp)
-	li	vr1180,	7
-	sw	vr1180,	420(sp)
-	li	vr1181,	2
-	sw	vr1181,	424(sp)
-	li	vr1182,	9
-	sw	vr1182,	428(sp)
-	li	vr1183,	8
-	sw	vr1183,	432(sp)
-	li	vr1184,	8
-	sw	vr1184,	436(sp)
-	li	vr1185,	0
-	sw	vr1185,	440(sp)
-	li	vr1186,	0
-	sw	vr1186,	444(sp)
-	li	vr1187,	3
-	sw	vr1187,	448(sp)
-	li	vr1188,	4
-	sw	vr1188,	452(sp)
-	li	vr1189,	8
-	sw	vr1189,	456(sp)
-	li	vr1190,	9
-	sw	vr1190,	460(sp)
-	li	vr1191,	0
-	sw	vr1191,	464(sp)
-	li	vr1192,	5
-	sw	vr1192,	468(sp)
-	li	vr1193,	9
-	sw	vr1193,	472(sp)
-	li	vr1194,	8
-	sw	vr1194,	476(sp)
-	li	vr1195,	5
-	sw	vr1195,	480(sp)
-	li	vr1196,	1
-	sw	vr1196,	484(sp)
-	li	vr1197,	2
-	sw	vr1197,	488(sp)
-	li	vr1198,	7
-	sw	vr1198,	492(sp)
-	li	vr1199,	3
-	sw	vr1199,	496(sp)
-	li	vr1200,	2
-	sw	vr1200,	500(sp)
-	li	vr1201,	5
-	sw	vr1201,	504(sp)
-	li	vr1202,	4
-	sw	vr1202,	508(sp)
-	li	vr1203,	9
-	sw	vr1203,	512(sp)
-	li	vr1204,	9
-	sw	vr1204,	516(sp)
-	li	vr1205,	6
-	sw	vr1205,	520(sp)
-	li	vr1206,	9
-	sw	vr1206,	524(sp)
-	li	vr1207,	2
-	sw	vr1207,	528(sp)
-	li	vr1208,	5
-	sw	vr1208,	532(sp)
-	li	vr1209,	5
-	sw	vr1209,	536(sp)
-	li	vr1210,	7
-	sw	vr1210,	540(sp)
-	li	vr1211,	8
-	sw	vr1211,	544(sp)
-	li	vr1212,	3
-	sw	vr1212,	548(sp)
-	li	vr1213,	8
-	sw	vr1213,	552(sp)
-	li	vr1214,	9
-	sw	vr1214,	556(sp)
-	li	vr1215,	4
-	sw	vr1215,	560(sp)
-	li	vr1216,	9
-	sw	vr1216,	564(sp)
-	li	vr1217,	0
-	sw	vr1217,	568(sp)
-	li	vr1218,	5
-	sw	vr1218,	572(sp)
-	li	vr1219,	9
-	sw	vr1219,	576(sp)
-	li	vr1220,	8
-	sw	vr1220,	580(sp)
-	li	vr1221,	4
-	sw	vr1221,	584(sp)
-	li	vr1222,	2
-	sw	vr1222,	588(sp)
-	li	vr1223,	5
-	sw	vr1223,	592(sp)
-	li	vr1224,	0
-	sw	vr1224,	596(sp)
-	li	vr1225,	7
-	sw	vr1225,	600(sp)
-	li	vr1226,	8
-	sw	vr1226,	604(sp)
-	li	vr1227,	8
-	sw	vr1227,	608(sp)
-	li	vr1228,	4
-	sw	vr1228,	612(sp)
-	li	vr1229,	6
-	sw	vr1229,	616(sp)
-	li	vr1230,	7
-	sw	vr1230,	620(sp)
-	li	vr1231,	9
-	sw	vr1231,	624(sp)
-	li	vr1232,	8
-	sw	vr1232,	628(sp)
-	li	vr1233,	2
-	sw	vr1233,	632(sp)
-	li	vr1234,	4
-	sw	vr1234,	636(sp)
-	li	vr1235,	4
-	sw	vr1235,	640(sp)
-	li	vr1236,	2
-	sw	vr1236,	644(sp)
-	li	vr1237,	9
-	sw	vr1237,	648(sp)
-	li	vr1238,	9
-	sw	vr1238,	652(sp)
-	li	vr1239,	8
-	sw	vr1239,	656(sp)
-	li	vr1240,	1
-	sw	vr1240,	660(sp)
-	li	vr1241,	2
-	sw	vr1241,	664(sp)
-	li	vr1242,	3
-	sw	vr1242,	668(sp)
-	li	vr1243,	7
-	sw	vr1243,	672(sp)
-	li	vr1244,	2
-	sw	vr1244,	676(sp)
-	li	vr1245,	2
-	sw	vr1245,	680(sp)
-	li	vr1246,	1
-	sw	vr1246,	684(sp)
-	li	vr1247,	7
-	sw	vr1247,	688(sp)
-	li	vr1248,	1
-	sw	vr1248,	692(sp)
-	li	vr1249,	2
-	sw	vr1249,	696(sp)
-	li	vr1250,	4
-	sw	vr1250,	700(sp)
-	li	vr1251,	0
-	sw	vr1251,	704(sp)
-	li	vr1252,	6
-	sw	vr1252,	708(sp)
-	li	vr1253,	6
-	sw	vr1253,	712(sp)
-	li	vr1254,	0
-	sw	vr1254,	716(sp)
-	li	vr1255,	9
-	sw	vr1255,	720(sp)
-	li	vr1256,	9
-	sw	vr1256,	724(sp)
-	li	vr1257,	0
-	sw	vr1257,	728(sp)
-	li	vr1258,	7
-	sw	vr1258,	732(sp)
-	li	vr1259,	8
-	sw	vr1259,	736(sp)
-	li	vr1260,	9
-	sw	vr1260,	740(sp)
-	li	vr1261,	8
-	sw	vr1261,	744(sp)
-	li	vr1262,	5
-	sw	vr1262,	748(sp)
-	li	vr1263,	1
-	sw	vr1263,	752(sp)
-	li	vr1264,	8
-	sw	vr1264,	756(sp)
-	li	vr1265,	9
-	sw	vr1265,	760(sp)
-	li	vr1266,	2
-	sw	vr1266,	764(sp)
-	li	vr1267,	4
-	sw	vr1267,	768(sp)
-	li	vr1268,	7
-	sw	vr1268,	772(sp)
-	li	vr1269,	3
-	sw	vr1269,	776(sp)
-	li	vr1270,	4
-	sw	vr1270,	780(sp)
-	li	vr1271,	7
-	sw	vr1271,	784(sp)
-	li	vr1272,	9
-	sw	vr1272,	788(sp)
-	li	vr1273,	9
-	sw	vr1273,	792(sp)
-	li	vr1274,	4
-	sw	vr1274,	796(sp)
-	li	vr1275,	7
-	sw	vr1275,	800(sp)
-	li	vr1276,	1
-	sw	vr1276,	804(sp)
-	li	vr1277,	9
-	sw	vr1277,	808(sp)
-	li	vr1278,	0
-	sw	vr1278,	812(sp)
-	li	vr1279,	6
-	sw	vr1279,	816(sp)
-	li	vr1280,	0
-	sw	vr1280,	820(sp)
-	li	vr1281,	6
-	sw	vr1281,	824(sp)
-	li	vr1282,	9
-	sw	vr1282,	828(sp)
-	li	vr1283,	8
-	sw	vr1283,	832(sp)
-	li	vr1284,	4
-	sw	vr1284,	836(sp)
-	li	vr1285,	3
-	sw	vr1285,	840(sp)
-	li	vr1286,	6
-	sw	vr1286,	844(sp)
-	li	vr1287,	2
-	sw	vr1287,	848(sp)
-	li	vr1288,	9
-	sw	vr1288,	852(sp)
-	li	vr1289,	7
-	sw	vr1289,	856(sp)
-	li	vr1290,	5
-	sw	vr1290,	860(sp)
-	li	vr1291,	6
-	sw	vr1291,	864(sp)
-	li	vr1292,	9
-	sw	vr1292,	868(sp)
-	li	vr1293,	8
-	sw	vr1293,	872(sp)
-	li	vr1294,	6
-	sw	vr1294,	876(sp)
-	li	vr1295,	5
-	sw	vr1295,	880(sp)
-	li	vr1296,	8
-	sw	vr1296,	884(sp)
-	li	vr1297,	4
-	sw	vr1297,	888(sp)
-	li	vr1298,	0
-	sw	vr1298,	892(sp)
-	li	vr1299,	5
-	sw	vr1299,	896(sp)
-	li	vr1300,	2
-	sw	vr1300,	900(sp)
-	li	vr1301,	3
-	sw	vr1301,	904(sp)
-	li	vr1302,	2
-	sw	vr1302,	908(sp)
-	li	vr1303,	4
-	sw	vr1303,	912(sp)
-	li	vr1304,	0
-	sw	vr1304,	916(sp)
-	li	vr1305,	0
-	sw	vr1305,	920(sp)
-	li	vr1306,	9
-	sw	vr1306,	924(sp)
-	li	vr1307,	5
-	sw	vr1307,	928(sp)
-	li	vr1308,	8
-	sw	vr1308,	932(sp)
-	li	vr1309,	9
-	sw	vr1309,	936(sp)
-	li	vr1310,	2
-	sw	vr1310,	940(sp)
-	li	vr1311,	5
-	sw	vr1311,	944(sp)
-	li	vr1312,	2
-	sw	vr1312,	948(sp)
-	li	vr1313,	5
-	sw	vr1313,	952(sp)
-	li	vr1314,	0
-	sw	vr1314,	956(sp)
-	li	vr1315,	9
-	sw	vr1315,	960(sp)
-	li	vr1316,	4
-	sw	vr1316,	964(sp)
-	li	vr1317,	2
-	sw	vr1317,	968(sp)
-	li	vr1318,	0
-	sw	vr1318,	972(sp)
-	li	vr1319,	0
-	sw	vr1319,	976(sp)
-	li	vr1320,	1
-	sw	vr1320,	980(sp)
-	li	vr1321,	5
-	sw	vr1321,	984(sp)
-	li	vr1322,	0
-	sw	vr1322,	988(sp)
-	li	vr1323,	4
-	sw	vr1323,	992(sp)
-	li	vr1324,	9
-	sw	vr1324,	996(sp)
-	li	vr1325,	4
-	sw	vr1325,	1000(sp)
-	li	vr1326,	9
-	sw	vr1326,	1004(sp)
-	li	vr1327,	4
-	sw	vr1327,	1008(sp)
-	li	vr1328,	6
-	sw	vr1328,	1012(sp)
-	li	vr1329,	0
-	sw	vr1329,	1016(sp)
-	li	vr1330,	0
-	sw	vr1330,	1020(sp)
-	li	vr1331,	4
-	sw	vr1331,	1024(sp)
-	li	vr1332,	2
-	sw	vr1332,	1028(sp)
-	li	vr1333,	6
-	sw	vr1333,	1032(sp)
-	li	vr1334,	9
-	sw	vr1334,	1036(sp)
-	li	vr1335,	3
-	sw	vr1335,	1040(sp)
-	li	vr1336,	7
-	sw	vr1336,	1044(sp)
-	li	vr1337,	8
-	sw	vr1337,	1048(sp)
-	li	vr1338,	5
-	sw	vr1338,	1052(sp)
-	li	vr1339,	5
-	sw	vr1339,	1056(sp)
-	li	vr1340,	7
-	sw	vr1340,	1060(sp)
-	li	vr1341,	1
-	sw	vr1341,	1064(sp)
-	li	vr1342,	0
-	sw	vr1342,	1068(sp)
-	li	vr1343,	5
-	sw	vr1343,	1072(sp)
-	li	vr1344,	3
-	sw	vr1344,	1076(sp)
-	li	vr1345,	6
-	sw	vr1345,	1080(sp)
-	li	vr1346,	0
-	sw	vr1346,	1084(sp)
-	li	vr1347,	3
-	sw	vr1347,	1088(sp)
-	li	vr1348,	3
-	sw	vr1348,	1092(sp)
-	li	vr1349,	6
-	sw	vr1349,	1096(sp)
-	li	vr1350,	2
-	sw	vr1350,	1100(sp)
-	li	vr1351,	9
-	sw	vr1351,	1104(sp)
-	li	vr1352,	9
-	sw	vr1352,	1108(sp)
-	li	vr1353,	1
-	sw	vr1353,	1112(sp)
-	li	vr1354,	9
-	sw	vr1354,	1116(sp)
-	li	vr1355,	6
-	sw	vr1355,	1120(sp)
-	li	vr1356,	2
-	sw	vr1356,	1124(sp)
-	li	vr1357,	4
-	sw	vr1357,	1128(sp)
-	li	vr1358,	1
-	sw	vr1358,	1132(sp)
-	li	vr1359,	5
-	sw	vr1359,	1136(sp)
-	li	vr1360,	1
-	sw	vr1360,	1140(sp)
-	li	vr1361,	5
-	sw	vr1361,	1144(sp)
-	li	vr1362,	0
-	sw	vr1362,	1148(sp)
-	li	vr1363,	8
-	sw	vr1363,	1152(sp)
-	li	vr1364,	5
-	sw	vr1364,	1156(sp)
-	li	vr1365,	7
-	sw	vr1365,	1160(sp)
-	li	vr1366,	9
-	sw	vr1366,	1164(sp)
-	li	vr1367,	4
-	sw	vr1367,	1168(sp)
-	li	vr1368,	6
-	sw	vr1368,	1172(sp)
-	li	vr1369,	1
-	sw	vr1369,	1176(sp)
-	li	vr1370,	3
-	sw	vr1370,	1180(sp)
-	li	vr1371,	9
-	sw	vr1371,	1184(sp)
-	li	vr1372,	4
-	sw	vr1372,	1188(sp)
-	li	vr1373,	2
-	sw	vr1373,	1192(sp)
-	li	vr1374,	3
-	sw	vr1374,	1196(sp)
-	li	vr1375,	0
-	sw	vr1375,	1200(sp)
-	li	vr1376,	8
-	sw	vr1376,	1204(sp)
-	li	vr1377,	6
-	sw	vr1377,	1208(sp)
-	li	vr1378,	0
-	sw	vr1378,	1212(sp)
-	li	vr1379,	9
-	sw	vr1379,	1216(sp)
-	li	vr1380,	7
-	sw	vr1380,	1220(sp)
-	li	vr1381,	3
-	sw	vr1381,	1224(sp)
-	li	vr1382,	1
-	sw	vr1382,	1228(sp)
-	li	vr1383,	3
-	sw	vr1383,	1232(sp)
-	li	vr1384,	7
-	sw	vr1384,	1236(sp)
-	li	vr1385,	0
-	sw	vr1385,	1240(sp)
-	li	vr1386,	9
-	sw	vr1386,	1244(sp)
-	li	vr1387,	2
-	sw	vr1387,	1248(sp)
-	li	vr1388,	3
-	sw	vr1388,	1252(sp)
-	li	vr1389,	1
-	sw	vr1389,	1256(sp)
-	li	vr1390,	2
-	sw	vr1390,	1260(sp)
-	li	vr1391,	9
-	sw	vr1391,	1264(sp)
-	li	vr1392,	3
-	sw	vr1392,	1268(sp)
-	li	vr1393,	8
-	sw	vr1393,	1272(sp)
-	li	vr1394,	5
-	sw	vr1394,	1276(sp)
-	li	vr1395,	7
-	sw	vr1395,	1280(sp)
-	li	vr1396,	3
-	sw	vr1396,	1284(sp)
-	li	vr1397,	9
-	sw	vr1397,	1288(sp)
-	li	vr1398,	6
-	sw	vr1398,	1292(sp)
-	li	vr1399,	7
-	sw	vr1399,	1296(sp)
-	li	vr1400,	1
-	sw	vr1400,	1300(sp)
-	li	vr1401,	9
-	sw	vr1401,	1304(sp)
-	li	vr1402,	6
-	sw	vr1402,	1308(sp)
-	li	vr1403,	3
-	sw	vr1403,	1312(sp)
-	li	vr1404,	8
-	sw	vr1404,	1316(sp)
-	li	vr1405,	1
-	sw	vr1405,	1320(sp)
-	li	vr1406,	8
-	sw	vr1406,	1324(sp)
-	li	vr1407,	8
-	sw	vr1407,	1328(sp)
-	li	vr1408,	2
-	sw	vr1408,	1332(sp)
-	li	vr1409,	8
-	sw	vr1409,	1336(sp)
-	li	vr1410,	7
-	sw	vr1410,	1340(sp)
-	li	vr1411,	5
-	sw	vr1411,	1344(sp)
-	li	vr1412,	4
-	sw	vr1412,	1348(sp)
-	li	vr1413,	2
-	sw	vr1413,	1352(sp)
-	li	vr1414,	0
-	sw	vr1414,	1356(sp)
-	li	vr1415,	4
-	sw	vr1415,	1360(sp)
-	li	vr1416,	0
-	sw	vr1416,	1364(sp)
-	li	vr1417,	7
-	sw	vr1417,	1368(sp)
+	li	vr1387,	6
+	sw	vr1387,	0(sp)
+	li	vr1388,	2
+	sw	vr1388,	4(sp)
+	li	vr1389,	4
+	sw	vr1389,	8(sp)
+	li	vr1390,	7
+	sw	vr1390,	12(sp)
+	li	vr1391,	1
+	sw	vr1391,	16(sp)
+	li	vr1392,	6
+	sw	vr1392,	20(sp)
+	li	vr1393,	9
+	sw	vr1393,	24(sp)
+	li	vr1394,	3
+	sw	vr1394,	28(sp)
+	li	vr1395,	3
+	sw	vr1395,	32(sp)
+	li	vr1396,	5
+	sw	vr1396,	36(sp)
+	li	vr1397,	0
+	sw	vr1397,	40(sp)
+	li	vr1398,	8
+	sw	vr1398,	44(sp)
+	li	vr1399,	9
+	sw	vr1399,	48(sp)
+	li	vr1400,	3
+	sw	vr1400,	52(sp)
+	li	vr1401,	4
+	sw	vr1401,	56(sp)
+	li	vr1402,	5
+	sw	vr1402,	60(sp)
+	li	vr1403,	9
+	sw	vr1403,	64(sp)
+	li	vr1404,	0
+	sw	vr1404,	68(sp)
+	li	vr1405,	8
+	sw	vr1405,	72(sp)
+	li	vr1406,	9
+	sw	vr1406,	76(sp)
+	li	vr1407,	5
+	sw	vr1407,	80(sp)
+	li	vr1408,	5
+	sw	vr1408,	84(sp)
+	li	vr1409,	4
+	sw	vr1409,	88(sp)
+	li	vr1410,	1
+	sw	vr1410,	92(sp)
+	li	vr1411,	4
+	sw	vr1411,	96(sp)
+	li	vr1412,	3
+	sw	vr1412,	100(sp)
+	li	vr1413,	5
+	sw	vr1413,	104(sp)
+	li	vr1414,	9
+	sw	vr1414,	108(sp)
+	li	vr1415,	7
+	sw	vr1415,	112(sp)
+	li	vr1416,	6
+	sw	vr1416,	116(sp)
+	li	vr1417,	1
+	sw	vr1417,	120(sp)
 	li	vr1418,	7
-	sw	vr1418,	1372(sp)
-	li	vr1419,	8
-	sw	vr1419,	1376(sp)
-	li	vr1420,	9
-	sw	vr1420,	1380(sp)
-	li	vr1421,	6
-	sw	vr1421,	1384(sp)
-	li	vr1422,	6
-	sw	vr1422,	1388(sp)
-	li	vr1423,	7
-	sw	vr1423,	1392(sp)
-	li	vr1424,	7
-	sw	vr1424,	1396(sp)
-	li	vr1425,	1
-	sw	vr1425,	1400(sp)
-	li	vr1426,	6
-	sw	vr1426,	1404(sp)
-	li	vr1427,	0
-	sw	vr1427,	1408(sp)
-	li	vr1428,	5
-	sw	vr1428,	1412(sp)
-	li	vr1429,	3
-	sw	vr1429,	1416(sp)
-	li	vr1430,	4
-	sw	vr1430,	1420(sp)
-	li	vr1431,	2
-	sw	vr1431,	1424(sp)
-	li	vr1432,	6
-	sw	vr1432,	1428(sp)
-	li	vr1433,	3
-	sw	vr1433,	1432(sp)
-	li	vr1434,	6
-	sw	vr1434,	1436(sp)
+	sw	vr1418,	124(sp)
+	li	vr1419,	5
+	sw	vr1419,	128(sp)
+	li	vr1420,	4
+	sw	vr1420,	132(sp)
+	li	vr1421,	0
+	sw	vr1421,	136(sp)
+	li	vr1422,	7
+	sw	vr1422,	140(sp)
+	li	vr1423,	5
+	sw	vr1423,	144(sp)
+	li	vr1424,	5
+	sw	vr1424,	148(sp)
+	li	vr1425,	6
+	sw	vr1425,	152(sp)
+	li	vr1426,	4
+	sw	vr1426,	156(sp)
+	li	vr1427,	9
+	sw	vr1427,	160(sp)
+	li	vr1428,	6
+	sw	vr1428,	164(sp)
+	li	vr1429,	6
+	sw	vr1429,	168(sp)
+	li	vr1430,	6
+	sw	vr1430,	172(sp)
+	li	vr1431,	8
+	sw	vr1431,	176(sp)
+	li	vr1432,	0
+	sw	vr1432,	180(sp)
+	li	vr1433,	4
+	sw	vr1433,	184(sp)
+	li	vr1434,	2
+	sw	vr1434,	188(sp)
 	li	vr1435,	3
-	sw	vr1435,	1440(sp)
-	li	vr1436,	4
-	sw	vr1436,	1444(sp)
-	li	vr1437,	1
-	sw	vr1437,	1448(sp)
-	li	vr1438,	3
-	sw	vr1438,	1452(sp)
-	li	vr1439,	6
-	sw	vr1439,	1456(sp)
-	li	vr1440,	9
-	sw	vr1440,	1460(sp)
-	li	vr1441,	4
-	sw	vr1441,	1464(sp)
-	li	vr1442,	3
-	sw	vr1442,	1468(sp)
-	li	vr1443,	0
-	sw	vr1443,	1472(sp)
-	li	vr1444,	9
-	sw	vr1444,	1476(sp)
-	li	vr1445,	0
-	sw	vr1445,	1480(sp)
-	li	vr1446,	2
-	sw	vr1446,	1484(sp)
-	li	vr1447,	2
-	sw	vr1447,	1488(sp)
-	li	vr1448,	0
-	sw	vr1448,	1492(sp)
-	li	vr1449,	8
-	sw	vr1449,	1496(sp)
-	li	vr1450,	8
-	sw	vr1450,	1500(sp)
-	li	vr1451,	4
-	sw	vr1451,	1504(sp)
-	li	vr1452,	5
-	sw	vr1452,	1508(sp)
-	li	vr1453,	8
-	sw	vr1453,	1512(sp)
-	li	vr1454,	2
-	sw	vr1454,	1516(sp)
-	li	vr1455,	3
-	sw	vr1455,	1520(sp)
-	li	vr1456,	3
-	sw	vr1456,	1524(sp)
-	li	vr1457,	7
-	sw	vr1457,	1528(sp)
-	li	vr1458,	2
-	sw	vr1458,	1532(sp)
-	li	vr1459,	5
-	sw	vr1459,	1536(sp)
-	li	vr1460,	9
-	sw	vr1460,	1540(sp)
-	li	vr1461,	6
-	sw	vr1461,	1544(sp)
-	li	vr1462,	7
-	sw	vr1462,	1548(sp)
-	li	vr1463,	0
-	sw	vr1463,	1552(sp)
+	sw	vr1435,	192(sp)
+	li	vr1436,	3
+	sw	vr1436,	196(sp)
+	li	vr1437,	0
+	sw	vr1437,	200(sp)
+	li	vr1438,	5
+	sw	vr1438,	204(sp)
+	li	vr1439,	4
+	sw	vr1439,	208(sp)
+	li	vr1440,	3
+	sw	vr1440,	212(sp)
+	li	vr1441,	9
+	sw	vr1441,	216(sp)
+	li	vr1442,	5
+	sw	vr1442,	220(sp)
+	li	vr1443,	9
+	sw	vr1443,	224(sp)
+	li	vr1444,	3
+	sw	vr1444,	228(sp)
+	li	vr1445,	3
+	sw	vr1445,	232(sp)
+	li	vr1446,	6
+	sw	vr1446,	236(sp)
+	li	vr1447,	4
+	sw	vr1447,	240(sp)
+	li	vr1448,	3
+	sw	vr1448,	244(sp)
+	li	vr1449,	3
+	sw	vr1449,	248(sp)
+	li	vr1450,	0
+	sw	vr1450,	252(sp)
+	li	vr1451,	5
+	sw	vr1451,	256(sp)
+	li	vr1452,	0
+	sw	vr1452,	260(sp)
+	li	vr1453,	2
+	sw	vr1453,	264(sp)
+	li	vr1454,	5
+	sw	vr1454,	268(sp)
+	li	vr1455,	6
+	sw	vr1455,	272(sp)
+	li	vr1456,	6
+	sw	vr1456,	276(sp)
+	li	vr1457,	9
+	sw	vr1457,	280(sp)
+	li	vr1458,	4
+	sw	vr1458,	284(sp)
+	li	vr1459,	0
+	sw	vr1459,	288(sp)
+	li	vr1460,	3
+	sw	vr1460,	292(sp)
+	li	vr1461,	7
+	sw	vr1461,	296(sp)
+	li	vr1462,	2
+	sw	vr1462,	300(sp)
+	li	vr1463,	1
+	sw	vr1463,	304(sp)
 	li	vr1464,	1
-	sw	vr1464,	1556(sp)
-	li	vr1465,	8
-	sw	vr1465,	1560(sp)
-	li	vr1466,	5
-	sw	vr1466,	1564(sp)
-	li	vr1467,	7
-	sw	vr1467,	1568(sp)
+	sw	vr1464,	308(sp)
+	li	vr1465,	9
+	sw	vr1465,	312(sp)
+	li	vr1466,	8
+	sw	vr1466,	316(sp)
+	li	vr1467,	4
+	sw	vr1467,	320(sp)
 	li	vr1468,	8
-	sw	vr1468,	1572(sp)
-	li	vr1469,	3
-	sw	vr1469,	1576(sp)
-	li	vr1470,	0
-	sw	vr1470,	1580(sp)
-	li	vr1471,	2
-	sw	vr1471,	1584(sp)
-	li	vr1472,	9
-	sw	vr1472,	1588(sp)
-	li	vr1473,	1
-	sw	vr1473,	1592(sp)
-	li	vr1474,	5
-	sw	vr1474,	1596(sp)
-	li	vr1475,	4
-	sw	vr1475,	1600(sp)
-	li	vr1476,	9
-	sw	vr1476,	1604(sp)
-	li	vr1477,	4
-	sw	vr1477,	1608(sp)
-	li	vr1478,	5
-	sw	vr1478,	1612(sp)
-	li	vr1479,	3
-	sw	vr1479,	1616(sp)
+	sw	vr1468,	324(sp)
+	li	vr1469,	5
+	sw	vr1469,	328(sp)
+	li	vr1470,	2
+	sw	vr1470,	332(sp)
+	li	vr1471,	5
+	sw	vr1471,	336(sp)
+	li	vr1472,	4
+	sw	vr1472,	340(sp)
+	li	vr1473,	5
+	sw	vr1473,	344(sp)
+	li	vr1474,	0
+	sw	vr1474,	348(sp)
+	li	vr1475,	3
+	sw	vr1475,	352(sp)
+	li	vr1476,	5
+	sw	vr1476,	356(sp)
+	li	vr1477,	0
+	sw	vr1477,	360(sp)
+	li	vr1478,	7
+	sw	vr1478,	364(sp)
+	li	vr1479,	0
+	sw	vr1479,	368(sp)
 	li	vr1480,	7
-	sw	vr1480,	1620(sp)
-	li	vr1481,	4
-	sw	vr1481,	1624(sp)
-	li	vr1482,	0
-	sw	vr1482,	1628(sp)
-	li	vr1483,	2
-	sw	vr1483,	1632(sp)
+	sw	vr1480,	372(sp)
+	li	vr1481,	5
+	sw	vr1481,	376(sp)
+	li	vr1482,	6
+	sw	vr1482,	380(sp)
+	li	vr1483,	7
+	sw	vr1483,	384(sp)
 	li	vr1484,	7
-	sw	vr1484,	1636(sp)
-	li	vr1485,	1
-	sw	vr1485,	1640(sp)
-	li	vr1486,	3
-	sw	vr1486,	1644(sp)
-	li	vr1487,	2
-	sw	vr1487,	1648(sp)
-	li	vr1488,	7
-	sw	vr1488,	1652(sp)
-	li	vr1489,	1
-	sw	vr1489,	1656(sp)
-	li	vr1490,	7
-	sw	vr1490,	1660(sp)
-	li	vr1491,	0
-	sw	vr1491,	1664(sp)
-	li	vr1492,	0
-	sw	vr1492,	1668(sp)
-	li	vr1493,	6
-	sw	vr1493,	1672(sp)
-	li	vr1494,	7
-	sw	vr1494,	1676(sp)
+	sw	vr1484,	388(sp)
+	li	vr1485,	8
+	sw	vr1485,	392(sp)
+	li	vr1486,	2
+	sw	vr1486,	396(sp)
+	li	vr1487,	6
+	sw	vr1487,	400(sp)
+	li	vr1488,	8
+	sw	vr1488,	404(sp)
+	li	vr1489,	9
+	sw	vr1489,	408(sp)
+	li	vr1490,	4
+	sw	vr1490,	412(sp)
+	li	vr1491,	6
+	sw	vr1491,	416(sp)
+	li	vr1492,	7
+	sw	vr1492,	420(sp)
+	li	vr1493,	2
+	sw	vr1493,	424(sp)
+	li	vr1494,	9
+	sw	vr1494,	428(sp)
 	li	vr1495,	8
-	sw	vr1495,	1680(sp)
-	li	vr1496,	9
-	sw	vr1496,	1684(sp)
+	sw	vr1495,	432(sp)
+	li	vr1496,	8
+	sw	vr1496,	436(sp)
 	li	vr1497,	0
-	sw	vr1497,	1688(sp)
-	li	vr1498,	2
-	sw	vr1498,	1692(sp)
-	li	vr1499,	5
-	sw	vr1499,	1696(sp)
+	sw	vr1497,	440(sp)
+	li	vr1498,	0
+	sw	vr1498,	444(sp)
+	li	vr1499,	3
+	sw	vr1499,	448(sp)
 	li	vr1500,	4
-	sw	vr1500,	1700(sp)
-	li	vr1501,	6
-	sw	vr1501,	1704(sp)
-	li	vr1502,	2
-	sw	vr1502,	1708(sp)
-	li	vr1503,	9
-	sw	vr1503,	1712(sp)
-	li	vr1504,	2
-	sw	vr1504,	1716(sp)
-	li	vr1505,	1
-	sw	vr1505,	1720(sp)
-	li	vr1506,	0
-	sw	vr1506,	1724(sp)
-	li	vr1507,	2
-	sw	vr1507,	1728(sp)
-	li	vr1508,	2
-	sw	vr1508,	1732(sp)
-	li	vr1509,	7
-	sw	vr1509,	1736(sp)
-	li	vr1510,	3
-	sw	vr1510,	1740(sp)
-	li	vr1511,	8
-	sw	vr1511,	1744(sp)
-	li	vr1512,	9
-	sw	vr1512,	1748(sp)
-	li	vr1513,	6
-	sw	vr1513,	1752(sp)
-	li	vr1514,	3
-	sw	vr1514,	1756(sp)
-	li	vr1515,	6
-	sw	vr1515,	1760(sp)
+	sw	vr1500,	452(sp)
+	li	vr1501,	8
+	sw	vr1501,	456(sp)
+	li	vr1502,	9
+	sw	vr1502,	460(sp)
+	li	vr1503,	0
+	sw	vr1503,	464(sp)
+	li	vr1504,	5
+	sw	vr1504,	468(sp)
+	li	vr1505,	9
+	sw	vr1505,	472(sp)
+	li	vr1506,	8
+	sw	vr1506,	476(sp)
+	li	vr1507,	5
+	sw	vr1507,	480(sp)
+	li	vr1508,	1
+	sw	vr1508,	484(sp)
+	li	vr1509,	2
+	sw	vr1509,	488(sp)
+	li	vr1510,	7
+	sw	vr1510,	492(sp)
+	li	vr1511,	3
+	sw	vr1511,	496(sp)
+	li	vr1512,	2
+	sw	vr1512,	500(sp)
+	li	vr1513,	5
+	sw	vr1513,	504(sp)
+	li	vr1514,	4
+	sw	vr1514,	508(sp)
+	li	vr1515,	9
+	sw	vr1515,	512(sp)
 	li	vr1516,	9
-	sw	vr1516,	1764(sp)
-	li	vr1517,	0
-	sw	vr1517,	1768(sp)
-	li	vr1518,	8
-	sw	vr1518,	1772(sp)
-	li	vr1519,	1
-	sw	vr1519,	1776(sp)
-	li	vr1520,	2
-	sw	vr1520,	1780(sp)
-	li	vr1521,	2
-	sw	vr1521,	1784(sp)
-	li	vr1522,	9
-	sw	vr1522,	1788(sp)
-	li	vr1523,	5
-	sw	vr1523,	1792(sp)
-	li	vr1524,	8
-	sw	vr1524,	1796(sp)
-	li	vr1525,	2
-	sw	vr1525,	1800(sp)
-	li	vr1526,	5
-	sw	vr1526,	1804(sp)
-	li	vr1527,	0
-	sw	vr1527,	1808(sp)
-	li	vr1528,	4
-	sw	vr1528,	1812(sp)
-	li	vr1529,	7
-	sw	vr1529,	1816(sp)
-	li	vr1530,	0
-	sw	vr1530,	1820(sp)
-	li	vr1531,	8
-	sw	vr1531,	1824(sp)
-	li	vr1532,	2
-	sw	vr1532,	1828(sp)
-	li	vr1533,	9
-	sw	vr1533,	1832(sp)
-	li	vr1534,	6
-	sw	vr1534,	1836(sp)
-	li	vr1535,	7
-	sw	vr1535,	1840(sp)
-	li	vr1536,	7
-	sw	vr1536,	1844(sp)
-	li	vr1537,	5
-	sw	vr1537,	1848(sp)
-	li	vr1538,	2
-	sw	vr1538,	1852(sp)
-	li	vr1539,	6
-	sw	vr1539,	1856(sp)
-	li	vr1540,	6
-	sw	vr1540,	1860(sp)
-	li	vr1541,	8
-	sw	vr1541,	1864(sp)
-	li	vr1542,	8
-	sw	vr1542,	1868(sp)
+	sw	vr1516,	516(sp)
+	li	vr1517,	6
+	sw	vr1517,	520(sp)
+	li	vr1518,	9
+	sw	vr1518,	524(sp)
+	li	vr1519,	2
+	sw	vr1519,	528(sp)
+	li	vr1520,	5
+	sw	vr1520,	532(sp)
+	li	vr1521,	5
+	sw	vr1521,	536(sp)
+	li	vr1522,	7
+	sw	vr1522,	540(sp)
+	li	vr1523,	8
+	sw	vr1523,	544(sp)
+	li	vr1524,	3
+	sw	vr1524,	548(sp)
+	li	vr1525,	8
+	sw	vr1525,	552(sp)
+	li	vr1526,	9
+	sw	vr1526,	556(sp)
+	li	vr1527,	4
+	sw	vr1527,	560(sp)
+	li	vr1528,	9
+	sw	vr1528,	564(sp)
+	li	vr1529,	0
+	sw	vr1529,	568(sp)
+	li	vr1530,	5
+	sw	vr1530,	572(sp)
+	li	vr1531,	9
+	sw	vr1531,	576(sp)
+	li	vr1532,	8
+	sw	vr1532,	580(sp)
+	li	vr1533,	4
+	sw	vr1533,	584(sp)
+	li	vr1534,	2
+	sw	vr1534,	588(sp)
+	li	vr1535,	5
+	sw	vr1535,	592(sp)
+	li	vr1536,	0
+	sw	vr1536,	596(sp)
+	li	vr1537,	7
+	sw	vr1537,	600(sp)
+	li	vr1538,	8
+	sw	vr1538,	604(sp)
+	li	vr1539,	8
+	sw	vr1539,	608(sp)
+	li	vr1540,	4
+	sw	vr1540,	612(sp)
+	li	vr1541,	6
+	sw	vr1541,	616(sp)
+	li	vr1542,	7
+	sw	vr1542,	620(sp)
 	li	vr1543,	9
-	sw	vr1543,	1872(sp)
-	li	vr1544,	7
-	sw	vr1544,	1876(sp)
-	li	vr1545,	7
-	sw	vr1545,	1880(sp)
+	sw	vr1543,	624(sp)
+	li	vr1544,	8
+	sw	vr1544,	628(sp)
+	li	vr1545,	2
+	sw	vr1545,	632(sp)
 	li	vr1546,	4
-	sw	vr1546,	1884(sp)
-	li	vr1547,	9
-	sw	vr1547,	1888(sp)
-	li	vr1548,	0
-	sw	vr1548,	1892(sp)
-	li	vr1549,	8
-	sw	vr1549,	1896(sp)
-	li	vr1550,	7
-	sw	vr1550,	1900(sp)
-	li	vr1551,	6
-	sw	vr1551,	1904(sp)
-	li	vr1552,	8
-	sw	vr1552,	1908(sp)
-	li	vr1553,	3
-	sw	vr1553,	1912(sp)
-	li	vr1554,	1
-	sw	vr1554,	1916(sp)
-	li	vr1555,	6
-	sw	vr1555,	1920(sp)
-	li	vr1556,	7
-	sw	vr1556,	1924(sp)
-	li	vr1557,	4
-	sw	vr1557,	1928(sp)
-	li	vr1558,	6
-	sw	vr1558,	1932(sp)
-	li	vr1559,	5
-	sw	vr1559,	1936(sp)
-	li	vr1560,	6
-	sw	vr1560,	1940(sp)
+	sw	vr1546,	636(sp)
+	li	vr1547,	4
+	sw	vr1547,	640(sp)
+	li	vr1548,	2
+	sw	vr1548,	644(sp)
+	li	vr1549,	9
+	sw	vr1549,	648(sp)
+	li	vr1550,	9
+	sw	vr1550,	652(sp)
+	li	vr1551,	8
+	sw	vr1551,	656(sp)
+	li	vr1552,	1
+	sw	vr1552,	660(sp)
+	li	vr1553,	2
+	sw	vr1553,	664(sp)
+	li	vr1554,	3
+	sw	vr1554,	668(sp)
+	li	vr1555,	7
+	sw	vr1555,	672(sp)
+	li	vr1556,	2
+	sw	vr1556,	676(sp)
+	li	vr1557,	2
+	sw	vr1557,	680(sp)
+	li	vr1558,	1
+	sw	vr1558,	684(sp)
+	li	vr1559,	7
+	sw	vr1559,	688(sp)
+	li	vr1560,	1
+	sw	vr1560,	692(sp)
 	li	vr1561,	2
-	sw	vr1561,	1944(sp)
-	li	vr1562,	8
-	sw	vr1562,	1948(sp)
-	li	vr1563,	8
-	sw	vr1563,	1952(sp)
-	li	vr1564,	5
-	sw	vr1564,	1956(sp)
-	li	vr1565,	9
-	sw	vr1565,	1960(sp)
+	sw	vr1561,	696(sp)
+	li	vr1562,	4
+	sw	vr1562,	700(sp)
+	li	vr1563,	0
+	sw	vr1563,	704(sp)
+	li	vr1564,	6
+	sw	vr1564,	708(sp)
+	li	vr1565,	6
+	sw	vr1565,	712(sp)
 	li	vr1566,	0
-	sw	vr1566,	1964(sp)
-	li	vr1567,	3
-	sw	vr1567,	1968(sp)
-	li	vr1568,	1
-	sw	vr1568,	1972(sp)
-	li	vr1569,	9
-	sw	vr1569,	1976(sp)
-	li	vr1570,	1
-	sw	vr1570,	1980(sp)
-	li	vr1571,	4
-	sw	vr1571,	1984(sp)
+	sw	vr1566,	716(sp)
+	li	vr1567,	9
+	sw	vr1567,	720(sp)
+	li	vr1568,	9
+	sw	vr1568,	724(sp)
+	li	vr1569,	0
+	sw	vr1569,	728(sp)
+	li	vr1570,	7
+	sw	vr1570,	732(sp)
+	li	vr1571,	8
+	sw	vr1571,	736(sp)
 	li	vr1572,	9
-	sw	vr1572,	1988(sp)
-	li	vr1573,	6
-	sw	vr1573,	1992(sp)
-	li	vr1574,	4
-	sw	vr1574,	1996(sp)
-	li	vr1575,	7
-	sw	vr1575,	2000(sp)
-	li	vr1576,	6
-	sw	vr1576,	2004(sp)
-	li	vr1577,	6
-	sw	vr1577,	2008(sp)
-	li	vr1578,	8
-	sw	vr1578,	2012(sp)
-	li	vr1579,	9
-	sw	vr1579,	2016(sp)
-	li	vr1580,	6
-	sw	vr1580,	2020(sp)
-	li	vr1581,	6
-	sw	vr1581,	2024(sp)
-	li	vr1582,	1
-	sw	vr1582,	2028(sp)
-	li	vr1583,	2
-	sw	vr1583,	2032(sp)
-	li	vr1584,	5
-	sw	vr1584,	2036(sp)
-	li	vr1585,	2
-	sw	vr1585,	2040(sp)
-	li	vr1586,	0
-	sw	vr1586,	2044(sp)
-	li	vr1587,	3
-	sw	vr1587,	2048(sp)
-	li	vr1588,	8
-	sw	vr1588,	2052(sp)
-	li	vr1589,	2
-	sw	vr1589,	2056(sp)
-	li	vr1590,	9
-	sw	vr1590,	2060(sp)
-	li	vr1591,	1
-	sw	vr1591,	2064(sp)
-	li	vr1592,	3
-	sw	vr1592,	2068(sp)
-	li	vr1593,	9
-	sw	vr1593,	2072(sp)
-	li	vr1594,	6
-	sw	vr1594,	2076(sp)
-	li	vr1595,	2
-	sw	vr1595,	2080(sp)
-	li	vr1596,	3
-	sw	vr1596,	2084(sp)
-	li	vr1597,	2
-	sw	vr1597,	2088(sp)
-	li	vr1598,	9
-	sw	vr1598,	2092(sp)
-	li	vr1599,	9
-	sw	vr1599,	2096(sp)
-	li	vr1600,	3
-	sw	vr1600,	2100(sp)
-	li	vr1601,	8
-	sw	vr1601,	2104(sp)
-	li	vr1602,	8
-	sw	vr1602,	2108(sp)
-	li	vr1603,	1
-	sw	vr1603,	2112(sp)
+	sw	vr1572,	740(sp)
+	li	vr1573,	8
+	sw	vr1573,	744(sp)
+	li	vr1574,	5
+	sw	vr1574,	748(sp)
+	li	vr1575,	1
+	sw	vr1575,	752(sp)
+	li	vr1576,	8
+	sw	vr1576,	756(sp)
+	li	vr1577,	9
+	sw	vr1577,	760(sp)
+	li	vr1578,	2
+	sw	vr1578,	764(sp)
+	li	vr1579,	4
+	sw	vr1579,	768(sp)
+	li	vr1580,	7
+	sw	vr1580,	772(sp)
+	li	vr1581,	3
+	sw	vr1581,	776(sp)
+	li	vr1582,	4
+	sw	vr1582,	780(sp)
+	li	vr1583,	7
+	sw	vr1583,	784(sp)
+	li	vr1584,	9
+	sw	vr1584,	788(sp)
+	li	vr1585,	9
+	sw	vr1585,	792(sp)
+	li	vr1586,	4
+	sw	vr1586,	796(sp)
+	li	vr1587,	7
+	sw	vr1587,	800(sp)
+	li	vr1588,	1
+	sw	vr1588,	804(sp)
+	li	vr1589,	9
+	sw	vr1589,	808(sp)
+	li	vr1590,	0
+	sw	vr1590,	812(sp)
+	li	vr1591,	6
+	sw	vr1591,	816(sp)
+	li	vr1592,	0
+	sw	vr1592,	820(sp)
+	li	vr1593,	6
+	sw	vr1593,	824(sp)
+	li	vr1594,	9
+	sw	vr1594,	828(sp)
+	li	vr1595,	8
+	sw	vr1595,	832(sp)
+	li	vr1596,	4
+	sw	vr1596,	836(sp)
+	li	vr1597,	3
+	sw	vr1597,	840(sp)
+	li	vr1598,	6
+	sw	vr1598,	844(sp)
+	li	vr1599,	2
+	sw	vr1599,	848(sp)
+	li	vr1600,	9
+	sw	vr1600,	852(sp)
+	li	vr1601,	7
+	sw	vr1601,	856(sp)
+	li	vr1602,	5
+	sw	vr1602,	860(sp)
+	li	vr1603,	6
+	sw	vr1603,	864(sp)
 	li	vr1604,	9
-	sw	vr1604,	2116(sp)
+	sw	vr1604,	868(sp)
 	li	vr1605,	8
-	sw	vr1605,	2120(sp)
-	li	vr1606,	5
-	sw	vr1606,	2124(sp)
-	li	vr1607,	1
-	sw	vr1607,	2128(sp)
-	li	vr1608,	1
-	sw	vr1608,	2132(sp)
-	li	vr1609,	2
-	sw	vr1609,	2136(sp)
-	li	vr1610,	7
-	sw	vr1610,	2140(sp)
-	li	vr1611,	9
-	sw	vr1611,	2144(sp)
-	li	vr1612,	3
-	sw	vr1612,	2148(sp)
-	li	vr1613,	7
-	sw	vr1613,	2152(sp)
-	li	vr1614,	4
-	sw	vr1614,	2156(sp)
-	li	vr1615,	3
-	sw	vr1615,	2160(sp)
-	li	vr1616,	4
-	sw	vr1616,	2164(sp)
+	sw	vr1605,	872(sp)
+	li	vr1606,	6
+	sw	vr1606,	876(sp)
+	li	vr1607,	5
+	sw	vr1607,	880(sp)
+	li	vr1608,	8
+	sw	vr1608,	884(sp)
+	li	vr1609,	4
+	sw	vr1609,	888(sp)
+	li	vr1610,	0
+	sw	vr1610,	892(sp)
+	li	vr1611,	5
+	sw	vr1611,	896(sp)
+	li	vr1612,	2
+	sw	vr1612,	900(sp)
+	li	vr1613,	3
+	sw	vr1613,	904(sp)
+	li	vr1614,	2
+	sw	vr1614,	908(sp)
+	li	vr1615,	4
+	sw	vr1615,	912(sp)
+	li	vr1616,	0
+	sw	vr1616,	916(sp)
 	li	vr1617,	0
-	sw	vr1617,	2168(sp)
-	li	vr1618,	7
-	sw	vr1618,	2172(sp)
-	li	vr1619,	4
-	sw	vr1619,	2176(sp)
-	li	vr1620,	9
-	sw	vr1620,	2180(sp)
-	li	vr1621,	1
-	sw	vr1621,	2184(sp)
-	li	vr1622,	4
-	sw	vr1622,	2188(sp)
-	li	vr1623,	6
-	sw	vr1623,	2192(sp)
-	li	vr1624,	4
-	sw	vr1624,	2196(sp)
-	li	vr1625,	3
-	sw	vr1625,	2200(sp)
-	li	vr1626,	8
-	sw	vr1626,	2204(sp)
-	li	vr1627,	3
-	sw	vr1627,	2208(sp)
-	li	vr1628,	8
-	sw	vr1628,	2212(sp)
-	li	vr1629,	7
-	sw	vr1629,	2216(sp)
-	li	vr1630,	6
-	sw	vr1630,	2220(sp)
-	li	vr1631,	3
-	sw	vr1631,	2224(sp)
-	li	vr1632,	2
-	sw	vr1632,	2228(sp)
-	li	vr1633,	1
-	sw	vr1633,	2232(sp)
-	li	vr1634,	8
-	sw	vr1634,	2236(sp)
-	li	vr1635,	5
-	sw	vr1635,	2240(sp)
-	li	vr1636,	2
-	sw	vr1636,	2244(sp)
-	li	vr1637,	3
-	sw	vr1637,	2248(sp)
-	li	vr1638,	1
-	sw	vr1638,	2252(sp)
-	li	vr1639,	3
-	sw	vr1639,	2256(sp)
-	li	vr1640,	7
-	sw	vr1640,	2260(sp)
-	li	vr1641,	6
-	sw	vr1641,	2264(sp)
-	li	vr1642,	2
-	sw	vr1642,	2268(sp)
+	sw	vr1617,	920(sp)
+	li	vr1618,	9
+	sw	vr1618,	924(sp)
+	li	vr1619,	5
+	sw	vr1619,	928(sp)
+	li	vr1620,	8
+	sw	vr1620,	932(sp)
+	li	vr1621,	9
+	sw	vr1621,	936(sp)
+	li	vr1622,	2
+	sw	vr1622,	940(sp)
+	li	vr1623,	5
+	sw	vr1623,	944(sp)
+	li	vr1624,	2
+	sw	vr1624,	948(sp)
+	li	vr1625,	5
+	sw	vr1625,	952(sp)
+	li	vr1626,	0
+	sw	vr1626,	956(sp)
+	li	vr1627,	9
+	sw	vr1627,	960(sp)
+	li	vr1628,	4
+	sw	vr1628,	964(sp)
+	li	vr1629,	2
+	sw	vr1629,	968(sp)
+	li	vr1630,	0
+	sw	vr1630,	972(sp)
+	li	vr1631,	0
+	sw	vr1631,	976(sp)
+	li	vr1632,	1
+	sw	vr1632,	980(sp)
+	li	vr1633,	5
+	sw	vr1633,	984(sp)
+	li	vr1634,	0
+	sw	vr1634,	988(sp)
+	li	vr1635,	4
+	sw	vr1635,	992(sp)
+	li	vr1636,	9
+	sw	vr1636,	996(sp)
+	li	vr1637,	4
+	sw	vr1637,	1000(sp)
+	li	vr1638,	9
+	sw	vr1638,	1004(sp)
+	li	vr1639,	4
+	sw	vr1639,	1008(sp)
+	li	vr1640,	6
+	sw	vr1640,	1012(sp)
+	li	vr1641,	0
+	sw	vr1641,	1016(sp)
+	li	vr1642,	0
+	sw	vr1642,	1020(sp)
 	li	vr1643,	4
-	sw	vr1643,	2272(sp)
-	li	vr1644,	0
-	sw	vr1644,	2276(sp)
-	li	vr1645,	9
-	sw	vr1645,	2280(sp)
+	sw	vr1643,	1024(sp)
+	li	vr1644,	2
+	sw	vr1644,	1028(sp)
+	li	vr1645,	6
+	sw	vr1645,	1032(sp)
 	li	vr1646,	9
-	sw	vr1646,	2284(sp)
-	li	vr1647,	7
-	sw	vr1647,	2288(sp)
-	li	vr1648,	8
-	sw	vr1648,	2292(sp)
-	li	vr1649,	3
-	sw	vr1649,	2296(sp)
-	li	vr1650,	7
-	sw	vr1650,	2300(sp)
+	sw	vr1646,	1036(sp)
+	li	vr1647,	3
+	sw	vr1647,	1040(sp)
+	li	vr1648,	7
+	sw	vr1648,	1044(sp)
+	li	vr1649,	8
+	sw	vr1649,	1048(sp)
+	li	vr1650,	5
+	sw	vr1650,	1052(sp)
 	li	vr1651,	5
-	sw	vr1651,	2304(sp)
-	li	vr1652,	8
-	sw	vr1652,	2308(sp)
-	li	vr1653,	8
-	sw	vr1653,	2312(sp)
-	li	vr1654,	5
-	sw	vr1654,	2316(sp)
-	li	vr1655,	6
-	sw	vr1655,	2320(sp)
-	li	vr1656,	7
-	sw	vr1656,	2324(sp)
-	li	vr1657,	3
-	sw	vr1657,	2328(sp)
-	li	vr1658,	2
-	sw	vr1658,	2332(sp)
-	li	vr1659,	9
-	sw	vr1659,	2336(sp)
-	li	vr1660,	5
-	sw	vr1660,	2340(sp)
-	li	vr1661,	5
-	sw	vr1661,	2344(sp)
-	li	vr1662,	1
-	sw	vr1662,	2348(sp)
-	li	vr1663,	5
-	sw	vr1663,	2352(sp)
-	li	vr1664,	7
-	sw	vr1664,	2356(sp)
-	li	vr1665,	9
-	sw	vr1665,	2360(sp)
-	li	vr1666,	7
-	sw	vr1666,	2364(sp)
-	li	vr1667,	9
-	sw	vr1667,	2368(sp)
-	li	vr1668,	0
-	sw	vr1668,	2372(sp)
-	li	vr1669,	5
-	sw	vr1669,	2376(sp)
-	li	vr1670,	4
-	sw	vr1670,	2380(sp)
-	li	vr1671,	3
-	sw	vr1671,	2384(sp)
-	li	vr1672,	3
-	sw	vr1672,	2388(sp)
-	li	vr1673,	0
-	sw	vr1673,	2392(sp)
+	sw	vr1651,	1056(sp)
+	li	vr1652,	7
+	sw	vr1652,	1060(sp)
+	li	vr1653,	1
+	sw	vr1653,	1064(sp)
+	li	vr1654,	0
+	sw	vr1654,	1068(sp)
+	li	vr1655,	5
+	sw	vr1655,	1072(sp)
+	li	vr1656,	3
+	sw	vr1656,	1076(sp)
+	li	vr1657,	6
+	sw	vr1657,	1080(sp)
+	li	vr1658,	0
+	sw	vr1658,	1084(sp)
+	li	vr1659,	3
+	sw	vr1659,	1088(sp)
+	li	vr1660,	3
+	sw	vr1660,	1092(sp)
+	li	vr1661,	6
+	sw	vr1661,	1096(sp)
+	li	vr1662,	2
+	sw	vr1662,	1100(sp)
+	li	vr1663,	9
+	sw	vr1663,	1104(sp)
+	li	vr1664,	9
+	sw	vr1664,	1108(sp)
+	li	vr1665,	1
+	sw	vr1665,	1112(sp)
+	li	vr1666,	9
+	sw	vr1666,	1116(sp)
+	li	vr1667,	6
+	sw	vr1667,	1120(sp)
+	li	vr1668,	2
+	sw	vr1668,	1124(sp)
+	li	vr1669,	4
+	sw	vr1669,	1128(sp)
+	li	vr1670,	1
+	sw	vr1670,	1132(sp)
+	li	vr1671,	5
+	sw	vr1671,	1136(sp)
+	li	vr1672,	1
+	sw	vr1672,	1140(sp)
+	li	vr1673,	5
+	sw	vr1673,	1144(sp)
 	li	vr1674,	0
-	sw	vr1674,	2396(sp)
-	li	vr1675,	0
-	sw	vr1675,	2400(sp)
-	li	vr1676,	3
-	sw	vr1676,	2404(sp)
-	li	vr1677,	5
-	sw	vr1677,	2408(sp)
-	li	vr1678,	1
-	sw	vr1678,	2412(sp)
-	li	vr1679,	6
-	sw	vr1679,	2416(sp)
-	li	vr1680,	2
-	sw	vr1680,	2420(sp)
-	li	vr1681,	0
-	sw	vr1681,	2424(sp)
-	li	vr1682,	4
-	sw	vr1682,	2428(sp)
-	li	vr1683,	7
-	sw	vr1683,	2432(sp)
+	sw	vr1674,	1148(sp)
+	li	vr1675,	8
+	sw	vr1675,	1152(sp)
+	li	vr1676,	5
+	sw	vr1676,	1156(sp)
+	li	vr1677,	7
+	sw	vr1677,	1160(sp)
+	li	vr1678,	9
+	sw	vr1678,	1164(sp)
+	li	vr1679,	4
+	sw	vr1679,	1168(sp)
+	li	vr1680,	6
+	sw	vr1680,	1172(sp)
+	li	vr1681,	1
+	sw	vr1681,	1176(sp)
+	li	vr1682,	3
+	sw	vr1682,	1180(sp)
+	li	vr1683,	9
+	sw	vr1683,	1184(sp)
 	li	vr1684,	4
-	sw	vr1684,	2436(sp)
-	li	vr1685,	9
-	sw	vr1685,	2440(sp)
-	li	vr1686,	7
-	sw	vr1686,	2444(sp)
-	li	vr1687,	3
-	sw	vr1687,	2448(sp)
-	li	vr1688,	4
-	sw	vr1688,	2452(sp)
-	li	vr1689,	0
-	sw	vr1689,	2456(sp)
-	li	vr1690,	6
-	sw	vr1690,	2460(sp)
-	li	vr1691,	0
-	sw	vr1691,	2464(sp)
-	li	vr1692,	3
-	sw	vr1692,	2468(sp)
-	li	vr1693,	1
-	sw	vr1693,	2472(sp)
-	li	vr1694,	3
-	sw	vr1694,	2476(sp)
-	li	vr1695,	5
-	sw	vr1695,	2480(sp)
+	sw	vr1684,	1188(sp)
+	li	vr1685,	2
+	sw	vr1685,	1192(sp)
+	li	vr1686,	3
+	sw	vr1686,	1196(sp)
+	li	vr1687,	0
+	sw	vr1687,	1200(sp)
+	li	vr1688,	8
+	sw	vr1688,	1204(sp)
+	li	vr1689,	6
+	sw	vr1689,	1208(sp)
+	li	vr1690,	0
+	sw	vr1690,	1212(sp)
+	li	vr1691,	9
+	sw	vr1691,	1216(sp)
+	li	vr1692,	7
+	sw	vr1692,	1220(sp)
+	li	vr1693,	3
+	sw	vr1693,	1224(sp)
+	li	vr1694,	1
+	sw	vr1694,	1228(sp)
+	li	vr1695,	3
+	sw	vr1695,	1232(sp)
 	li	vr1696,	7
-	sw	vr1696,	2484(sp)
-	li	vr1697,	3
-	sw	vr1697,	2488(sp)
-	li	vr1698,	8
-	sw	vr1698,	2492(sp)
-	li	vr1699,	3
-	sw	vr1699,	2496(sp)
-	li	vr1700,	1
-	sw	vr1700,	2500(sp)
-	li	vr1701,	9
-	sw	vr1701,	2504(sp)
-	li	vr1702,	6
-	sw	vr1702,	2508(sp)
-	li	vr1703,	8
-	sw	vr1703,	2512(sp)
-	li	vr1704,	6
-	sw	vr1704,	2516(sp)
-	li	vr1705,	7
-	sw	vr1705,	2520(sp)
-	li	vr1706,	7
-	sw	vr1706,	2524(sp)
-	li	vr1707,	3
-	sw	vr1707,	2528(sp)
-	li	vr1708,	2
-	sw	vr1708,	2532(sp)
+	sw	vr1696,	1236(sp)
+	li	vr1697,	0
+	sw	vr1697,	1240(sp)
+	li	vr1698,	9
+	sw	vr1698,	1244(sp)
+	li	vr1699,	2
+	sw	vr1699,	1248(sp)
+	li	vr1700,	3
+	sw	vr1700,	1252(sp)
+	li	vr1701,	1
+	sw	vr1701,	1256(sp)
+	li	vr1702,	2
+	sw	vr1702,	1260(sp)
+	li	vr1703,	9
+	sw	vr1703,	1264(sp)
+	li	vr1704,	3
+	sw	vr1704,	1268(sp)
+	li	vr1705,	8
+	sw	vr1705,	1272(sp)
+	li	vr1706,	5
+	sw	vr1706,	1276(sp)
+	li	vr1707,	7
+	sw	vr1707,	1280(sp)
+	li	vr1708,	3
+	sw	vr1708,	1284(sp)
 	li	vr1709,	9
-	sw	vr1709,	2536(sp)
-	li	vr1710,	8
-	sw	vr1710,	2540(sp)
-	li	vr1711,	1
-	sw	vr1711,	2544(sp)
-	li	vr1712,	9
-	sw	vr1712,	2548(sp)
-	li	vr1713,	5
-	sw	vr1713,	2552(sp)
-	li	vr1714,	8
-	sw	vr1714,	2556(sp)
-	li	vr1715,	4
-	sw	vr1715,	2560(sp)
-	li	vr1716,	7
-	sw	vr1716,	2564(sp)
-	li	vr1717,	8
-	sw	vr1717,	2568(sp)
-	li	vr1718,	9
-	sw	vr1718,	2572(sp)
-	li	vr1719,	9
-	sw	vr1719,	2576(sp)
-	li	vr1720,	0
-	sw	vr1720,	2580(sp)
-	li	vr1721,	9
-	sw	vr1721,	2584(sp)
-	li	vr1722,	2
-	sw	vr1722,	2588(sp)
-	li	vr1723,	9
-	sw	vr1723,	2592(sp)
-	li	vr1724,	0
-	sw	vr1724,	2596(sp)
-	li	vr1725,	0
-	sw	vr1725,	2600(sp)
-	li	vr1726,	7
-	sw	vr1726,	2604(sp)
+	sw	vr1709,	1288(sp)
+	li	vr1710,	6
+	sw	vr1710,	1292(sp)
+	li	vr1711,	7
+	sw	vr1711,	1296(sp)
+	li	vr1712,	1
+	sw	vr1712,	1300(sp)
+	li	vr1713,	9
+	sw	vr1713,	1304(sp)
+	li	vr1714,	6
+	sw	vr1714,	1308(sp)
+	li	vr1715,	3
+	sw	vr1715,	1312(sp)
+	li	vr1716,	8
+	sw	vr1716,	1316(sp)
+	li	vr1717,	1
+	sw	vr1717,	1320(sp)
+	li	vr1718,	8
+	sw	vr1718,	1324(sp)
+	li	vr1719,	8
+	sw	vr1719,	1328(sp)
+	li	vr1720,	2
+	sw	vr1720,	1332(sp)
+	li	vr1721,	8
+	sw	vr1721,	1336(sp)
+	li	vr1722,	7
+	sw	vr1722,	1340(sp)
+	li	vr1723,	5
+	sw	vr1723,	1344(sp)
+	li	vr1724,	4
+	sw	vr1724,	1348(sp)
+	li	vr1725,	2
+	sw	vr1725,	1352(sp)
+	li	vr1726,	0
+	sw	vr1726,	1356(sp)
 	li	vr1727,	4
-	sw	vr1727,	2608(sp)
-	li	vr1728,	3
-	sw	vr1728,	2612(sp)
-	li	vr1729,	9
-	sw	vr1729,	2616(sp)
-	li	vr1730,	2
-	sw	vr1730,	2620(sp)
-	li	vr1731,	2
-	sw	vr1731,	2624(sp)
-	li	vr1732,	7
-	sw	vr1732,	2628(sp)
-	li	vr1733,	8
-	sw	vr1733,	2632(sp)
-	li	vr1734,	7
-	sw	vr1734,	2636(sp)
-	li	vr1735,	1
-	sw	vr1735,	2640(sp)
-	li	vr1736,	3
-	sw	vr1736,	2644(sp)
-	li	vr1737,	5
-	sw	vr1737,	2648(sp)
-	li	vr1738,	8
-	sw	vr1738,	2652(sp)
-	li	vr1739,	4
-	sw	vr1739,	2656(sp)
-	li	vr1740,	4
-	sw	vr1740,	2660(sp)
-	li	vr1741,	0
-	sw	vr1741,	2664(sp)
-	li	vr1742,	9
-	sw	vr1742,	2668(sp)
+	sw	vr1727,	1360(sp)
+	li	vr1728,	0
+	sw	vr1728,	1364(sp)
+	li	vr1729,	7
+	sw	vr1729,	1368(sp)
+	li	vr1730,	7
+	sw	vr1730,	1372(sp)
+	li	vr1731,	8
+	sw	vr1731,	1376(sp)
+	li	vr1732,	9
+	sw	vr1732,	1380(sp)
+	li	vr1733,	6
+	sw	vr1733,	1384(sp)
+	li	vr1734,	6
+	sw	vr1734,	1388(sp)
+	li	vr1735,	7
+	sw	vr1735,	1392(sp)
+	li	vr1736,	7
+	sw	vr1736,	1396(sp)
+	li	vr1737,	1
+	sw	vr1737,	1400(sp)
+	li	vr1738,	6
+	sw	vr1738,	1404(sp)
+	li	vr1739,	0
+	sw	vr1739,	1408(sp)
+	li	vr1740,	5
+	sw	vr1740,	1412(sp)
+	li	vr1741,	3
+	sw	vr1741,	1416(sp)
+	li	vr1742,	4
+	sw	vr1742,	1420(sp)
+	li	vr1743,	2
+	sw	vr1743,	1424(sp)
+	li	vr1744,	6
+	sw	vr1744,	1428(sp)
+	li	vr1745,	3
+	sw	vr1745,	1432(sp)
+	li	vr1746,	6
+	sw	vr1746,	1436(sp)
+	li	vr1747,	3
+	sw	vr1747,	1440(sp)
+	li	vr1748,	4
+	sw	vr1748,	1444(sp)
+	li	vr1749,	1
+	sw	vr1749,	1448(sp)
+	li	vr1750,	3
+	sw	vr1750,	1452(sp)
+	li	vr1751,	6
+	sw	vr1751,	1456(sp)
+	li	vr1752,	9
+	sw	vr1752,	1460(sp)
+	li	vr1753,	4
+	sw	vr1753,	1464(sp)
+	li	vr1754,	3
+	sw	vr1754,	1468(sp)
+	li	vr1755,	0
+	sw	vr1755,	1472(sp)
+	li	vr1756,	9
+	sw	vr1756,	1476(sp)
+	li	vr1757,	0
+	sw	vr1757,	1480(sp)
+	li	vr1758,	2
+	sw	vr1758,	1484(sp)
+	li	vr1759,	2
+	sw	vr1759,	1488(sp)
+	li	vr1760,	0
+	sw	vr1760,	1492(sp)
+	li	vr1761,	8
+	sw	vr1761,	1496(sp)
+	li	vr1762,	8
+	sw	vr1762,	1500(sp)
+	li	vr1763,	4
+	sw	vr1763,	1504(sp)
+	li	vr1764,	5
+	sw	vr1764,	1508(sp)
+	li	vr1765,	8
+	sw	vr1765,	1512(sp)
+	li	vr1766,	2
+	sw	vr1766,	1516(sp)
+	li	vr1767,	3
+	sw	vr1767,	1520(sp)
+	li	vr1768,	3
+	sw	vr1768,	1524(sp)
+	li	vr1769,	7
+	sw	vr1769,	1528(sp)
+	li	vr1770,	2
+	sw	vr1770,	1532(sp)
+	li	vr1771,	5
+	sw	vr1771,	1536(sp)
+	li	vr1772,	9
+	sw	vr1772,	1540(sp)
+	li	vr1773,	6
+	sw	vr1773,	1544(sp)
+	li	vr1774,	7
+	sw	vr1774,	1548(sp)
+	li	vr1775,	0
+	sw	vr1775,	1552(sp)
+	li	vr1776,	1
+	sw	vr1776,	1556(sp)
+	li	vr1777,	8
+	sw	vr1777,	1560(sp)
+	li	vr1778,	5
+	sw	vr1778,	1564(sp)
+	li	vr1779,	7
+	sw	vr1779,	1568(sp)
+	li	vr1780,	8
+	sw	vr1780,	1572(sp)
+	li	vr1781,	3
+	sw	vr1781,	1576(sp)
+	li	vr1782,	0
+	sw	vr1782,	1580(sp)
+	li	vr1783,	2
+	sw	vr1783,	1584(sp)
+	li	vr1784,	9
+	sw	vr1784,	1588(sp)
+	li	vr1785,	1
+	sw	vr1785,	1592(sp)
+	li	vr1786,	5
+	sw	vr1786,	1596(sp)
+	li	vr1787,	4
+	sw	vr1787,	1600(sp)
+	li	vr1788,	9
+	sw	vr1788,	1604(sp)
+	li	vr1789,	4
+	sw	vr1789,	1608(sp)
+	li	vr1790,	5
+	sw	vr1790,	1612(sp)
+	li	vr1791,	3
+	sw	vr1791,	1616(sp)
+	li	vr1792,	7
+	sw	vr1792,	1620(sp)
+	li	vr1793,	4
+	sw	vr1793,	1624(sp)
+	li	vr1794,	0
+	sw	vr1794,	1628(sp)
+	li	vr1795,	2
+	sw	vr1795,	1632(sp)
+	li	vr1796,	7
+	sw	vr1796,	1636(sp)
+	li	vr1797,	1
+	sw	vr1797,	1640(sp)
+	li	vr1798,	3
+	sw	vr1798,	1644(sp)
+	li	vr1799,	2
+	sw	vr1799,	1648(sp)
+	li	vr1800,	7
+	sw	vr1800,	1652(sp)
+	li	vr1801,	1
+	sw	vr1801,	1656(sp)
+	li	vr1802,	7
+	sw	vr1802,	1660(sp)
+	li	vr1803,	0
+	sw	vr1803,	1664(sp)
+	li	vr1804,	0
+	sw	vr1804,	1668(sp)
+	li	vr1805,	6
+	sw	vr1805,	1672(sp)
+	li	vr1806,	7
+	sw	vr1806,	1676(sp)
+	li	vr1807,	8
+	sw	vr1807,	1680(sp)
+	li	vr1808,	9
+	sw	vr1808,	1684(sp)
+	li	vr1809,	0
+	sw	vr1809,	1688(sp)
+	li	vr1810,	2
+	sw	vr1810,	1692(sp)
+	li	vr1811,	5
+	sw	vr1811,	1696(sp)
+	li	vr1812,	4
+	sw	vr1812,	1700(sp)
+	li	vr1813,	6
+	sw	vr1813,	1704(sp)
+	li	vr1814,	2
+	sw	vr1814,	1708(sp)
+	li	vr1815,	9
+	sw	vr1815,	1712(sp)
+	li	vr1816,	2
+	sw	vr1816,	1716(sp)
+	li	vr1817,	1
+	sw	vr1817,	1720(sp)
+	li	vr1818,	0
+	sw	vr1818,	1724(sp)
+	li	vr1819,	2
+	sw	vr1819,	1728(sp)
+	li	vr1820,	2
+	sw	vr1820,	1732(sp)
+	li	vr1821,	7
+	sw	vr1821,	1736(sp)
+	li	vr1822,	3
+	sw	vr1822,	1740(sp)
+	li	vr1823,	8
+	sw	vr1823,	1744(sp)
+	li	vr1824,	9
+	sw	vr1824,	1748(sp)
+	li	vr1825,	6
+	sw	vr1825,	1752(sp)
+	li	vr1826,	3
+	sw	vr1826,	1756(sp)
+	li	vr1827,	6
+	sw	vr1827,	1760(sp)
+	li	vr1828,	9
+	sw	vr1828,	1764(sp)
+	li	vr1829,	0
+	sw	vr1829,	1768(sp)
+	li	vr1830,	8
+	sw	vr1830,	1772(sp)
+	li	vr1831,	1
+	sw	vr1831,	1776(sp)
+	li	vr1832,	2
+	sw	vr1832,	1780(sp)
+	li	vr1833,	2
+	sw	vr1833,	1784(sp)
+	li	vr1834,	9
+	sw	vr1834,	1788(sp)
+	li	vr1835,	5
+	sw	vr1835,	1792(sp)
+	li	vr1836,	8
+	sw	vr1836,	1796(sp)
+	li	vr1837,	2
+	sw	vr1837,	1800(sp)
+	li	vr1838,	5
+	sw	vr1838,	1804(sp)
+	li	vr1839,	0
+	sw	vr1839,	1808(sp)
+	li	vr1840,	4
+	sw	vr1840,	1812(sp)
+	li	vr1841,	7
+	sw	vr1841,	1816(sp)
+	li	vr1842,	0
+	sw	vr1842,	1820(sp)
+	li	vr1843,	8
+	sw	vr1843,	1824(sp)
+	li	vr1844,	2
+	sw	vr1844,	1828(sp)
+	li	vr1845,	9
+	sw	vr1845,	1832(sp)
+	li	vr1846,	6
+	sw	vr1846,	1836(sp)
+	li	vr1847,	7
+	sw	vr1847,	1840(sp)
+	li	vr1848,	7
+	sw	vr1848,	1844(sp)
+	li	vr1849,	5
+	sw	vr1849,	1848(sp)
+	li	vr1850,	2
+	sw	vr1850,	1852(sp)
+	li	vr1851,	6
+	sw	vr1851,	1856(sp)
+	li	vr1852,	6
+	sw	vr1852,	1860(sp)
+	li	vr1853,	8
+	sw	vr1853,	1864(sp)
+	li	vr1854,	8
+	sw	vr1854,	1868(sp)
+	li	vr1855,	9
+	sw	vr1855,	1872(sp)
+	li	vr1856,	7
+	sw	vr1856,	1876(sp)
+	li	vr1857,	7
+	sw	vr1857,	1880(sp)
+	li	vr1858,	4
+	sw	vr1858,	1884(sp)
+	li	vr1859,	9
+	sw	vr1859,	1888(sp)
+	li	vr1860,	0
+	sw	vr1860,	1892(sp)
+	li	vr1861,	8
+	sw	vr1861,	1896(sp)
+	li	vr1862,	7
+	sw	vr1862,	1900(sp)
+	li	vr1863,	6
+	sw	vr1863,	1904(sp)
+	li	vr1864,	8
+	sw	vr1864,	1908(sp)
+	li	vr1865,	3
+	sw	vr1865,	1912(sp)
+	li	vr1866,	1
+	sw	vr1866,	1916(sp)
+	li	vr1867,	6
+	sw	vr1867,	1920(sp)
+	li	vr1868,	7
+	sw	vr1868,	1924(sp)
+	li	vr1869,	4
+	sw	vr1869,	1928(sp)
+	li	vr1870,	6
+	sw	vr1870,	1932(sp)
+	li	vr1871,	5
+	sw	vr1871,	1936(sp)
+	li	vr1872,	6
+	sw	vr1872,	1940(sp)
+	li	vr1873,	2
+	sw	vr1873,	1944(sp)
+	li	vr1874,	8
+	sw	vr1874,	1948(sp)
+	li	vr1875,	8
+	sw	vr1875,	1952(sp)
+	li	vr1876,	5
+	sw	vr1876,	1956(sp)
+	li	vr1877,	9
+	sw	vr1877,	1960(sp)
+	li	vr1878,	0
+	sw	vr1878,	1964(sp)
+	li	vr1879,	3
+	sw	vr1879,	1968(sp)
+	li	vr1880,	1
+	sw	vr1880,	1972(sp)
+	li	vr1881,	9
+	sw	vr1881,	1976(sp)
+	li	vr1882,	1
+	sw	vr1882,	1980(sp)
+	li	vr1883,	4
+	sw	vr1883,	1984(sp)
+	li	vr1884,	9
+	sw	vr1884,	1988(sp)
+	li	vr1885,	6
+	sw	vr1885,	1992(sp)
+	li	vr1886,	4
+	sw	vr1886,	1996(sp)
+	li	vr1887,	7
+	sw	vr1887,	2000(sp)
+	li	vr1888,	6
+	sw	vr1888,	2004(sp)
+	li	vr1889,	6
+	sw	vr1889,	2008(sp)
+	li	vr1890,	8
+	sw	vr1890,	2012(sp)
+	li	vr1891,	9
+	sw	vr1891,	2016(sp)
+	li	vr1892,	6
+	sw	vr1892,	2020(sp)
+	li	vr1893,	6
+	sw	vr1893,	2024(sp)
+	li	vr1894,	1
+	sw	vr1894,	2028(sp)
+	li	vr1895,	2
+	sw	vr1895,	2032(sp)
+	li	vr1896,	5
+	sw	vr1896,	2036(sp)
+	li	vr1897,	2
+	sw	vr1897,	2040(sp)
+	li	vr1898,	0
+	sw	vr1898,	2044(sp)
+	li	vr1899,	3
+	li	vr1900,	2048
+	   add	vr1901,	sp,	vr1900
+	sw	vr1899,	0(vr1901)
+	li	vr1902,	8
+	li	vr1903,	2052
+	   add	vr1904,	sp,	vr1903
+	sw	vr1902,	0(vr1904)
+	li	vr1905,	2
+	li	vr1906,	2056
+	   add	vr1907,	sp,	vr1906
+	sw	vr1905,	0(vr1907)
+	li	vr1908,	9
+	li	vr1909,	2060
+	   add	vr1910,	sp,	vr1909
+	sw	vr1908,	0(vr1910)
+	li	vr1911,	1
+	li	vr1912,	2064
+	   add	vr1913,	sp,	vr1912
+	sw	vr1911,	0(vr1913)
+	li	vr1914,	3
+	li	vr1915,	2068
+	   add	vr1916,	sp,	vr1915
+	sw	vr1914,	0(vr1916)
+	li	vr1917,	9
+	li	vr1918,	2072
+	   add	vr1919,	sp,	vr1918
+	sw	vr1917,	0(vr1919)
+	li	vr1920,	6
+	li	vr1921,	2076
+	   add	vr1922,	sp,	vr1921
+	sw	vr1920,	0(vr1922)
+	li	vr1923,	2
+	li	vr1924,	2080
+	   add	vr1925,	sp,	vr1924
+	sw	vr1923,	0(vr1925)
+	li	vr1926,	3
+	li	vr1927,	2084
+	   add	vr1928,	sp,	vr1927
+	sw	vr1926,	0(vr1928)
+	li	vr1929,	2
+	li	vr1930,	2088
+	   add	vr1931,	sp,	vr1930
+	sw	vr1929,	0(vr1931)
+	li	vr1932,	9
+	li	vr1933,	2092
+	   add	vr1934,	sp,	vr1933
+	sw	vr1932,	0(vr1934)
+	li	vr1935,	9
+	li	vr1936,	2096
+	   add	vr1937,	sp,	vr1936
+	sw	vr1935,	0(vr1937)
+	li	vr1938,	3
+	li	vr1939,	2100
+	   add	vr1940,	sp,	vr1939
+	sw	vr1938,	0(vr1940)
+	li	vr1941,	8
+	li	vr1942,	2104
+	   add	vr1943,	sp,	vr1942
+	sw	vr1941,	0(vr1943)
+	li	vr1944,	8
+	li	vr1945,	2108
+	   add	vr1946,	sp,	vr1945
+	sw	vr1944,	0(vr1946)
+	li	vr1947,	1
+	li	vr1948,	2112
+	   add	vr1949,	sp,	vr1948
+	sw	vr1947,	0(vr1949)
+	li	vr1950,	9
+	li	vr1951,	2116
+	   add	vr1952,	sp,	vr1951
+	sw	vr1950,	0(vr1952)
+	li	vr1953,	8
+	li	vr1954,	2120
+	   add	vr1955,	sp,	vr1954
+	sw	vr1953,	0(vr1955)
+	li	vr1956,	5
+	li	vr1957,	2124
+	   add	vr1958,	sp,	vr1957
+	sw	vr1956,	0(vr1958)
+	li	vr1959,	1
+	li	vr1960,	2128
+	   add	vr1961,	sp,	vr1960
+	sw	vr1959,	0(vr1961)
+	li	vr1962,	1
+	li	vr1963,	2132
+	   add	vr1964,	sp,	vr1963
+	sw	vr1962,	0(vr1964)
+	li	vr1965,	2
+	li	vr1966,	2136
+	   add	vr1967,	sp,	vr1966
+	sw	vr1965,	0(vr1967)
+	li	vr1968,	7
+	li	vr1969,	2140
+	   add	vr1970,	sp,	vr1969
+	sw	vr1968,	0(vr1970)
+	li	vr1971,	9
+	li	vr1972,	2144
+	   add	vr1973,	sp,	vr1972
+	sw	vr1971,	0(vr1973)
+	li	vr1974,	3
+	li	vr1975,	2148
+	   add	vr1976,	sp,	vr1975
+	sw	vr1974,	0(vr1976)
+	li	vr1977,	7
+	li	vr1978,	2152
+	   add	vr1979,	sp,	vr1978
+	sw	vr1977,	0(vr1979)
+	li	vr1980,	4
+	li	vr1981,	2156
+	   add	vr1982,	sp,	vr1981
+	sw	vr1980,	0(vr1982)
+	li	vr1983,	3
+	li	vr1984,	2160
+	   add	vr1985,	sp,	vr1984
+	sw	vr1983,	0(vr1985)
+	li	vr1986,	4
+	li	vr1987,	2164
+	   add	vr1988,	sp,	vr1987
+	sw	vr1986,	0(vr1988)
+	li	vr1989,	0
+	li	vr1990,	2168
+	   add	vr1991,	sp,	vr1990
+	sw	vr1989,	0(vr1991)
+	li	vr1992,	7
+	li	vr1993,	2172
+	   add	vr1994,	sp,	vr1993
+	sw	vr1992,	0(vr1994)
+	li	vr1995,	4
+	li	vr1996,	2176
+	   add	vr1997,	sp,	vr1996
+	sw	vr1995,	0(vr1997)
+	li	vr1998,	9
+	li	vr1999,	2180
+	   add	vr2000,	sp,	vr1999
+	sw	vr1998,	0(vr2000)
+	li	vr2001,	1
+	li	vr2002,	2184
+	   add	vr2003,	sp,	vr2002
+	sw	vr2001,	0(vr2003)
+	li	vr2004,	4
+	li	vr2005,	2188
+	   add	vr2006,	sp,	vr2005
+	sw	vr2004,	0(vr2006)
+	li	vr2007,	6
+	li	vr2008,	2192
+	   add	vr2009,	sp,	vr2008
+	sw	vr2007,	0(vr2009)
+	li	vr2010,	4
+	li	vr2011,	2196
+	   add	vr2012,	sp,	vr2011
+	sw	vr2010,	0(vr2012)
+	li	vr2013,	3
+	li	vr2014,	2200
+	   add	vr2015,	sp,	vr2014
+	sw	vr2013,	0(vr2015)
+	li	vr2016,	8
+	li	vr2017,	2204
+	   add	vr2018,	sp,	vr2017
+	sw	vr2016,	0(vr2018)
+	li	vr2019,	3
+	li	vr2020,	2208
+	   add	vr2021,	sp,	vr2020
+	sw	vr2019,	0(vr2021)
+	li	vr2022,	8
+	li	vr2023,	2212
+	   add	vr2024,	sp,	vr2023
+	sw	vr2022,	0(vr2024)
+	li	vr2025,	7
+	li	vr2026,	2216
+	   add	vr2027,	sp,	vr2026
+	sw	vr2025,	0(vr2027)
+	li	vr2028,	6
+	li	vr2029,	2220
+	   add	vr2030,	sp,	vr2029
+	sw	vr2028,	0(vr2030)
+	li	vr2031,	3
+	li	vr2032,	2224
+	   add	vr2033,	sp,	vr2032
+	sw	vr2031,	0(vr2033)
+	li	vr2034,	2
+	li	vr2035,	2228
+	   add	vr2036,	sp,	vr2035
+	sw	vr2034,	0(vr2036)
+	li	vr2037,	1
+	li	vr2038,	2232
+	   add	vr2039,	sp,	vr2038
+	sw	vr2037,	0(vr2039)
+	li	vr2040,	8
+	li	vr2041,	2236
+	   add	vr2042,	sp,	vr2041
+	sw	vr2040,	0(vr2042)
+	li	vr2043,	5
+	li	vr2044,	2240
+	   add	vr2045,	sp,	vr2044
+	sw	vr2043,	0(vr2045)
+	li	vr2046,	2
+	li	vr2047,	2244
+	   add	vr2048,	sp,	vr2047
+	sw	vr2046,	0(vr2048)
+	li	vr2049,	3
+	li	vr2050,	2248
+	   add	vr2051,	sp,	vr2050
+	sw	vr2049,	0(vr2051)
+	li	vr2052,	1
+	li	vr2053,	2252
+	   add	vr2054,	sp,	vr2053
+	sw	vr2052,	0(vr2054)
+	li	vr2055,	3
+	li	vr2056,	2256
+	   add	vr2057,	sp,	vr2056
+	sw	vr2055,	0(vr2057)
+	li	vr2058,	7
+	li	vr2059,	2260
+	   add	vr2060,	sp,	vr2059
+	sw	vr2058,	0(vr2060)
+	li	vr2061,	6
+	li	vr2062,	2264
+	   add	vr2063,	sp,	vr2062
+	sw	vr2061,	0(vr2063)
+	li	vr2064,	2
+	li	vr2065,	2268
+	   add	vr2066,	sp,	vr2065
+	sw	vr2064,	0(vr2066)
+	li	vr2067,	4
+	li	vr2068,	2272
+	   add	vr2069,	sp,	vr2068
+	sw	vr2067,	0(vr2069)
+	li	vr2070,	0
+	li	vr2071,	2276
+	   add	vr2072,	sp,	vr2071
+	sw	vr2070,	0(vr2072)
+	li	vr2073,	9
+	li	vr2074,	2280
+	   add	vr2075,	sp,	vr2074
+	sw	vr2073,	0(vr2075)
+	li	vr2076,	9
+	li	vr2077,	2284
+	   add	vr2078,	sp,	vr2077
+	sw	vr2076,	0(vr2078)
+	li	vr2079,	7
+	li	vr2080,	2288
+	   add	vr2081,	sp,	vr2080
+	sw	vr2079,	0(vr2081)
+	li	vr2082,	8
+	li	vr2083,	2292
+	   add	vr2084,	sp,	vr2083
+	sw	vr2082,	0(vr2084)
+	li	vr2085,	3
+	li	vr2086,	2296
+	   add	vr2087,	sp,	vr2086
+	sw	vr2085,	0(vr2087)
+	li	vr2088,	7
+	li	vr2089,	2300
+	   add	vr2090,	sp,	vr2089
+	sw	vr2088,	0(vr2090)
+	li	vr2091,	5
+	li	vr2092,	2304
+	   add	vr2093,	sp,	vr2092
+	sw	vr2091,	0(vr2093)
+	li	vr2094,	8
+	li	vr2095,	2308
+	   add	vr2096,	sp,	vr2095
+	sw	vr2094,	0(vr2096)
+	li	vr2097,	8
+	li	vr2098,	2312
+	   add	vr2099,	sp,	vr2098
+	sw	vr2097,	0(vr2099)
+	li	vr2100,	5
+	li	vr2101,	2316
+	   add	vr2102,	sp,	vr2101
+	sw	vr2100,	0(vr2102)
+	li	vr2103,	6
+	li	vr2104,	2320
+	   add	vr2105,	sp,	vr2104
+	sw	vr2103,	0(vr2105)
+	li	vr2106,	7
+	li	vr2107,	2324
+	   add	vr2108,	sp,	vr2107
+	sw	vr2106,	0(vr2108)
+	li	vr2109,	3
+	li	vr2110,	2328
+	   add	vr2111,	sp,	vr2110
+	sw	vr2109,	0(vr2111)
+	li	vr2112,	2
+	li	vr2113,	2332
+	   add	vr2114,	sp,	vr2113
+	sw	vr2112,	0(vr2114)
+	li	vr2115,	9
+	li	vr2116,	2336
+	   add	vr2117,	sp,	vr2116
+	sw	vr2115,	0(vr2117)
+	li	vr2118,	5
+	li	vr2119,	2340
+	   add	vr2120,	sp,	vr2119
+	sw	vr2118,	0(vr2120)
+	li	vr2121,	5
+	li	vr2122,	2344
+	   add	vr2123,	sp,	vr2122
+	sw	vr2121,	0(vr2123)
+	li	vr2124,	1
+	li	vr2125,	2348
+	   add	vr2126,	sp,	vr2125
+	sw	vr2124,	0(vr2126)
+	li	vr2127,	5
+	li	vr2128,	2352
+	   add	vr2129,	sp,	vr2128
+	sw	vr2127,	0(vr2129)
+	li	vr2130,	7
+	li	vr2131,	2356
+	   add	vr2132,	sp,	vr2131
+	sw	vr2130,	0(vr2132)
+	li	vr2133,	9
+	li	vr2134,	2360
+	   add	vr2135,	sp,	vr2134
+	sw	vr2133,	0(vr2135)
+	li	vr2136,	7
+	li	vr2137,	2364
+	   add	vr2138,	sp,	vr2137
+	sw	vr2136,	0(vr2138)
+	li	vr2139,	9
+	li	vr2140,	2368
+	   add	vr2141,	sp,	vr2140
+	sw	vr2139,	0(vr2141)
+	li	vr2142,	0
+	li	vr2143,	2372
+	   add	vr2144,	sp,	vr2143
+	sw	vr2142,	0(vr2144)
+	li	vr2145,	5
+	li	vr2146,	2376
+	   add	vr2147,	sp,	vr2146
+	sw	vr2145,	0(vr2147)
+	li	vr2148,	4
+	li	vr2149,	2380
+	   add	vr2150,	sp,	vr2149
+	sw	vr2148,	0(vr2150)
+	li	vr2151,	3
+	li	vr2152,	2384
+	   add	vr2153,	sp,	vr2152
+	sw	vr2151,	0(vr2153)
+	li	vr2154,	3
+	li	vr2155,	2388
+	   add	vr2156,	sp,	vr2155
+	sw	vr2154,	0(vr2156)
+	li	vr2157,	0
+	li	vr2158,	2392
+	   add	vr2159,	sp,	vr2158
+	sw	vr2157,	0(vr2159)
+	li	vr2160,	0
+	li	vr2161,	2396
+	   add	vr2162,	sp,	vr2161
+	sw	vr2160,	0(vr2162)
+	li	vr2163,	0
+	li	vr2164,	2400
+	   add	vr2165,	sp,	vr2164
+	sw	vr2163,	0(vr2165)
+	li	vr2166,	3
+	li	vr2167,	2404
+	   add	vr2168,	sp,	vr2167
+	sw	vr2166,	0(vr2168)
+	li	vr2169,	5
+	li	vr2170,	2408
+	   add	vr2171,	sp,	vr2170
+	sw	vr2169,	0(vr2171)
+	li	vr2172,	1
+	li	vr2173,	2412
+	   add	vr2174,	sp,	vr2173
+	sw	vr2172,	0(vr2174)
+	li	vr2175,	6
+	li	vr2176,	2416
+	   add	vr2177,	sp,	vr2176
+	sw	vr2175,	0(vr2177)
+	li	vr2178,	2
+	li	vr2179,	2420
+	   add	vr2180,	sp,	vr2179
+	sw	vr2178,	0(vr2180)
+	li	vr2181,	0
+	li	vr2182,	2424
+	   add	vr2183,	sp,	vr2182
+	sw	vr2181,	0(vr2183)
+	li	vr2184,	4
+	li	vr2185,	2428
+	   add	vr2186,	sp,	vr2185
+	sw	vr2184,	0(vr2186)
+	li	vr2187,	7
+	li	vr2188,	2432
+	   add	vr2189,	sp,	vr2188
+	sw	vr2187,	0(vr2189)
+	li	vr2190,	4
+	li	vr2191,	2436
+	   add	vr2192,	sp,	vr2191
+	sw	vr2190,	0(vr2192)
+	li	vr2193,	9
+	li	vr2194,	2440
+	   add	vr2195,	sp,	vr2194
+	sw	vr2193,	0(vr2195)
+	li	vr2196,	7
+	li	vr2197,	2444
+	   add	vr2198,	sp,	vr2197
+	sw	vr2196,	0(vr2198)
+	li	vr2199,	3
+	li	vr2200,	2448
+	   add	vr2201,	sp,	vr2200
+	sw	vr2199,	0(vr2201)
+	li	vr2202,	4
+	li	vr2203,	2452
+	   add	vr2204,	sp,	vr2203
+	sw	vr2202,	0(vr2204)
+	li	vr2205,	0
+	li	vr2206,	2456
+	   add	vr2207,	sp,	vr2206
+	sw	vr2205,	0(vr2207)
+	li	vr2208,	6
+	li	vr2209,	2460
+	   add	vr2210,	sp,	vr2209
+	sw	vr2208,	0(vr2210)
+	li	vr2211,	0
+	li	vr2212,	2464
+	   add	vr2213,	sp,	vr2212
+	sw	vr2211,	0(vr2213)
+	li	vr2214,	3
+	li	vr2215,	2468
+	   add	vr2216,	sp,	vr2215
+	sw	vr2214,	0(vr2216)
+	li	vr2217,	1
+	li	vr2218,	2472
+	   add	vr2219,	sp,	vr2218
+	sw	vr2217,	0(vr2219)
+	li	vr2220,	3
+	li	vr2221,	2476
+	   add	vr2222,	sp,	vr2221
+	sw	vr2220,	0(vr2222)
+	li	vr2223,	5
+	li	vr2224,	2480
+	   add	vr2225,	sp,	vr2224
+	sw	vr2223,	0(vr2225)
+	li	vr2226,	7
+	li	vr2227,	2484
+	   add	vr2228,	sp,	vr2227
+	sw	vr2226,	0(vr2228)
+	li	vr2229,	3
+	li	vr2230,	2488
+	   add	vr2231,	sp,	vr2230
+	sw	vr2229,	0(vr2231)
+	li	vr2232,	8
+	li	vr2233,	2492
+	   add	vr2234,	sp,	vr2233
+	sw	vr2232,	0(vr2234)
+	li	vr2235,	3
+	li	vr2236,	2496
+	   add	vr2237,	sp,	vr2236
+	sw	vr2235,	0(vr2237)
+	li	vr2238,	1
+	li	vr2239,	2500
+	   add	vr2240,	sp,	vr2239
+	sw	vr2238,	0(vr2240)
+	li	vr2241,	9
+	li	vr2242,	2504
+	   add	vr2243,	sp,	vr2242
+	sw	vr2241,	0(vr2243)
+	li	vr2244,	6
+	li	vr2245,	2508
+	   add	vr2246,	sp,	vr2245
+	sw	vr2244,	0(vr2246)
+	li	vr2247,	8
+	li	vr2248,	2512
+	   add	vr2249,	sp,	vr2248
+	sw	vr2247,	0(vr2249)
+	li	vr2250,	6
+	li	vr2251,	2516
+	   add	vr2252,	sp,	vr2251
+	sw	vr2250,	0(vr2252)
+	li	vr2253,	7
+	li	vr2254,	2520
+	   add	vr2255,	sp,	vr2254
+	sw	vr2253,	0(vr2255)
+	li	vr2256,	7
+	li	vr2257,	2524
+	   add	vr2258,	sp,	vr2257
+	sw	vr2256,	0(vr2258)
+	li	vr2259,	3
+	li	vr2260,	2528
+	   add	vr2261,	sp,	vr2260
+	sw	vr2259,	0(vr2261)
+	li	vr2262,	2
+	li	vr2263,	2532
+	   add	vr2264,	sp,	vr2263
+	sw	vr2262,	0(vr2264)
+	li	vr2265,	9
+	li	vr2266,	2536
+	   add	vr2267,	sp,	vr2266
+	sw	vr2265,	0(vr2267)
+	li	vr2268,	8
+	li	vr2269,	2540
+	   add	vr2270,	sp,	vr2269
+	sw	vr2268,	0(vr2270)
+	li	vr2271,	1
+	li	vr2272,	2544
+	   add	vr2273,	sp,	vr2272
+	sw	vr2271,	0(vr2273)
+	li	vr2274,	9
+	li	vr2275,	2548
+	   add	vr2276,	sp,	vr2275
+	sw	vr2274,	0(vr2276)
+	li	vr2277,	5
+	li	vr2278,	2552
+	   add	vr2279,	sp,	vr2278
+	sw	vr2277,	0(vr2279)
+	li	vr2280,	8
+	li	vr2281,	2556
+	   add	vr2282,	sp,	vr2281
+	sw	vr2280,	0(vr2282)
+	li	vr2283,	4
+	li	vr2284,	2560
+	   add	vr2285,	sp,	vr2284
+	sw	vr2283,	0(vr2285)
+	li	vr2286,	7
+	li	vr2287,	2564
+	   add	vr2288,	sp,	vr2287
+	sw	vr2286,	0(vr2288)
+	li	vr2289,	8
+	li	vr2290,	2568
+	   add	vr2291,	sp,	vr2290
+	sw	vr2289,	0(vr2291)
+	li	vr2292,	9
+	li	vr2293,	2572
+	   add	vr2294,	sp,	vr2293
+	sw	vr2292,	0(vr2294)
+	li	vr2295,	9
+	li	vr2296,	2576
+	   add	vr2297,	sp,	vr2296
+	sw	vr2295,	0(vr2297)
+	li	vr2298,	0
+	li	vr2299,	2580
+	   add	vr2300,	sp,	vr2299
+	sw	vr2298,	0(vr2300)
+	li	vr2301,	9
+	li	vr2302,	2584
+	   add	vr2303,	sp,	vr2302
+	sw	vr2301,	0(vr2303)
+	li	vr2304,	2
+	li	vr2305,	2588
+	   add	vr2306,	sp,	vr2305
+	sw	vr2304,	0(vr2306)
+	li	vr2307,	9
+	li	vr2308,	2592
+	   add	vr2309,	sp,	vr2308
+	sw	vr2307,	0(vr2309)
+	li	vr2310,	0
+	li	vr2311,	2596
+	   add	vr2312,	sp,	vr2311
+	sw	vr2310,	0(vr2312)
+	li	vr2313,	0
+	li	vr2314,	2600
+	   add	vr2315,	sp,	vr2314
+	sw	vr2313,	0(vr2315)
+	li	vr2316,	7
+	li	vr2317,	2604
+	   add	vr2318,	sp,	vr2317
+	sw	vr2316,	0(vr2318)
+	li	vr2319,	4
+	li	vr2320,	2608
+	   add	vr2321,	sp,	vr2320
+	sw	vr2319,	0(vr2321)
+	li	vr2322,	3
+	li	vr2323,	2612
+	   add	vr2324,	sp,	vr2323
+	sw	vr2322,	0(vr2324)
+	li	vr2325,	9
+	li	vr2326,	2616
+	   add	vr2327,	sp,	vr2326
+	sw	vr2325,	0(vr2327)
+	li	vr2328,	2
+	li	vr2329,	2620
+	   add	vr2330,	sp,	vr2329
+	sw	vr2328,	0(vr2330)
+	li	vr2331,	2
+	li	vr2332,	2624
+	   add	vr2333,	sp,	vr2332
+	sw	vr2331,	0(vr2333)
+	li	vr2334,	7
+	li	vr2335,	2628
+	   add	vr2336,	sp,	vr2335
+	sw	vr2334,	0(vr2336)
+	li	vr2337,	8
+	li	vr2338,	2632
+	   add	vr2339,	sp,	vr2338
+	sw	vr2337,	0(vr2339)
+	li	vr2340,	7
+	li	vr2341,	2636
+	   add	vr2342,	sp,	vr2341
+	sw	vr2340,	0(vr2342)
+	li	vr2343,	1
+	li	vr2344,	2640
+	   add	vr2345,	sp,	vr2344
+	sw	vr2343,	0(vr2345)
+	li	vr2346,	3
+	li	vr2347,	2644
+	   add	vr2348,	sp,	vr2347
+	sw	vr2346,	0(vr2348)
+	li	vr2349,	5
+	li	vr2350,	2648
+	   add	vr2351,	sp,	vr2350
+	sw	vr2349,	0(vr2351)
+	li	vr2352,	8
+	li	vr2353,	2652
+	   add	vr2354,	sp,	vr2353
+	sw	vr2352,	0(vr2354)
+	li	vr2355,	4
+	li	vr2356,	2656
+	   add	vr2357,	sp,	vr2356
+	sw	vr2355,	0(vr2357)
+	li	vr2358,	4
+	li	vr2359,	2660
+	   add	vr2360,	sp,	vr2359
+	sw	vr2358,	0(vr2360)
+	li	vr2361,	0
+	li	vr2362,	2664
+	   add	vr2363,	sp,	vr2362
+	sw	vr2361,	0(vr2363)
+	li	vr2364,	9
+	li	vr2365,	2668
+	   add	vr2366,	sp,	vr2365
+	sw	vr2364,	0(vr2366)
 	call	func
-	move	vr1743,	a0
-	move	a0,	vr1743
+	move	vr2367,	a0
+	move	a0,	vr2367
 	call	putint
-	move	a0,	vr1743
-	ld	ra,	2672(sp)
+	move	a0,	vr2367
+	li	vr2370,	2672
+	   add	vr2371,	sp,	vr2370
+	ld	ra,	0(vr2371)
 	 ret
-	li	vr1744,	-2680
-	   add	sp,	sp,	vr1745
-	li	vr1745,	2680
+	li	vr2372,	-2680
+	   add	sp,	sp,	vr2373
+	li	vr2373,	2680
