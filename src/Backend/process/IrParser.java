@@ -234,28 +234,35 @@ public class IrParser {
 		for (int i = 8; i < args_num; i++) {
 			Value arg = args.get(i);
 			ObjOperand operand = parseOperand(arg, 0, f, b);
-			if (arg.getType() instanceof FloatType) {
-				ObjImm12 Imm = new ObjImm12(off + (i - 8) * 4);
-				ObjLoad objLoad = new ObjLoad(operand, SP, Imm, "flw");
-				objF.getFirstBlock().addInstrHead(objLoad);
-			} else {
-				ObjImm12 Imm = new ObjImm12(off + (i - 8) * 4);
-				ObjLoad objLoad = new ObjLoad(operand, SP, Imm, "lw");
-				objF.getFirstBlock().addInstrHead(objLoad);
-			}
+//			if (arg.getType() instanceof FloatType) {
+//				ObjImm12 Imm = new ObjImm12(off + (i - 8) * 4);
+//				ObjLoad objLoad = new ObjLoad(operand, SP, Imm, "flw");
+//				objF.getFirstBlock().addInstrHead(objLoad);
+//			} else {
+//				ObjImm12 Imm = new ObjImm12(off + (i - 8) * 4);
+//				ObjLoad objLoad = new ObjLoad(operand, SP, Imm, "lw");
+//				objF.getFirstBlock().addInstrHead(objLoad);
+//			}
 
-
+			String ty = "lw";
+			if (arg.getType() instanceof FloatType)
+				ty = "flw";
+			int immediate = off + (i - 8) * 4;
+			getLoad(operand, SP, immediate, ty, false, f, objF.getFirstBlock().getInstrs().getHead().getValue());
 		}
 
 
 		if (objF.getRsize() > 0) {
-			ObjImm12 Imm = new ObjImm12(objF.getStackSize() - 8);
-			ObjStore objStore = new ObjStore(RA, SP, Imm, "sd");
-			objF.getFirstBlock().addInstrHead(objStore);
+			// ObjImm12 Imm = new ObjImm12(objF.getStackSize() - 8);
+			// ObjStore objStore = new ObjStore(RA, SP, Imm, "sd");
+			// objF.getFirstBlock().addInstrHead(objStore);
+			getStore(RA, SP, objF.getStackSize() - 8, "sd", false,
+					f, objF.getFirstBlock().getInstrs().getHeadValue());
 
-
-			ObjLoad objLoad = new ObjLoad(RA, SP, Imm, "ld");
-			objLoad.getNode().insertBefore(objF.getBbExit().getInstrs().getTail());
+			// ObjLoad objLoad = new ObjLoad(RA, SP, Imm, "ld");
+			// objLoad.getNode().insertBefore(objF.getBbExit().getInstrs().getTail());
+			getLoad(RA, SP, objF.getStackSize() - 8, "ld", false,
+					f, objF.getBbExit().getInstrs().getTail().getValue());
 		}
 
 		ObjOperand alloc = parseConstIntOperand(-objF.getStackSize(), 12, f, b);
@@ -494,15 +501,21 @@ public class IrParser {
 				objOperand=tmp;
 			}
 
-			ObjImm12 offset = new ObjImm12((i - 8) * 4);
-			if (arg.getType() instanceof FloatType) {
-				ObjStore objStore = new ObjStore(objOperand, SP, offset, "fsw");
-				objBlock.addInstr(objStore);
-			} else {
-				ObjStore objStore = new ObjStore(objOperand, SP, offset, "sw");
-				objBlock.addInstr(objStore);
-			}
-
+//			ObjImm12 offset = new ObjImm12((i - 8) * 4);
+//			if (arg.getType() instanceof FloatType) {
+//				ObjStore objStore = new ObjStore(objOperand, SP, offset, "fsw");
+//				objBlock.addInstr(objStore);
+//			} else {
+//				ObjStore objStore = new ObjStore(objOperand, SP, offset, "sw");
+//				objBlock.addInstr(objStore);
+//			}
+			int immediate = (i - 8) * 4;
+			if (arg.getType() instanceof FloatType)
+				getStore(objOperand, SP, immediate, "fsw", true, irFunction,
+						objBlock.getInstrs().getTailValue());
+			else
+				getStore(objOperand, SP, immediate, "sw", true, irFunction,
+						objBlock.getInstrs().getTailValue());
 		}
 
 		ObjCall objCall = new ObjCall(tarFunction);
@@ -931,8 +944,7 @@ public class IrParser {
 			if(src instanceof ObjFVirReg) type1="fsw";
 			ObjStore objStore = new ObjStore(src, tmp, offset, type1);
 			objBlock.addInstr(objStore);
-		}
-		else {
+		} else {
 			ObjOperand src = parseOperand(inst.getValue(), 0, irFunction, irBlock);
 
 			ObjOperand addr = parseOperand(irAddr, 0, irFunction, irBlock);
@@ -942,6 +954,84 @@ public class IrParser {
 
 			ObjStore objStore = new ObjStore(src, addr, offset, type);
 			objBlock.addInstr(objStore);
+		}
+
+	}
+
+	private void getStore(ObjOperand src, ObjOperand addr, int immediate, String ty,
+						  boolean insertpos, Function irFunction, ObjInstr instr) {
+		// insertpos false: ???????, true: ???????
+		if (immediate >= -2048 && immediate <= 2047) {
+			ObjImm12 Imm = new ObjImm12(immediate);
+			ObjStore objStore = new ObjStore(src, addr, Imm, ty);
+			if (insertpos)
+				instr.getNode().insertAfter(objStore.getNode());
+			else
+				instr.getNode().insertBefore(objStore.getNode());
+		}
+		else {
+			ObjOperand tmp = genTmpReg(irFunction);
+			ObjImm tmpimm = new ObjImm(immediate);
+			ObjMove objMove = new ObjMove(tmp, tmpimm);
+
+			ObjOperand addr2 = genTmpReg(irFunction);
+			ObjBinary objAdd = ObjBinary.getAdd(addr2, addr, tmp);
+
+			ObjStore objStore = new ObjStore(src, addr2, new ObjImm12(0), ty);
+			if(insertpos) {
+				instr.getNode().insertAfter(objMove.getNode());
+				objMove.getNode().insertAfter(objAdd.getNode());
+				objAdd.getNode().insertAfter(objStore.getNode());
+			}
+			else {
+				instr.getNode().insertBefore(objStore.getNode());
+				objStore.getNode().insertBefore(objAdd.getNode());
+				objAdd.getNode().insertBefore(objMove.getNode());
+			}
+		}
+
+	}
+
+	private void getLoad(ObjOperand dst, ObjOperand addr, int immediate, String ty,
+						 boolean insertpos, Function irFunction, ObjInstr instr) {
+
+		// insertpos false: ???????, true: ???????
+		if (immediate >= -2048 && immediate <= 2047) {
+			ObjImm12 Imm = new ObjImm12(immediate);
+			ObjLoad objLoad = new ObjLoad(dst, addr, Imm, ty);
+			if(insertpos)
+				// objBlock.addInstr(objLoad);
+				instr.getNode().insertAfter(objLoad.getNode());
+			else
+				// objBlock.addInstr(objLoad);
+				instr.getNode().insertBefore(objLoad.getNode());
+		}
+		else {
+			ObjOperand tmp = genTmpReg(irFunction);
+			ObjImm tmpimm = new ObjImm(immediate);
+			ObjMove objMove = new ObjMove(tmp, tmpimm);
+
+			ObjOperand addr2 = genTmpReg(irFunction);
+			ObjBinary objAdd = ObjBinary.getAdd(addr2, addr, tmp);
+
+			ObjLoad objLoad = new ObjLoad(dst, addr2, new ObjImm12(0), ty);
+
+			if(insertpos) {
+				// objBlock.addInstr(objMove);
+				// objBlock.addInstr(objAdd);
+				// objBlock.addInstr(objLoad);
+				instr.getNode().insertAfter(objMove.getNode());
+				objMove.getNode().insertAfter(objAdd.getNode());
+				objAdd.getNode().insertAfter(objLoad.getNode());
+			}
+			else {
+				// objBlock.addInstrHead(objLoad);
+				// objBlock.addInstrHead(objAdd);
+				// objBlock.addInstrHead(objMove);
+				instr.getNode().insertBefore(objLoad.getNode());
+				objLoad.getNode().insertBefore(objAdd.getNode());
+				objAdd.getNode().insertBefore(objMove.getNode());
+			}
 		}
 	}
 
@@ -955,7 +1045,7 @@ public class IrParser {
 			ObjOperand dst = parseOperand(inst, 0, irFunction, irBlock);
 			ObjOperand addr = parseOperand(irAddr, 0, irFunction, irBlock);
 			String type="lw";
-			ObjLoad objLoad = new ObjLoad(tmp, addr, type);//la:tmpÊÇ¸öµØÖ·
+			ObjLoad objLoad = new ObjLoad(tmp, addr, type);//la:tmp??????
 			objBlock.addInstr(objLoad);
 			String type1="lw";
 			if(dst instanceof ObjFVirReg) type1="flw";
