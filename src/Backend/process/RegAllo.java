@@ -522,14 +522,6 @@ if(needallo==1)
 					if ((floatOrInt == 1 && x instanceof ObjVirReg || floatOrInt == 2 && x instanceof ObjFVirReg) &&!tmpin.contains(x))
 						tmpin.add(x);
 				}
-				int contains=0;
-				for(ArrayList<ObjReg> x :bb.getValue().LocalInterfere)
-				{
-					ArrayList<ObjReg> xx=new ArrayList<>(x);
-					xx.removeIf(tmpin::contains);
-					if(xx.isEmpty()) contains=1;
-				}
-				if(!(contains==1))
 				bb.getValue().LocalInterfere.add(tmpin);
 				ins.livein.clear();
 				ins.livein.addAll(tmpin);
@@ -906,9 +898,9 @@ if(needallo==1)
 				}
 			}
 		}
-//		for (ObjInstr i : toberemoved) {
-//			i.getNode().removeFromList();
-//		}
+		for (ObjInstr i : toberemoved) {
+			i.getNode().removeFromList();
+		}
 	}
 
 	private void RewriteProgram(ObjFunction func) {
