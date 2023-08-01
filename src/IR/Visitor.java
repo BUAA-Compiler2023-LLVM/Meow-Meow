@@ -722,7 +722,7 @@ public class Visitor {
         PrintArrFunc.setAsLibFunction();
         PrintFArrFunc.setAsLibFunction();
 
-        InputArrFunc.setAsLibFunction();
+        InputFunc.setAsLibFunction();
         InputChFunc.setAsLibFunction();
         InputFloatFunc.setAsLibFunction();
         InputArrFunc.setAsLibFunction();

@@ -931,7 +931,8 @@ public class IrParser {
 			if(src instanceof ObjFVirReg) type1="fsw";
 			ObjStore objStore = new ObjStore(src, tmp, offset, type1);
 			objBlock.addInstr(objStore);
-		} else {
+		}
+		else {
 			ObjOperand src = parseOperand(inst.getValue(), 0, irFunction, irBlock);
 
 			ObjOperand addr = parseOperand(irAddr, 0, irFunction, irBlock);
@@ -942,7 +943,6 @@ public class IrParser {
 			ObjStore objStore = new ObjStore(src, addr, offset, type);
 			objBlock.addInstr(objStore);
 		}
-
 	}
 
 	private void parseLoad(LoadInst inst, BasicBlock irBlock, Function irFunction) {

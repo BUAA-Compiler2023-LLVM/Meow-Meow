@@ -43,7 +43,7 @@ public class PassManager {
 
         irPasses.add(new GVN());
         //  循环相关优化
-        irPasses.add(new LCSSA());
+//        irPasses.add(new LCSSA());
 
         //  GVNGCM本身不是循环优化，但需要用到loopDepth
 //        irPasses.add(new GCM());

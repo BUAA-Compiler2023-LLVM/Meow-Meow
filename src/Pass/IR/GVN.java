@@ -59,32 +59,15 @@ public class GVN implements Pass.IRPass {
 
     private void removeInstFromGVN(Instruction inst){
         String hash = getHash(inst);
-        if(GVNCnt.get(hash) != 0) {
-            GVNCnt.replace(hash, GVNCnt.get(hash) - 1);
-        }
-        else{
-            GVNMap.remove(hash);
-        }
+        GVNMap.remove(hash);
         if(inst instanceof BinaryInst binaryInst && canSwap(binaryInst.getOp())){
             String hash_2 = getSwapHash(binaryInst);
-            if(GVNCnt.get(hash_2) != 0) {
-                GVNCnt.replace(hash_2, GVNCnt.get(hash_2) - 1);
-            }
-            else{
-                GVNMap.remove(hash_2);
-            }
+            GVNMap.remove(hash_2);
         }
     }
 
     private void addToGVNMap(String string, Instruction value){
-        if(!GVNMap.containsKey(string)){
-            GVNMap.put(string, value);
-            GVNCnt.put(string, 1);
-        }
-        else {
-            int cnt = GVNCnt.get(string);
-            GVNCnt.replace(string, cnt + 1);
-        }
+        GVNMap.put(string, value);
     }
 
     private boolean runGVNOnInst(Instruction inst) {

@@ -25,7 +25,17 @@ public class LoopAnalysis {
         HashSet<BasicBlock> visited = new HashSet<>();
 
         BasicBlock entry = function.getBbEntry();
-        POSearch(entry, visited, postOrder);
+        Stack<BasicBlock> stack = new Stack<>();
+        stack.push(entry);
+        BasicBlock now;
+        while (!stack.isEmpty()) {
+            now = stack.pop();
+            postOrder.add(now);
+            for (BasicBlock child : idoms.get(now)) {
+                stack.push(child);
+            }
+        }
+        Collections.reverse(postOrder); // 由于不是严格的树结构可以这样做后序遍历
 
         for(BasicBlock headBb : postOrder){
             Stack<BasicBlock> backEdges = new Stack<>();
