@@ -10,8 +10,6 @@ import IR.Value.Instructions.OP;
 import Pass.Pass;
 import Utils.DataStruct.IList;
 
-import java.util.ArrayList;
-
 public class InstComb implements Pass.IRPass {
 
 

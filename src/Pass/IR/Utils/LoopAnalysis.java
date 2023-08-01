@@ -22,8 +22,6 @@ public class LoopAnalysis {
 
         // 后序遍历IDom
         ArrayList<BasicBlock> postOrder = new ArrayList<>();
-        HashSet<BasicBlock> visited = new HashSet<>();
-
         BasicBlock entry = function.getBbEntry();
         Stack<BasicBlock> stack = new Stack<>();
         stack.push(entry);
@@ -82,7 +80,7 @@ public class LoopAnalysis {
             }
         }
 
-        visited.clear();
+        HashSet<BasicBlock> visited = new HashSet<>();
         populateLoopsDFS(entry, visited);
         computeAllLoops();
 
@@ -132,14 +130,4 @@ public class LoopAnalysis {
         }
     }
 
-    //  do post-order traversal
-    private static void POSearch(BasicBlock bb, HashSet<BasicBlock> visited, ArrayList<BasicBlock> POrder){
-        visited.add(bb);
-        for(BasicBlock nxtBb : bb.getNxtBlocks()){
-            if(!visited.contains(nxtBb)) {
-                POSearch(nxtBb, visited, POrder);
-            }
-        }
-        POrder.add(bb);
-    }
 }

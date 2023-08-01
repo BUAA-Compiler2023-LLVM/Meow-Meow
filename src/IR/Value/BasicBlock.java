@@ -112,16 +112,13 @@ public class BasicBlock extends Value{
     public BasicBlock getIdominator(){
         return idominator;
     }
-    public BasicBlock getPIdominator(){
-        return pidominator;
-    }
     public ArrayList<BasicBlock> getIdoms(){
         return idoms;
     }
-
-    public ArrayList<BasicBlock> getPIdoms(){
-        return pidoms;
+    public int getDomLV(){
+        return domLV;
     }
+
 
     public void removeSelf(){
         //  删除前驱后继关系
