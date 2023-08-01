@@ -15,6 +15,7 @@ import java.util.*;
 public class GVN implements Pass.IRPass {
 
     private final HashMap<String, Value> GVNMap = new HashMap<>();
+    private final HashMap<String, Integer> GVNCnt = new HashMap<>();
 
     @Override
     public void run(IRModule module) {
@@ -26,72 +27,110 @@ public class GVN implements Pass.IRPass {
 
     private void runGVNOnFunction(Function function){
         GVNMap.clear();
+        GVNCnt.clear();
         DomAnalysis.run(function);
-        HashSet<BasicBlock> visited = new HashSet<>();
-        ArrayList<BasicBlock> RPOrder = new ArrayList<>();
-
         BasicBlock entry = function.getBbEntry();
-        POSearch(entry, visited, RPOrder);
-        Collections.reverse(RPOrder);
 
-        for(BasicBlock bb : RPOrder){
-            runGVNOnBlock(bb);
-        }
+        RPOSearch(entry);
     }
 
-    //  do post-order traversal
-    private void POSearch(BasicBlock bb, HashSet<BasicBlock> visited, ArrayList<BasicBlock> RPOrder){
-        visited.add(bb);
-        for(BasicBlock nxtBb : bb.getNxtBlocks()){
-            if(!visited.contains(nxtBb)) {
-                POSearch(nxtBb, visited, RPOrder);
-            }
-        }
-        RPOrder.add(bb);
-    }
-
-    private void runGVNOnBlock(BasicBlock bb){
+    private void RPOSearch(BasicBlock bb){
         IList.INode<Instruction, BasicBlock> itInstNode = bb.getInsts().getHead();
-        ArrayList<Instruction> deletedInsts = new ArrayList<>();
+        HashSet<Instruction> numberedInsts = new HashSet<>();
         while (itInstNode != null){
             Instruction inst = itInstNode.getValue();
             itInstNode = itInstNode.getNext();
-            if (canGVN(inst) && runGVNOnInst(inst)){
-                deletedInsts.add(inst);
+            if (canGVN(inst)){
+                boolean isNumbered = runGVNOnInst(inst);
+                if(isNumbered){
+                    numberedInsts.add(inst);
+                }
             }
         }
 
         for(BasicBlock idomBb : bb.getIdoms()){
-            runGVNOnBlock(idomBb);
+            RPOSearch(idomBb);
+        }
+
+        for(Instruction inst : numberedInsts){
+            removeInstFromGVN(inst);
         }
     }
 
-    private boolean runGVNOnInst(Instruction inst){
-        if(inst instanceof BinaryInst binaryInst){
-            String leftName = binaryInst.getLeftVal().getName();
-            OP op = binaryInst.getOp();
-            String rightName = binaryInst.getRightVal().getName();
-            String hash_1 = leftName + op.name() + rightName;
-            String hash_2 = rightName + op.name() + leftName;
-            if(GVNMap.containsKey(hash_1)){
+    private void removeInstFromGVN(Instruction inst){
+        String hash = getHash(inst);
+        if(GVNCnt.get(hash) != 0) {
+            GVNCnt.replace(hash, GVNCnt.get(hash) - 1);
+        }
+        else{
+            GVNMap.remove(hash);
+        }
+        if(inst instanceof BinaryInst binaryInst && canSwap(binaryInst.getOp())){
+            String hash_2 = getSwapHash(binaryInst);
+            if(GVNCnt.get(hash_2) != 0) {
+                GVNCnt.replace(hash_2, GVNCnt.get(hash_2) - 1);
+            }
+            else{
+                GVNMap.remove(hash_2);
+            }
+        }
+    }
+
+    private void addToGVNMap(String string, Instruction value){
+        if(!GVNMap.containsKey(string)){
+            GVNMap.put(string, value);
+            GVNCnt.put(string, 1);
+        }
+        else {
+            int cnt = GVNCnt.get(string);
+            GVNCnt.replace(string, cnt + 1);
+        }
+    }
+
+    private boolean runGVNOnInst(Instruction inst) {
+        if (inst instanceof BinaryInst binaryInst) {
+            String hash_1 = getHash(binaryInst);
+            if (GVNMap.containsKey(hash_1)) {
                 inst.replaceUsedWith(GVNMap.get(hash_1));
                 inst.removeSelf();
                 return false;
             }
-            if(canSwap(op)){
-                if(GVNMap.containsKey(hash_2)){
+            if (canSwap(binaryInst.getOp())) {
+                String hash_2 = getSwapHash(binaryInst);
+                if (GVNMap.containsKey(hash_2)) {
                     inst.replaceUsedWith(GVNMap.get(hash_2));
                     inst.removeSelf();
                     return false;
                 }
-                GVNMap.put(hash_1, inst);
-                if(!leftName.equals(rightName)){
-                    GVNMap.put(hash_2, inst);
-                }
+                addToGVNMap(hash_1, inst);
+                addToGVNMap(hash_2, inst);
             }
-            else{
-                GVNMap.put(hash_1, inst);
+            else {
+                addToGVNMap(hash_1, inst);
             }
+            return true;
+        }
+        else if (inst instanceof CallInst || inst instanceof GepInst
+                || inst instanceof ConversionInst) {
+            String hash = getHash(inst);
+            if (GVNMap.containsKey(hash)) {
+                inst.replaceUsedWith(GVNMap.get(hash));
+                inst.removeSelf();
+                return false;
+            }
+            addToGVNMap(hash, inst);
+            return true;
+        }
+        return false;
+    }
+
+    //  为inst创建hash
+    private String getHash(Instruction inst){
+        if(inst instanceof BinaryInst binaryInst){
+            String leftName = binaryInst.getLeftVal().getName();
+            OP op = binaryInst.getOp();
+            String rightName = binaryInst.getRightVal().getName();
+            return leftName + op.name() + rightName;
         }
         else if(inst instanceof CallInst callInst){
             StringBuilder hashBuilder = new StringBuilder(callInst.getFunction().getName() + "(");
@@ -103,35 +142,29 @@ public class GVN implements Pass.IRPass {
                 }
             }
             hashBuilder.append(")");
-            String hash = hashBuilder.toString();
-            if (GVNMap.containsKey(hash)) {
-                inst.replaceUsedWith(GVNMap.get(hash));
-                inst.removeSelf();
-                return false;
-            }
-            GVNMap.put(hash, inst);
+            return hashBuilder.toString();
         }
-        else if (inst instanceof GepInst gepInst) {
+        else if(inst instanceof GepInst gepInst){
             StringBuilder hashBuilder = new StringBuilder(gepInst.getTarget().getName());
             ArrayList<Value> indexs = ((GepInst) inst).getIndexs();
             for (Value index : indexs) {
                 hashBuilder.append("[").append(index.getName()).append("]");
             }
-            String hash = hashBuilder.toString();
-            if (GVNMap.containsKey(hash)) {
-                inst.replaceUsedWith(GVNMap.get(hash));
-                inst.removeSelf();
-                return false;
-            }
-            GVNMap.put(hash, inst);
+            return hashBuilder.toString();
         }
-        return true;
+        else if(inst instanceof ConversionInst conversionInst) {
+            return conversionInst.getInstString();
+        }
+        return null;
     }
 
-    private void removeInstFromGVN(Instruction inst){
-
+    //  部分binaryInst满足交换律，存在第二个hash
+    private String getSwapHash(BinaryInst binaryInst){
+        String leftName = binaryInst.getLeftVal().getName();
+        OP op = binaryInst.getOp();
+        String rightName = binaryInst.getRightVal().getName();
+        return rightName + op.name() + leftName;
     }
-
 
     private boolean canGVN(Instruction inst){
         if(inst instanceof CallInst callInst){
