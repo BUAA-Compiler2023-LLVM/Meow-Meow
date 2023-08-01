@@ -958,7 +958,7 @@ public class IrParser {
 
 	}
 
-	public void getStore(ObjOperand src, ObjOperand addr, int immediate, String ty,
+	private void getStore(ObjOperand src, ObjOperand addr, int immediate, String ty,
 						  boolean insertpos, ObjFunction objFunction, ObjInstr instr) {
 		// insertpos false: ???????, true: ???????
 		if (immediate >= -2048 && immediate <= 2047) {
@@ -992,7 +992,7 @@ public class IrParser {
 
 	}
 
-	public void getLoad(ObjOperand dst, ObjOperand addr, int immediate, String ty,
+	private void getLoad(ObjOperand dst, ObjOperand addr, int immediate, String ty,
 						 boolean insertpos, ObjFunction objFunction, ObjInstr instr) {
 
 		// insertpos false: ???????, true: ???????
