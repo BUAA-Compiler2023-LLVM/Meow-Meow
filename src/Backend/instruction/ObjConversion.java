@@ -47,7 +47,7 @@ public class ObjConversion extends ObjInstr {
         return new ObjConversion("fcvt.w.s", dst, src);
     }
     public static ObjConversion getItof(ObjOperand dst, ObjOperand src) {
-        return new ObjConversion("fcvt.d.w", dst, src);
+        return new ObjConversion("fcvt.s.w", dst, src);
     }
 
     @Override
