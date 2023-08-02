@@ -10,6 +10,12 @@ import Utils.DataStruct.IList;
 
 public class UtilFunc {
     public static void initCFG(Function function){
+        for(IList.INode<BasicBlock, Function> bbNode : function.getBbs()) {
+            BasicBlock bb = bbNode.getValue();
+            bb.getPreBlocks().clear();
+            bb.getNxtBlocks().clear();
+        }
+
         for(IList.INode<BasicBlock, Function> bbNode : function.getBbs()){
             BasicBlock bb = bbNode.getValue();
             for(IList.INode<Instruction, BasicBlock> instNode : bb.getInsts()){

@@ -20,11 +20,13 @@ public class GCM implements Pass.IRPass {
     @Override
     public void run(IRModule module) {
         for (Function function : module.getFunctions()) {
-            runGCMForFunc(function);
+            if(function.getBbs().getSize() > 1) {
+                runGCMForFunc(function);
+            }
         }
     }
 
-    private void runGCMForFunc(Function function){
+    private void  runGCMForFunc(Function function){
         visited.clear();
 
         ArrayList<BasicBlock> postOrder = DomAnalysis.getDomPostOrder(function);
@@ -45,6 +47,9 @@ public class GCM implements Pass.IRPass {
 
         visited.clear();
         Collections.reverse(instructions);
+//        if(function.getName().equals("@main")){
+//            System.out.println("I'm here");
+//        }
         for (Instruction instruction : instructions) {
             scheduleLate(instruction);
         }
@@ -78,6 +83,7 @@ public class GCM implements Pass.IRPass {
         if (visited.contains(inst) || isPinned(inst)) {
             return;
         }
+
         visited.add(inst);
         // lca 是所有的 user 的共同祖先
         BasicBlock lca = null;
@@ -91,6 +97,9 @@ public class GCM implements Pass.IRPass {
                         Value value = userInst.getUseValues().get(j);
                         if (value instanceof Instruction && value.equals(inst)) {
                             useBB = phi.getParentbb().getPreBlocks().get(j);
+                            if(useBB == null){
+                                System.out.println("UseBB is NULL!");
+                            }
                             lca = findLCA(lca, useBB);
                         }
                     }
@@ -105,7 +114,6 @@ public class GCM implements Pass.IRPass {
         // Pick a final position
         if (inst.getUserList().size() > 0) {
             BasicBlock best = lca;
-            assert lca != null;
             while (!lca.equals(inst.getParentbb())) {
                 lca = lca.getIdominator();
                 if (lca.getLoopDepth() < best.getLoopDepth()) {
@@ -120,7 +128,7 @@ public class GCM implements Pass.IRPass {
         BasicBlock best = inst.getParentbb();
         for (IList.INode<Instruction, BasicBlock> instNode : best.getInsts()) {
             Instruction instInBestBb = instNode.getValue();
-            if(instInBestBb.equals(inst)){
+            if(!instInBestBb.equals(inst)){
                 if (!(instInBestBb instanceof Phi) && instInBestBb.getUseValues().contains(inst)) {
                     inst.removeFromBb();
                     inst.insertBefore(instInBestBb);

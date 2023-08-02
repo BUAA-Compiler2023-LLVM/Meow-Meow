@@ -24,7 +24,7 @@ public class DomAnalysis{
         runIDomForFunc(function);
         //  建立支配树
         //  根据直接支配关系(idoms) dfs建立支配树
-        buildDomTree(function.getBbEntry(), 0, function);
+        buildDomTree(function.getBbEntry(), 0);
         //  计算DF
         runDF(function);
     }
@@ -194,10 +194,10 @@ public class DomAnalysis{
         return postOrder;
     }
 
-    private static void buildDomTree(BasicBlock bb, int domLV, Function function){
+    private static void buildDomTree(BasicBlock bb, int domLV){
         bb.setDomLV(domLV);
-        for(BasicBlock sonBb : function.getIdoms().get(bb)){
-            buildDomTree(sonBb, domLV + 1, function);
+        for(BasicBlock sonBb : bb.getIdoms()){
+            buildDomTree(sonBb, domLV + 1);
         }
     }
 }
