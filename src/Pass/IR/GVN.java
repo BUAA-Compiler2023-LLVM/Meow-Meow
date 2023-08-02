@@ -21,11 +21,11 @@ public class GVN implements Pass.IRPass {
     public void run(IRModule module) {
         InterproceduralAnalysis.run(module);
         for(Function function : module.getFunctions()){
-            runGVNOnFunction(function);
+            runGVNForFunc(function);
         }
     }
 
-    private void runGVNOnFunction(Function function){
+    private void runGVNForFunc(Function function){
         GVNMap.clear();
         GVNCnt.clear();
         DomAnalysis.run(function);

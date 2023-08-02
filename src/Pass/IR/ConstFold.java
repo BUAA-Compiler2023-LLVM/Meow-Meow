@@ -21,68 +21,6 @@ public class ConstFold implements Pass.IRPass {
     @Override
     public void run(IRModule module) {
         foldCalculateInst(module);
-//        foldGlobalArr(module);
-    }
-
-    private void foldGlobalArr(IRModule module){
-        HashSet<GlobalVar> globalArrs = new HashSet<>(module.getGlobalVars());
-
-        //  除去所有被store过的全局数组
-        for(Function function : module.getFunctions()) {
-            for (IList.INode<BasicBlock, Function> bbNode : function.getBbs()) {
-                BasicBlock bb = bbNode.getValue();
-                for(IList.INode<Instruction, BasicBlock> instNode : bb.getInsts()){
-                    Instruction inst = instNode.getValue();
-                    if(inst instanceof StoreInst storeInst){
-                        Value pointer = storeInst.getPointer();
-                        Value root = AliasAnalysis.getRoot(pointer);
-                        if(root instanceof GlobalVar globalVar && globalVar.isArray()){
-                            globalArrs.remove(globalVar);
-                        }
-                    }
-                }
-            }
-        }
-
-        for(Function function : module.getFunctions()) {
-            for (IList.INode<BasicBlock, Function> bbNode : function.getBbs()) {
-                BasicBlock bb = bbNode.getValue();
-                for(IList.INode<Instruction, BasicBlock> instNode : bb.getInsts()){
-                    Instruction inst = instNode.getValue();
-                    if(inst instanceof GepInst gepInst){
-                        Value ptr = gepInst.getTarget();
-                        if(ptr instanceof GlobalVar globalVar && globalArrs.contains(globalVar)){
-                            ArrayList<Value> indexs = gepInst.getIndexs();
-                            boolean allConst = true;
-                            for(Value value : indexs){
-                                if(!(value instanceof ConstInteger)){
-                                    allConst = false;
-                                    break;
-                                }
-                            }
-                            if(allConst){
-                                ArrayList<Integer> intIndexs = new ArrayList<>();
-                                for(int i = 1; i < indexs.size(); i++){
-                                    intIndexs.add(((ConstInteger) indexs.get(i)).getValue());
-                                }
-
-                                Value retValue = getGlobalArrValue(globalVar, intIndexs);
-                                if(retValue != null){
-                                    for(Use use : globalVar.getUseList()){
-                                        User user = use.getUser();
-                                        if(user instanceof LoadInst loadInst){
-                                            loadInst.replaceUsedWith(retValue);
-                                        }
-                                    }
-                                }
-
-                            }
-
-                        }
-                    }
-                }
-            }
-        }
     }
 
     private Value getGlobalArrValue(GlobalVar globalVar, ArrayList<Integer> intIndexs){
