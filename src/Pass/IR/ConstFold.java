@@ -102,7 +102,7 @@ public class ConstFold implements Pass.IRPass {
                     //  simplifyInst得到的Inst有两种情况：
                     //  一种是原指令，说明无法优化
                     //  另一种为简化后的Inst/Value，这种情况我们直接replaceUsedWith
-                    Value value = simplifyInst(inst, 0);
+                    Value value = simplifyInst(inst);
                     if(!inst.equals(value)){
                         inst.replaceUsedWith(value);
                         inst.removeSelf();
@@ -113,9 +113,9 @@ public class ConstFold implements Pass.IRPass {
     }
 
 
-    private Value simplifyInst(Instruction inst, int rec){
+    private Value simplifyInst(Instruction inst){
         if(inst instanceof BinaryInst binaryInst){
-            return simplifyBinaryInst(binaryInst, rec);
+            return simplifyBinaryInst(binaryInst);
         }
         else if(inst instanceof ConversionInst conversionInst){
             return simplifyConversionInst(conversionInst);
@@ -137,22 +137,22 @@ public class ConstFold implements Pass.IRPass {
         return conversionInst;
     }
 
-    private Value simplifyBinaryInst(BinaryInst binaryInst, int rec){
+    private Value simplifyBinaryInst(BinaryInst binaryInst){
         OP op = binaryInst.getOp();
         if(op == OP.Add || op == OP.Fadd){
-            return simplifyAddInst(binaryInst, rec);
+            return simplifyAddInst(binaryInst);
         }
         else if(op == OP.Sub || op == OP.Fsub){
-            return simplifySubInst(binaryInst, rec);
+            return simplifySubInst(binaryInst);
         }
         else if(op == OP.Mul || op == OP.Fmul){
-            return simplifyMulInst(binaryInst, rec);
+            return simplifyMulInst(binaryInst);
         }
         else if(op == OP.Div || op == OP.Fdiv){
-            return simplifyDivInst(binaryInst, rec);
+            return simplifyDivInst(binaryInst);
         }
         else if(op == OP.Mod || op == OP.Fmod){
-            return simplifyModInst(binaryInst, rec);
+            return simplifyModInst(binaryInst);
         }
         else if(op == OP.Eq || op == OP.FEq
                 || op == OP.Ne || op == OP.FNe
@@ -185,7 +185,7 @@ public class ConstFold implements Pass.IRPass {
         return cmpInst;
     }
 
-    private Value simplifyAddInst(BinaryInst addInst, int rec){
+    private Value simplifyAddInst(BinaryInst addInst){
         //  1. fold常量
         Value tmp = foldConstant(addInst);
         if (tmp != null) {
@@ -227,32 +227,10 @@ public class ConstFold implements Pass.IRPass {
             }
         }
 
-        if (rec != 0) {
-            return addInst;
-        }
-
-        //  TODO: 加法结合律
-//        if (isInt) {
-//            // (a - b) + c  |   (a + b) + c
-//            if (left instanceof BinaryInst &&
-//                    (((BinaryInst) left).getOp() == OP.Sub || ((BinaryInst) left).getOp() == OP.Add)) {
-//                Value simp = tryCombineAddOrSubInst((BinaryInst) left, right, true, OP.Add, rec);
-//                if (simp != null)
-//                    return simp;
-//            }
-//            // a + (b - c)  |   a + (b + c)
-//            if (right instanceof BinaryInst &&
-//                    (((BinaryInst) right).getOp() == OP.Sub || ((BinaryInst) right).getOp() == OP.Add)) {
-//                Value simp = tryCombineAddOrSubInst((BinaryInst) right, left, false, OP.Add, rec);
-//                if (simp != null)
-//                    return simp;
-//            }
-//        }
-
         return addInst;
     }
 
-    private Value simplifySubInst(BinaryInst subInst, int rec){
+    private Value simplifySubInst(BinaryInst subInst){
         //  1. fold常量
         Value tmp = foldConstant(subInst);
         if (tmp != null) {
@@ -281,13 +259,11 @@ public class ConstFold implements Pass.IRPass {
             return isInt ? ConstInteger.const0_32 : ConstFloat.const0;
         }
 
-        //  TODO: 结合律
-
         return subInst;
 
     }
 
-    private Value simplifyMulInst(BinaryInst mulInst, int rec){
+    private Value simplifyMulInst(BinaryInst mulInst){
         //  1. fold常量
         Value tmp = foldConstant(mulInst);
         if (tmp != null) {
@@ -340,11 +316,10 @@ public class ConstFold implements Pass.IRPass {
             }
         }
 
-        //  TODO: 乘法结合律，乘法分配律
         return mulInst;
     }
 
-    private Value simplifyDivInst(BinaryInst divInst, int rec){
+    private Value simplifyDivInst(BinaryInst divInst){
         //  1. fold常量
         Value tmp = foldConstant(divInst);
         if (tmp != null) {
@@ -376,7 +351,7 @@ public class ConstFold implements Pass.IRPass {
         return divInst;
     }
 
-    private Value simplifyModInst(BinaryInst modInst, int rec){
+    private Value simplifyModInst(BinaryInst modInst){
         //  1. fold常量
         Value tmp = foldConstant(modInst);
         if (tmp != null) {
@@ -426,39 +401,6 @@ public class ConstFold implements Pass.IRPass {
         }
         return itofInst;
     }
-
-//    private Value tryCombineAddOrSubInst(BinaryInst inst, Value value, boolean valueInRight, OP curOp, int rec){
-//        OP binOp = inst.getOp();
-//        Value l = inst.getOperands().get(0);
-//        Value r = inst.getOperands().get(1);
-//        //加法可以换位，统一 value 置左
-//        if (valueInRight && (curOp == OP.Add || curOp == OP.Fadd)) {
-//            valueInRight = false;
-//        }
-//        //减法在右 去括号
-//        if (!valueInRight && (curOp == OP.Sub || curOp == OP.Fsub)) {
-//            if (binOp == OP.Sub)
-//                binOp = OP.Add;
-//            else if (binOp == OP.Add)
-//                binOp = OP.Sub;
-//            else if (binOp == OP.Fsub)
-//                binOp = OP.Fadd;
-//            else if (binOp == OP.Fadd)
-//                binOp = OP.Fsub;
-//        }
-//
-//        BinaryInst tmpBin = valueInRight ? f.getBinaryInst(l, value, curOp, value.getType()) :  // l curOp value
-//                f.getBinaryInst(value, l, curOp, value.getType()); // value curOp l
-//        Value simplify = simplifyInst(tmpBin, rec + 1);
-//        if (!tmpBin.equals(simplify)) {
-//            tmpBin.removeUseFromOperands();
-//            BinaryInst ans = f.getBinaryInst(simplify, r, binOp, r.getType()); // tmp binOp r
-//            return simplifyInst(ans, 0);
-//        } else {
-//            tmpBin.removeUseFromOperands();
-//        }
-//
-//    }
 
     private boolean tryAddToConst(Value value, Instruction inst){
         if (inst.getOp() == OP.Sub) {

@@ -20,13 +20,59 @@ public class PeepHole implements Pass.IRPass {
 
     @Override
     public void run(IRModule module) {
-        //  PeepHole1: Rem2DivSubMul & RemOptimize
+        //  Rem2DivSubMul & RemOptimize
         PeepHole1(module);
         // A = icmp %0, %1; B = icmp ne A, 0
         // A.replaceUsedWith(B)
         PeepHole2(module);
         // store A ptr1; ...; B = load ptr1;
         PeepHole3(module);
+        //  removeUselessPhi
+        Peephole4(module);
+    }
+
+    private void Peephole4(IRModule module){
+        for(Function function : module.getFunctions()) {
+            for (IList.INode<BasicBlock, Function> bbNode : function.getBbs()) {
+                BasicBlock bb = bbNode.getValue();
+                IList.INode<Instruction, BasicBlock> itInstNode = bb.getInsts().getHead();
+                while (itInstNode != null) {
+                    Instruction inst = itInstNode.getValue();
+                    itInstNode = itInstNode.getNext();
+                    if(inst instanceof Phi phi){
+                        Value commonVal = phi.getOperand(0);
+                        boolean isAllEqual = true;
+                        for(Value value : phi.getUseValues()){
+                            if(!commonVal.equals(value)){
+                                isAllEqual = false;
+                                break;
+                            }
+                        }
+                        if(isAllEqual){
+                            phi.replaceUsedWith(commonVal);
+                            phi.removeSelf();
+                            continue;
+                        }
+                        if(itInstNode != null && itInstNode.getValue() instanceof Phi nxtPhi){
+                            if(phi.getUseValues().size() != nxtPhi.getUseValues().size()){
+                                continue;
+                            }
+                            boolean isEqualToNxt = true;
+                            for(int i = 0; i < phi.getOperands().size(); i++){
+                                if(!phi.getOperand(i).equals(nxtPhi.getOperand(i))){
+                                    isEqualToNxt = false;
+                                    break;
+                                }
+                            }
+                            if(isEqualToNxt){
+                                phi.replaceUsedWith(nxtPhi);
+                                phi.removeSelf();
+                            }
+                        }
+                    }
+                }
+            }
+        }
     }
 
     private void PeepHole3(IRModule module){
