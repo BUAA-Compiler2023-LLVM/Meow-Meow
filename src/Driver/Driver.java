@@ -22,17 +22,23 @@ public class Driver {
         AST compAST = new Parser(tokenList).parseAST();
         IRModule irModule = new Visitor().visitAST(compAST);
 
-        IRDump.DumpModule(irModule,"llvm_no_opt.ll");
+        if(Config.outputLLVM) {
+            IRDump.DumpModule(irModule, "llvm_no_opt.ll");
+        }
 
         PassManager passManager = PassManager.getInstance();
         passManager.runIRPasses(irModule);
 
-        IRDump.DumpModule(irModule, "llvm.ll");
+        if(Config.outputLLVM) {
+            IRDump.DumpModule(irModule, "llvm.ll");
+        }
 
         RemovePhi rmp=new RemovePhi();
         rmp.run(irModule);
 
-        IRDump.DumpModule(irModule,"removed_phi.ll");
+        if(Config.outputLLVM) {
+            IRDump.DumpModule(irModule, "removed_phi.ll");
+        }
 
         Backend backend = new Backend(irModule);
         passManager.runObjPasses(backend.getModule());

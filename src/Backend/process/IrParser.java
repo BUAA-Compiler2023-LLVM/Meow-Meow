@@ -393,7 +393,7 @@ public class IrParser {
 		PointerType imsb = (PointerType)(values.get(0).getType());
 		ArrayList<Integer> dims=new ArrayList<>();
 		ArrayList<Integer> sizes=new ArrayList<>();
-		if(imsb.getEleType().isArrayType())//¶àÎ¬
+		if(imsb.getEleType().isArrayType())//ï¿½ï¿½Î¬
 		{
 			ArrayType imsb1 =(ArrayType)(imsb.getEleType());
 			int dim=imsb1.getDim();
@@ -424,15 +424,15 @@ public class IrParser {
 		if(sizes.isEmpty())
 			sizes.add(4);
 //		System.out.println(inst.getInstString());
-//		System.out.println("Ô­Êý×éÎ¬¶È£º"+dims.size());
-//		System.out.println("Ô­Êý×é¸÷Î¬³¤¶È"+dims);
-//		System.out.println("Ô­Êý×é¸÷Î¬´óÐ¡"+sizes);
-//		System.out.println("ÎÒÒªÈ¡µÄÎ¬¶È£º"+(indexs.size()));
-//		System.out.println("ÎÒÒªÈ¡µÄÏÂ±ê£º"+indexs);
+//		System.out.println("Ô­ï¿½ï¿½ï¿½ï¿½Î¬ï¿½È£ï¿½"+dims.size());
+//		System.out.println("Ô­ï¿½ï¿½ï¿½ï¿½ï¿½Î¬ï¿½ï¿½ï¿½ï¿½"+dims);
+//		System.out.println("Ô­ï¿½ï¿½ï¿½ï¿½ï¿½Î¬ï¿½ï¿½Ð¡"+sizes);
+//		System.out.println("ï¿½ï¿½ÒªÈ¡ï¿½ï¿½Î¬ï¿½È£ï¿½"+(indexs.size()));
+//		System.out.println("ï¿½ï¿½ÒªÈ¡ï¿½ï¿½ï¿½Â±ê£º"+indexs);
 		assert sizes.size()==indexs.size();
 		for(int i=indexs.size()-1;i>=0;i--)
 		{
-			if(indexs.get(i) instanceof  ConstInteger)//Èç¹ûÏÂ±êÊÇ³£Êý
+			if(indexs.get(i) instanceof  ConstInteger)//ï¿½ï¿½ï¿½ï¿½Â±ï¿½ï¿½Ç³ï¿½ï¿½ï¿½
 			{
 				int offset=sizes.get(i) * ((ConstInteger)(indexs.get(i))).getValue();
 				if(offset == 0)

@@ -36,9 +36,9 @@ public class RegAllo {
 
 	private HashSet<ObjOperand> initials = new HashSet<>();
 
-	//·ÅÐèÒª·ÅÔÚÈ«¾Ö¼Ä´æÆ÷ÀïµÄ±äÁ¿£¨Ã¿¸öobjblockµÄlivein£¬ÒÔ¼°callÓï¾äµÄÏÂÒ»¾äµÄlivein£©
+	//ï¿½ï¿½ï¿½ï¿½Òªï¿½ï¿½ï¿½ï¿½È«ï¿½Ö¼Ä´ï¿½ï¿½ï¿½ï¿½ï¿½Ä±ï¿½ï¿½ï¿½ï¿½ï¿½Ã¿ï¿½ï¿½objblockï¿½ï¿½liveinï¿½ï¿½ï¿½Ô¼ï¿½callï¿½ï¿½ï¿½ï¿½ï¿½ï¿½Ò»ï¿½ï¿½ï¿½liveinï¿½ï¿½
 	private HashSet<ObjOperand> S = new HashSet<>();
-	//·ÅÐèÒª·ÅÔÚ¾Ö²¿¼Ä´æÆ÷ÀïµÄ±äÁ¿£¨ÉÏÊöÒÔÍâ£©
+	//ï¿½ï¿½ï¿½ï¿½Òªï¿½ï¿½ï¿½Ú¾Ö²ï¿½ï¿½Ä´ï¿½ï¿½ï¿½ï¿½ï¿½Ä±ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½â£©
 	private HashSet<ObjOperand> T = new HashSet<>();
 
 	private int procedure;
@@ -81,7 +81,7 @@ public class RegAllo {
 
 	private HashMap<ObjOperand, Integer> color = new HashMap<>();
 	/**
-	 * ÐÂµÄÐéÄâ¼Ä´æÆ÷£¬ÓÃÀ´´¦ÀíÒç³ö½â¾öÊ±ÒýÈëµÄÐÂµÄÐéÄâ¼Ä´æÆ÷
+	 * ï¿½Âµï¿½ï¿½ï¿½ï¿½ï¿½Ä´ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½Ê±ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½Âµï¿½ï¿½ï¿½ï¿½ï¿½Ä´ï¿½ï¿½ï¿½
 	 */
 //	ObjVirReg vReg = null;
 
@@ -97,7 +97,7 @@ public class RegAllo {
 		floatOrInt = 1;
 		if(printdebug)
 		System.out.println("allocate int");
-		//ÏÈ·ÖÅäÕûÐÎ¼Ä´æÆ÷
+		//ï¿½È·ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½Î¼Ä´ï¿½ï¿½ï¿½
 		for (ObjFunction func : objModule.getFunctions()) {
 			loop=0;
 
@@ -112,7 +112,7 @@ public class RegAllo {
 		if(printdebug)
 		System.out.println("allocate float");
 
-		//·ÖÅä¸¡µã¼Ä´æÆ÷
+		//ï¿½ï¿½ï¿½ä¸¡ï¿½ï¿½Ä´ï¿½ï¿½ï¿½
 		for (ObjFunction func : objModule.getFunctions()) {
 			loop=0;
 			process(func);
@@ -239,8 +239,8 @@ if(needallo==1)
 
 			for (IList.INode<ObjInstr, ObjBlock> inst : bb.getValue().getInstrs()) {
 				/*
-				¶Ôº¯ÊýÀïÐÞ¸Ä¹ýµÄS¼Ä´æÆ÷½øÐÐÏÖ³¡µÄ±£´æºÍ»Ö¸´
-				¶ÔÒ»¸ö¼Ä´æÆ÷ÖØ¸³ÖµµÄµÄÓï¾ä£º
+				ï¿½Ôºï¿½ï¿½ï¿½ï¿½ï¿½ï¿½Þ¸Ä¹ï¿½ï¿½ï¿½Sï¿½Ä´ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½Ö³ï¿½ï¿½Ä±ï¿½ï¿½ï¿½Í»Ö¸ï¿½
+				ï¿½ï¿½Ò»ï¿½ï¿½ï¿½Ä´ï¿½ï¿½ï¿½ï¿½Ø¸ï¿½Öµï¿½Äµï¿½ï¿½ï¿½ä£º
 				1.ObjBinary
 				2.lw, la
 				3.move
@@ -592,7 +592,7 @@ if(needallo==1)
 				}
 
 				if (tmpinst.getValue() instanceof ObjMove) {
-					//Ö»ÓÐË«·½¶¼²»ÊÇÎïÀí¼Ä´æÆ÷µÄ£¬²Å·ÅmoveÀï
+					//Ö»ï¿½ï¿½Ë«ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½Ä´ï¿½ï¿½ï¿½ï¿½Ä£ï¿½ï¿½Å·ï¿½moveï¿½ï¿½
 					if (floatOrInt == 1 && ((ObjMove) tmpinst.getValue()).getDst() instanceof ObjVirReg && ((ObjMove) tmpinst.getValue()).getSrc() instanceof ObjVirReg || floatOrInt == 2 && ((ObjMove) tmpinst.getValue()).getDst() instanceof ObjFVirReg && ((ObjMove) tmpinst.getValue()).getSrc() instanceof ObjFVirReg) {
 						if (procedure == 1 && S.contains(((ObjMove) tmpinst.getValue()).getDst()) && S.contains(((ObjMove) tmpinst.getValue()).getSrc())) {
 							worklistMoves.add((ObjMove) tmpinst.getValue());
@@ -685,29 +685,29 @@ if(needallo==1)
 		for (ObjOperand o : initials) {
 
 			if (degree.get(o) >= K) {
-				//¸ß¶ÈÊý½Úµã£¬Ç±ÔÚÒç³ö£¬ÏÈÉ¾ÁË
+				//ï¿½ß¶ï¿½ï¿½ï¿½ï¿½Úµã£¬Ç±ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½É¾ï¿½ï¿½
 				spillWorklist.add(o);
 			} else if (MoveRelated(o)) {
-				//µÍ¶ÈÊý´«ËÍÓÐ¹Ø£¬µÈ×Å±»freeze
+				//ï¿½Í¶ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½Ð¹Ø£ï¿½ï¿½ï¿½ï¿½Å±ï¿½freeze
 				freezeWorklist.add(o);
 			} else {
-				//µÍ¶ÈÊý´«ËÍÎÞ¹Ø£¬µÈ×Å±»simplify
+				//ï¿½Í¶ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½Þ¹Ø£ï¿½ï¿½ï¿½ï¿½Å±ï¿½simplify
 				simplifyWorklist.add(o);
 			}
 		}
 	}
 
 	private HashSet<ObjOperand> Adjacent(ObjOperand x) {
-		//³åÍ»Í¼ÖÐµÄÏàÁÚµÄµã
+		//ï¿½ï¿½Í»Í¼ï¿½Ðµï¿½ï¿½ï¿½ï¿½ÚµÄµï¿½
 
 		HashSet<ObjOperand> ret = new HashSet<>(adjList.get(x));
 		for (ObjOperand i : selectStack)
-		//Æô·¢Ê½Í¼×ÅÉ«¹ý³ÌÖÐÔÝÊ±É¾µôµÄµãµÄÕ»
+		//ï¿½ï¿½ï¿½Ê½Í¼ï¿½ï¿½É«ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½Ê±É¾ï¿½ï¿½Äµï¿½ï¿½Õ»
 		{
 			ret.remove(i);
 		}
 		for (ObjOperand i : coalescedNodes)
-		//ÒÑ¾­ºÏ²¢µÄ¼Ä´æÆ÷¼¯ºÏ£¬Èç°Ñu-<vºÏ²¢µ½Ò»Ìå£¬¾Í°Ñv·ÅÈëÕâÀï
+		//ï¿½Ñ¾ï¿½ï¿½Ï²ï¿½ï¿½Ä¼Ä´ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½Ï£ï¿½ï¿½ï¿½ï¿½u-<vï¿½Ï²ï¿½ï¿½ï¿½Ò»ï¿½å£¬ï¿½Í°ï¿½vï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½
 		{
 			ret.remove(i);
 		}
@@ -739,7 +739,7 @@ if(needallo==1)
 //			bb.getValue().Def.removeIf(bb.getValue().Use::contains);
 			bb.getValue().printBbDetail();
 		}
-		procedure = 1;//·ÖÅäS¼Ä´æÆ÷
+		procedure = 1;//ï¿½ï¿½ï¿½ï¿½Sï¿½Ä´ï¿½ï¿½ï¿½
 
 		K = 12;
 		initials = S;
@@ -1057,7 +1057,7 @@ if(needallo==1)
 	private void SelectSpill() {
 
 		double magicNum = 1.414;
-		// TODO ÕâÀïÌ«ÂýÁË£¬Òª²»È»Ö±½ÓÌôµÚÒ»¸ö°É£¬ËÆºõ¿ÉÒÔÎ¬»¤Ò»¸ö¶Ñ
+		// TODO ï¿½ï¿½ï¿½ï¿½Ì«ï¿½ï¿½ï¿½Ë£ï¿½Òªï¿½ï¿½È»Ö±ï¿½ï¿½ï¿½ï¿½ï¿½Ò»ï¿½ï¿½ï¿½É£ï¿½ï¿½Æºï¿½ï¿½ï¿½ï¿½ï¿½Î¬ï¿½ï¿½Ò»ï¿½ï¿½ï¿½ï¿½
 		ObjOperand m = spillWorklist.stream().max((l, r) ->
 		{
 			double value1 = degree.getOrDefault(l, 0).doubleValue() / Math.pow(magicNum, loopDepths.getOrDefault(l, 0));
@@ -1122,7 +1122,7 @@ if(needallo==1)
 				constrainedMoves.add(m);
 				AddWorkList(u);
 				AddWorkList(v);
-			} else {//vÒ»¶¨Ã»ÓÐÔ¤×ÅÉ«£¬u¿ÉÄÜÓÐÔ¤×ÅÉ«
+			} else {//vÒ»ï¿½ï¿½Ã»ï¿½ï¿½Ô¤ï¿½ï¿½É«ï¿½ï¿½uï¿½ï¿½ï¿½ï¿½ï¿½ï¿½Ô¤ï¿½ï¿½É«
 				boolean ok = true;
 				for (ObjOperand t : Adjacent(v)) {
 					if (!OK(t, u)) ok = false;
@@ -1156,14 +1156,14 @@ if(needallo==1)
 			spillWorklist.remove(v);
 		}
 		coalescedNodes.add(v);
-		alias.put(v, u);  // 7µÄ±ðÃûÊÇ5  13µÄ±ðÃûÊÇ10
+		alias.put(v, u);  // 7ï¿½Ä±ï¿½ï¿½ï¿½ï¿½ï¿½5  13ï¿½Ä±ï¿½ï¿½ï¿½ï¿½ï¿½10
 		HashSet<ObjMove> tmp = new HashSet<>(moveList.get(u));
 		tmp.addAll(moveList.get(v));
 		moveList.put(u, tmp);
 		HashSet<ObjOperand> tmpp = new HashSet<>();
 		tmpp.add(v);
 		EnableMoves(tmpp);
-		for (ObjOperand t : Adjacent(v)) {  //5µÄµÐÈË+=7µÄµÐÈË
+		for (ObjOperand t : Adjacent(v)) {  //5ï¿½Äµï¿½ï¿½ï¿½+=7ï¿½Äµï¿½ï¿½ï¿½
 			AddEdge(t, u);
 			DecrementDegree(t);
 		}
@@ -1207,7 +1207,7 @@ if(needallo==1)
 	private void Simplify() {
 //		System.out.println("simplify");
 //		System.out.println(simplifyWorklist);
-		//³åÍ»Í¼ÀïÈ«ÊÇµÍ¶ÈÊý´«ËÍÎÞ¹Øµã£¬ÐèÒªÒ»¸ö¸ö·Åµ½Õ»ÀïÉ¾µô
+		//ï¿½ï¿½Í»Í¼ï¿½ï¿½È«ï¿½ÇµÍ¶ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½Þ¹Øµã£¬ï¿½ï¿½ÒªÒ»ï¿½ï¿½ï¿½ï¿½ï¿½Åµï¿½Õ»ï¿½ï¿½É¾ï¿½ï¿½
 
 		ObjOperand n = simplifyWorklist.iterator().next();
 		simplifyWorklist.remove(n);

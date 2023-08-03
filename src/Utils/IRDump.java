@@ -90,8 +90,8 @@ public class IRDump {
                 if(inst instanceof Move)
                 {
                     if (inst.hasName() ) {
-                        //如果是一个需要名字的move指令
-                        //需要名字的情况：没有pair，有pair但是之前出现的pair有过名字
+                        //锟斤拷锟斤拷锟揭伙拷锟斤拷锟揭拷锟斤拷值锟絤ove指锟斤拷
+                        //锟斤拷要锟斤拷锟街碉拷锟斤拷锟斤拷锟矫伙拷锟絧air锟斤拷锟斤拷pair锟斤拷锟斤拷之前锟斤拷锟街碉拷pair锟叫癸拷锟斤拷锟斤拷
                         inst.setName("%" + nowNum++);
                         if(((Move)inst).pair.size()!=0)
                         {

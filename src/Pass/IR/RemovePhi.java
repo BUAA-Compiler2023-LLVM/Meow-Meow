@@ -30,7 +30,7 @@ public class RemovePhi implements Pass.IRPass {
 					if (i.getValue() instanceof Phi) {
 
 						ArrayList<Move> pairlist = new ArrayList<>();
-						//new1£ºÇ°ÃæµÄ»ù±¾¿éÖÐµÄÕâ¸öphiµÄ±äÁ¿µÄ±ðÃû
+						//new1ï¿½ï¿½Ç°ï¿½ï¿½Ä»ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½Ðµï¿½ï¿½ï¿½ï¿½phiï¿½Ä±ï¿½ï¿½ï¿½ï¿½Ä±ï¿½ï¿½ï¿½
 						for (int ii = 0; ii < i.getValue().getOperands().size(); ii++) {
 							Value val = i.getValue().getOperand(ii);//%x1
 							BasicBlock src = curbb.getPreBlocks().get(ii);//%b1
@@ -87,7 +87,7 @@ public class RemovePhi implements Pass.IRPass {
 				}
 
 				ArrayList<Instruction> tobeRemoved = new ArrayList<>();
-				//É¾³ýËùÓÐphi
+				//É¾ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½phi
 				for (IList.INode<Instruction, BasicBlock> i : curbb.getInsts())
 					if (i.getValue() instanceof Phi) {
 						tobeRemoved.add(i.getValue());
