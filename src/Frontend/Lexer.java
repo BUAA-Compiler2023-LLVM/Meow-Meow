@@ -1,6 +1,6 @@
 package Frontend;
 
-import Utils.Config;
+import Driver.Config;
 
 import java.io.*;
 

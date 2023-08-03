@@ -6,6 +6,7 @@ import Backend.component.ObjFunction;
 import Backend.component.ObjGlobalVariable;
 import Backend.component.ObjModule;
 import Backend.instruction.ObjInstr;
+import Driver.Config;
 import Utils.DataStruct.IList;
 
 import java.io.BufferedWriter;

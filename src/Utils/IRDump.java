@@ -1,5 +1,6 @@
 package Utils;
 
+import Driver.Config;
 import IR.IRModule;
 import IR.Value.*;
 import IR.Value.Instructions.Instruction;
@@ -133,7 +134,7 @@ public class IRDump {
     }
 
     public static void DumpModule(IRModule irModule) throws IOException {
-        DumpModule(irModule,Config.iroutFile);
+        DumpModule(irModule, Config.iroutFile);
     }
     public static void DumpModule(IRModule irModule,String filename) throws IOException {
         out = new BufferedWriter(new FileWriter(filename));

@@ -1,10 +1,5 @@
 package Backend.component;
 
-import Utils.Config;
-
-import java.io.BufferedWriter;
-import java.io.FileWriter;
-import java.io.IOException;
 import java.util.ArrayList;
 
 public class ObjModule {

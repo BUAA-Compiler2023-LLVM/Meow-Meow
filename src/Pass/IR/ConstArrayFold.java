@@ -3,10 +3,7 @@ package Pass.IR;
 import IR.IRModule;
 import IR.Use;
 import IR.Value.*;
-import IR.Value.Instructions.GepInst;
-import IR.Value.Instructions.Instruction;
-import IR.Value.Instructions.LoadInst;
-import IR.Value.Instructions.StoreInst;
+import IR.Value.Instructions.*;
 import Pass.IR.Utils.AliasAnalysis;
 import Pass.Pass;
 import Utils.DataStruct.IList;
@@ -37,6 +34,17 @@ public class ConstArrayFold implements Pass.IRPass {
                         Value root = AliasAnalysis.getRoot(pointer);
                         if(root instanceof GlobalVar globalVar && globalVar.isArray()){
                             globalArrs.remove(globalVar);
+                        }
+                    }
+                    else if(inst instanceof CallInst callInst){
+
+                        for(Value arg : callInst.getUseValues()){
+                            if(arg instanceof GepInst gepInst){
+                                Value root = AliasAnalysis.getRoot(gepInst.getTarget());
+                                if(root instanceof GlobalVar globalVar && globalVar.isArray()){
+                                    globalArrs.remove(globalVar);
+                                }
+                            }
                         }
                     }
                 }
